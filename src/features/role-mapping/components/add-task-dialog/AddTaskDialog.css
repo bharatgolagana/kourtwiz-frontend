@@ -1,0 +1,55 @@
+.add-task-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 25rem;
+  background-color: var(--main-background-color);
+  box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.2);
+  border-radius: var(--border-radius-sm);
+  z-index: 999999;
+  display: none;
+  position: relative;
+}
+
+.add-task-dialog.open {
+  display: block;
+  top: 20rem;
+  position: absolute;
+}
+
+.add-task-dialog .modal-content {
+  padding: var(--padding-mdl);
+  
+}
+
+.add-task-dialog .form-group {
+  margin-bottom: var(--margin-md);
+}
+
+.add-task-dialog label {
+  display: block;
+  margin-bottom: 0.3125rem;
+  font-size: 0.875rem;
+  font-weight: var(--default-font-weight);
+}
+
+.add-task-dialog input,
+.add-task-dialog select {
+  width: 100%;
+  padding: var(--padding-sm);
+  border: 0.0625rem solid #ccc;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.add-task-dialog .modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.625rem;
+}
+
+.add-task-dialog .modal-actions button:disabled {
+  background-color: var(--background-color);
+  cursor: not-allowed;
+}

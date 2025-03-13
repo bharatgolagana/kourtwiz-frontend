@@ -1,0 +1,23 @@
+.role-mapping-container {
+  padding: 1.5rem;
+}
+
+.role-actions-box {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.role-actions-box .css-1yt9akw-MuiButtonBase-root-MuiButton-root {
+  padding: 0.5rem;
+  display: flex;
+  flex-wrap: nowrap;
+  flex-grow: 1;
+}
+
+@media screen and (max-width: 480px) {
+  .role-mapping-container {
+    padding: var(--padding-md);
+  }
+}

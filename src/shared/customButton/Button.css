@@ -1,0 +1,29 @@
+/* src/CustomButton.css */
+.btn {
+  height: 2.25rem;
+  display: flex;
+  gap: 0.5rem;
+  text-wrap: nowrap;
+}
+
+.btn-loading {
+  opacity: 0.6;
+}
+
+.custom-btn-spinner {
+  width: 1rem;
+  height: 1rem;
+  border: 0.125rem solid black;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

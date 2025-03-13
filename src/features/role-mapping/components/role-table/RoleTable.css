@@ -1,0 +1,16 @@
+.role-table-container {
+  margin-top: var(--margin-mdl);
+  box-shadow: none;
+}
+.header-module,
+.header-task {
+  text-transform: uppercase;
+}
+
+.module-cell,
+.task-cell {
+  text-transform: capitalize;
+}
+.role-table-container .table-container {
+  box-shadow: none;
+}

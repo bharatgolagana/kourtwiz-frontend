@@ -1,0 +1,11 @@
+.role-mapping-container {
+  border-radius: 0.625rem;
+  background-color: var(--main-background-color);
+  display: flex;
+  padding: 1.5rem;
+}
+
+.add-task-board {
+  display: flex;
+  flex-direction: column;
+}

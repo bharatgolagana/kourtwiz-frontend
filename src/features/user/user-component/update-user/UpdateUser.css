@@ -1,0 +1,101 @@
+.update-user-main-container {
+  padding: 1.5rem;
+}
+.edit-user-heading-container {
+  background-color: var(--heading-bg-color);
+  color: var(--primary-color);
+  padding: 0.5625rem 0.75rem 0.5625rem 1.5rem;
+  margin-bottom: 1rem;
+  border-radius: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+}
+.edit-user-heading {
+  color: var(--primary-color);
+  font-size: clamp(1.3rem, 3vw, 1.6rem);
+  font-weight: 500;
+  display: flex;
+  justify-content: flex-start;
+}
+.edit-user-sub-heading {
+  font-weight: var(--bold-font-weight);
+  color: var(--primary-color);
+  letter-spacing: normal;
+  font-size: 1.25rem;
+}
+
+.image-container {
+  margin-top: var(--margin-md);
+}
+
+.user-image-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--gap-md);
+  height: 6rem;
+  width: 6rem;
+}
+
+.user-image {
+  border: 1px solid lightgrey;
+  border-radius: 4px;
+  background-color: var(--background-color);
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+.add-photo {
+  text-wrap: nowrap;
+}
+
+.update-remove-container {
+  display: flex;
+  align-items: center;
+}
+
+.update-user-info-fields-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin: 3rem 0;
+  max-width: 1440px;
+}
+
+.user-fields-wrapper {
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+}
+
+.role-heading {
+  font-weight: var(--bold-font-weight);
+  color: var(--primary-color);
+  letter-spacing: normal;
+}
+
+.role-profile-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin: 3rem 0;
+  max-width: 1440px;
+}
+
+.update-user-button-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 2rem;
+}
+
+@media screen and (max-width: 900px) {
+  .user-info-fields-container {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media screen and (max-width: 758px) {
+  .user-info-fields-container {
+    grid-template-columns: 1fr;
+  }
+}

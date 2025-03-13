@@ -1,0 +1,24 @@
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logo-container .logo {
+  display: flex;
+  align-items: center;
+}
+.logo img {
+  width: clamp(2rem, 1.5vw, 2.5rem);
+  height: clamp(2rem, 1.5vw, 2.5rem);
+  margin: none;
+  padding: none;
+  margin-left: 0.9rem;
+}
+
+.logo-name {
+  font-size: 1.1rem;
+  font-weight: 500;
+  align-items: flex-start;
+  transition: opacity 0.3s ease;
+}

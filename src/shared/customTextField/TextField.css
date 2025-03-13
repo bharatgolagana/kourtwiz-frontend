@@ -1,0 +1,11 @@
+.input-text {
+  padding: 0 0.65625rem;
+  margin: 0;
+  margin-bottom: 0.625rem;
+  font-size: 0.65625rem;
+}
+
+.text-input .MuiFormHelperText-root {
+  text-align: left;
+  color: var(--accent-color);
+}

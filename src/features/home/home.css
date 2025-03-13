@@ -1,0 +1,27 @@
+.homePage--main-container {
+  padding: var(--padding-md1);
+  background: linear-gradient(to bottom, #eaeeff 15%, #f8f8fa 0%);
+}
+.homePage--title {
+  font-style: normal;
+  font-weight: var(--default-font-weight);
+  font-size: 2.125rem;
+  line-height: 2.5rem;
+  color: var(--text-color);
+  display: flex;
+  justify-content: space-between;
+  margin-top: var(--margin-md);
+}
+
+.actions--container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+@media screen and (max-width: 768px) {
+  .homePage--main-container {
+    margin: var(--margin-md);
+    padding: 0.5rem;
+  }
+}

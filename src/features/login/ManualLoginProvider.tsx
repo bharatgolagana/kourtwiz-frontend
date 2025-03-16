@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
+import "./ManualLoginProvider.css";
 
 const ManualLoginProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(false);
@@ -23,8 +24,8 @@ const ManualLoginProvider = ({ children }: { children: React.ReactNode }) => {
         throw new Error("Invalid username or password");
       }
 
-      const data = await response.json(); 
-      console.log(data.token)
+      const data = await response.json();
+      console.log(data.token);
 
       setIsAuthenticated(true);
     } catch (err) {
@@ -34,28 +35,30 @@ const ManualLoginProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  if (loading) return <CircularProgress />;
+  if (loading) return <CircularProgress className="loading-spinner" />;
 
   if (!isAuthenticated) {
     return (
       <div className="login-container">
-        <h2>Login</h2>
-        {error && <p className="error">{error}</p>}
-        <form onSubmit={handleLogin}>
-          <input
-            type="text"
-            placeholder="Username"
-            value={credentials.username}
-            onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={credentials.password}
-            onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
-          />
-          <button type="submit">Login</button>
-        </form>
+        <div className="login-box">
+          <h2>Pickleball Court Login</h2>
+          {error && <p className="error-message">{error}</p>}
+          <form onSubmit={handleLogin}>
+            <input
+              type="text"
+              placeholder="Username"
+              value={credentials.username}
+              onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={credentials.password}
+              onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
+            />
+            <button type="submit">Login</button>
+          </form>
+        </div>
       </div>
     );
   }

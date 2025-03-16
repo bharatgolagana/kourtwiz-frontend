@@ -11,33 +11,35 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Slide } from "@mui/material";
-import { useKeycloak } from "@react-keycloak/web";
+// import { useKeycloak } from "@react-keycloak/web";
 import Logout from "../../assets/Vector.svg";
 import CloseIcon from "@mui/icons-material/Close";
+import { useNavigate } from "react-router-dom";
 
 const UserProfile: React.FC = () => {
   const { userInfo } = useContext(UserInfoContext) || {};
   const [userDisplay, setUserDisplay] = useState(false);
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
-  const { keycloak } = useKeycloak();
-
+  // const { keycloak } = useKeycloak();
+  const navigate=useNavigate();
   const userDetails = () => {
     setUserDisplay((prev) => !prev);
   };
 
   const handleLogin = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    keycloak.login();
+    // keycloak.login();
   };
 
   const handleLogout = () => {
-    keycloak.logout({
-      redirectUri: window.location.origin,
-    });
+    // keycloak.logout({
+    //   redirectUri: window.location.origin,
+    // });
     localStorage.removeItem("onboardingComplete");
     localStorage.removeItem("availability");
     setLogoutDialogOpen(false);
+    navigate('/')
   };
 
   const openLogoutDialog = () => {
@@ -86,14 +88,12 @@ const UserProfile: React.FC = () => {
           <hr className="user-profile__hr"></hr>
           <hr className="user-profile__hr"></hr>
           <div className="user__profile__logout__container">
-            {keycloak.authenticated ? (
+           
               <Button onClick={openLogoutDialog} className="logout-btn">
                 Logout
                 <img src={Logout} />
               </Button>
-            ) : (
-              <Button onClick={handleLogin}>Login</Button>
-            )}
+            
             <div
               onClick={() => setUserDisplay(false)}
               className="profile__close-icon"

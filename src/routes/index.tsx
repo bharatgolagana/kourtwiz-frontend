@@ -1,16 +1,17 @@
-import { RouteObject } from "react-router-dom";
-import RoleMappingRoute from "./RoleMappingRoute";
-import { userRoutes } from "./userRoutes";
-import LandingPage from "../pages/LandingPage";
-import PrivateRoute from "./PrivateRoute";
-import ServerNotFound from "../shared/components/ErrorPages/server-not-found/ServerNotFound";
-import PageNotFound from "../shared/components/ErrorPages/page-not-found/PageNotFound";
-import HomeRoute from "./HomeRoutes";
+import { RouteObject } from 'react-router-dom';
+import RoleMappingRoute from './RoleMappingRoute';
+import { userRoutes } from './userRoutes';
+import LandingPage from '../pages/LandingPage';
+import PrivateRoute from './PrivateRoute';
+import ServerNotFound from '../shared/components/ErrorPages/server-not-found/ServerNotFound';
+import PageNotFound from '../shared/components/ErrorPages/page-not-found/PageNotFound';
+import HomeRoute from './HomeRoutes';
+import SubscriptionRoutes from './SubscriptionRoutes';
 
 const createRoutes = (): RouteObject[] => {
   return [
     {
-      path: "/",
+      path: '/',
       children: [{ index: true, element: <LandingPage /> }],
     },
 
@@ -20,19 +21,20 @@ const createRoutes = (): RouteObject[] => {
         ...RoleMappingRoute,
         ...HomeRoute,
         ...userRoutes,
+        ...SubscriptionRoutes,
 
         {
-          path: "/server-not-found",
+          path: '/server-not-found',
           element: <ServerNotFound />,
         },
         {
-          path: "/server-not-found",
+          path: '/server-not-found',
           element: <ServerNotFound />,
         },
       ],
     },
     {
-      path: "*",
+      path: '*',
       element: <PageNotFound />,
     },
   ];

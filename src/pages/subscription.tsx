@@ -85,14 +85,17 @@ const SubscriptionPage = () => {
       </Typography>
 
       <Grid container spacing={4} justifyContent='center'>
-        {roles.map((role) => (
-          <SubscriptionCard
-            key={role.id} // Always add a key inside map!
-            role={role}
-            handlePayment={handlePayment}
-            organizationsData={organizationData}
-          />
-        ))}
+        {roles.map((role) => {
+          if (role.name === 'MasterAdmin') return null;
+          return (
+            <SubscriptionCard
+              key={role.id} // Always add a key inside map!
+              role={role}
+              handlePayment={handlePayment}
+              organizationsData={organizationData}
+            />
+          );
+        })}
       </Grid>
 
       <Box
@@ -115,23 +118,27 @@ const SubscriptionPage = () => {
           Your Roles:
         </Typography>
 
-        <Box
-          sx={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: 1,
-          }}
-        >
-          {userDetails.roles.map((role) => (
-            <Chip
-              key={role.name}
-              label={role.name}
-              color='primary'
-              variant='outlined'
-              sx={{ fontSize: '0.875rem' }}
-            />
-          ))}
-        </Box>
+        {userDetails.roles.length == 0 ? (
+          <Typography variant='h6'>You do not have any role</Typography>
+        ) : (
+          <Box
+            sx={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: 1,
+            }}
+          >
+            {userDetails.roles.map((role) => (
+              <Chip
+                key={role.name}
+                label={role.name}
+                color='primary'
+                variant='outlined'
+                sx={{ fontSize: '0.875rem' }}
+              />
+            ))}
+          </Box>
+        )}
       </Box>
     </Box>
   );

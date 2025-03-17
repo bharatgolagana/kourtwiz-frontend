@@ -46,7 +46,7 @@ const SubscriptionCard = ({
           <Box component='ul' sx={{ pl: 2 }}>
             {role.tasks.map((task, idx) => (
               <li key={idx}>
-                <Typography variant='body2'>{task.taskName}</Typography>
+                <Typography variant='h6'>{task.taskName}</Typography>
               </li>
             ))}
           </Box>
@@ -57,6 +57,7 @@ const SubscriptionCard = ({
             flexDirection: 'column',
             alignItems: 'flex-start',
             mt: 2,
+            mb: 2,
           }}
         >
           <InputLabel htmlFor='organization-select'>

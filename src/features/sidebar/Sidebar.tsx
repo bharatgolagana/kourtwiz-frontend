@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   Drawer,
   List,
@@ -8,65 +8,72 @@ import {
   Collapse,
   IconButton,
   Tooltip,
-} from "@mui/material";
-import { Link } from "react-router-dom";
-import ExpandLess from "@mui/icons-material/ExpandLess";
-import ExpandMore from "@mui/icons-material/ExpandMore";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import CloseIcon from "@mui/icons-material/Close";
-import Toolbar from "../toolbar/Toolbar";
-import { Outlet } from "react-router-dom";
-import { useUserInfo } from "../../context/UserInfoContext";
-import { useHasPermission } from "../../context/UseHasPermission";
-import { useNavigate } from "react-router-dom";
-import "./Sidebar.css";
-import SideBarList from "./components/SideBarList";
+} from '@mui/material';
+import { Link } from 'react-router-dom';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import CloseIcon from '@mui/icons-material/Close';
+import Toolbar from '../toolbar/Toolbar';
+import { Outlet } from 'react-router-dom';
+import { useUserInfo } from '../../context/UserInfoContext';
+import { useHasPermission } from '../../context/UseHasPermission';
+import { useNavigate } from 'react-router-dom';
+import './Sidebar.css';
+import SideBarList from './components/SideBarList';
 
-import HomeImage from "../../assets/homepage.svg";
-import MySchedule from "../../assets/schedule.svg";
+import HomeImage from '../../assets/homepage.svg';
+import MySchedule from '../../assets/schedule.svg';
 
-import UserIcomImg from "../../assets/userIcoImage.svg";
+import UserIcomImg from '../../assets/userIcoImage.svg';
 
-import { useViewportSize } from "../../shared/components/ViewportSize/useViewPortSize";
-import Logo from "../logo/Logo";
+import { useViewportSize } from '../../shared/components/ViewportSize/useViewPortSize';
+import Logo from '../logo/Logo';
 
 const sidebarItems = [
   {
-    label: "Dashboard",
+    label: 'Dashboard',
     icon: <img src={HomeImage} />,
-    path: "/home",
+    path: '/home',
     isExpandable: false,
-    permission: "view_home",
+    permission: 'view_home',
   },
   {
-    label: "My Schedules",
+    label: 'My Schedules',
     icon: <img src={MySchedule} />,
-    path: "/scheduledBookings",
+    path: '/scheduledBookings',
     isExpandable: false,
-    permission: "view_schedules",
+    permission: 'view_schedules',
   },
   {
-    label: "User",
-    path: "/list-users",
+    label: 'User',
+    path: '/list-users',
     icon: <img src={UserIcomImg} />,
     isExpandable: false,
-    permission: "view_users",
+    permission: 'view_users',
   },
 
   {
-    label: "Roles",
+    label: 'Roles',
     icon: <img src={UserIcomImg} />,
-    path: "/role-mapping",
+    path: '/role-mapping',
     isExpandable: false,
-    permission: "VIEW_ROLES",
+    permission: 'VIEW_ROLES',
+  },
+  {
+    label: 'Subscripton',
+    icon: <img src={UserIcomImg} />,
+    path: '/subscription',
+    isExpandable: false,
+    permission: 'VIEW_ROLES',
   },
 ];
 
 const Sidebar: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState<boolean>(true);
   const [isHovered, setIsHovered] = useState<boolean>(false);
-  const [activeItem, setActiveItem] = useState<string>("Home");
+  const [activeItem, setActiveItem] = useState<string>('Home');
   const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { width } = useViewportSize();
@@ -145,51 +152,51 @@ const Sidebar: React.FC = () => {
 
   const isWelcome = userInfo.userInfo.isWelcome;
   return (
-    <div className="app-container">
+    <div className='app-container'>
       <Drawer
-        variant="permanent"
+        variant='permanent'
         className={`sidebar sidebar-icon-view ${
-          isExpanded ? "sidebar-open" : "sidebar-closed"
+          isExpanded ? 'sidebar-open' : 'sidebar-closed'
         }`}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         sx={{
-          "& .MuiDrawer-paper": {
-            width: isExpanded ? "260px" : "96px",
-            transition: "width 0.3s cubic-bezier(.05,.72,.6,.97)",
+          '& .MuiDrawer-paper': {
+            width: isExpanded ? '260px' : '96px',
+            transition: 'width 0.3s cubic-bezier(.05,.72,.6,.97)',
           },
         }}
       >
         <div
           className={`sidebar-content ${
-            !isExpanded && "sidebar-scroll-hidden"
+            !isExpanded && 'sidebar-scroll-hidden'
           }`}
         >
           <Logo isExpanded={isExpanded} />
-          <div className="sidebar-list-container">
-            <List className="list-items">
+          <div className='sidebar-list-container'>
+            <List className='list-items'>
               {sidebarItems.map((item) => {
                 // if (!hasPermission(item.permission)) return null;
 
                 const isDisabled = isWelcome;
 
                 if (item.isExpandable) {
-                  if (item.label === "Documents") {
+                  if (item.label === 'Documents') {
                     return (
                       <React.Fragment key={item.label}>
                         <Tooltip
                           disableHoverListener={isExpanded && !isDisabled}
-                          placement="right"
+                          placement='right'
                           title={
                             isDisabled
-                              ? "Complete onboarding to access"
+                              ? 'Complete onboarding to access'
                               : item.label
                           }
                         >
                           <ListItem
                             className={`list-item ${
-                              isDisabled ? "disabled" : ""
-                            } ${activeItem === item.label ? "active" : ""}`}
+                              isDisabled ? 'disabled' : ''
+                            } ${activeItem === item.label ? 'active' : ''}`}
                             onClick={() => {
                               if (!isDisabled) {
                                 if (item.subItems?.length) {
@@ -202,13 +209,13 @@ const Sidebar: React.FC = () => {
                             aria-expanded={openItems[item.label] || false}
                             selected={activeItem === item.label}
                           >
-                            <ListItemIcon className="list-item-icon">
+                            <ListItemIcon className='list-item-icon'>
                               {item.icon}
                             </ListItemIcon>
                             {isExpanded && (
                               <ListItemText
                                 primary={item.label}
-                                className="list-item-text"
+                                className='list-item-text'
                               />
                             )}
                             {isExpanded &&
@@ -221,20 +228,20 @@ const Sidebar: React.FC = () => {
                         </Tooltip>
                         <Collapse
                           in={openItems[item.label]}
-                          timeout="auto"
+                          timeout='auto'
                           unmountOnExit
                         >
-                          <List component="div" disablePadding>
+                          <List component='div' disablePadding>
                             {item.subItems?.map((subItem) => (
                               <Tooltip
                                 disableHoverListener={isExpanded && !isDisabled}
-                                placement="right"
+                                placement='right'
                                 className={`list-item sub-item ${
-                                  activeItem === subItem.label ? "active" : ""
+                                  activeItem === subItem.label ? 'active' : ''
                                 }`}
                                 title={
                                   isDisabled
-                                    ? "Complete onboarding to access"
+                                    ? 'Complete onboarding to access'
                                     : subItem.label
                                 }
                                 key={subItem.label}
@@ -242,7 +249,7 @@ const Sidebar: React.FC = () => {
                                 <ListItem
                                   key={subItem.label}
                                   className={`list-item sub-item ${
-                                    activeItem === subItem.label ? "active" : ""
+                                    activeItem === subItem.label ? 'active' : ''
                                   }`}
                                   component={Link}
                                   to={subItem.path}
@@ -255,13 +262,13 @@ const Sidebar: React.FC = () => {
                                     }
                                   }}
                                 >
-                                  <ListItemIcon className="list-item-icon">
+                                  <ListItemIcon className='list-item-icon'>
                                     {subItem.icon}
                                   </ListItemIcon>
                                   {isExpanded && (
                                     <ListItemText
                                       primary={subItem.label}
-                                      className="list-item-text"
+                                      className='list-item-text'
                                     />
                                   )}
                                 </ListItem>
@@ -271,7 +278,7 @@ const Sidebar: React.FC = () => {
                         </Collapse>
                       </React.Fragment>
                     );
-                  } else if (item.label === "Contacts") {
+                  } else if (item.label === 'Contacts') {
                     const visibleSubItems =
                       item.subItems?.filter((subItem) =>
                         hasPermission(subItem.permission)
@@ -283,20 +290,20 @@ const Sidebar: React.FC = () => {
                       <React.Fragment key={item.label}>
                         <Tooltip
                           disableHoverListener={isExpanded && !isDisabled}
-                          placement="right"
+                          placement='right'
                           title={
                             isDisabled
-                              ? "Complete onboarding to access"
+                              ? 'Complete onboarding to access'
                               : item.label
                           }
                         >
                           <ListItem
                             className={`list-item ${
-                              isDisabled ? "disabled" : ""
+                              isDisabled ? 'disabled' : ''
                             } ${
-                              activeItem.startsWith(item.label) ? "active" : ""
+                              activeItem.startsWith(item.label) ? 'active' : ''
                             }`}
-                            component={!isDisabled ? Link : "div"}
+                            component={!isDisabled ? Link : 'div'}
                             to={item.path}
                             onClick={() => {
                               if (!isDisabled) {
@@ -311,13 +318,13 @@ const Sidebar: React.FC = () => {
                             }
                             selected={activeItem === item.label}
                           >
-                            <ListItemIcon className="list-item-icon">
+                            <ListItemIcon className='list-item-icon'>
                               {item.icon}
                             </ListItemIcon>
                             {isExpanded && (
                               <ListItemText
                                 primary={item.label}
-                                className="list-item-text"
+                                className='list-item-text'
                               />
                             )}
                             {hasSubItems &&
@@ -332,20 +339,20 @@ const Sidebar: React.FC = () => {
                         {hasSubItems && (
                           <Collapse
                             in={openItems[item.label]}
-                            timeout="auto"
+                            timeout='auto'
                             unmountOnExit
                           >
-                            <List component="div" disablePadding>
+                            <List component='div' disablePadding>
                               {visibleSubItems.map((subItem) => (
                                 <Tooltip
                                   key={subItem.label}
                                   disableHoverListener={
                                     isExpanded && !isDisabled
                                   }
-                                  placement="right"
+                                  placement='right'
                                   title={
                                     isDisabled
-                                      ? "Complete onboarding to access"
+                                      ? 'Complete onboarding to access'
                                       : subItem.label
                                   }
                                 >
@@ -353,8 +360,8 @@ const Sidebar: React.FC = () => {
                                     className={`list-item sub-item ${
                                       activeItem ===
                                       `${item.label}/${subItem.label}`
-                                        ? "active"
-                                        : ""
+                                        ? 'active'
+                                        : ''
                                     }`}
                                     component={Link}
                                     to={subItem.path}
@@ -367,13 +374,13 @@ const Sidebar: React.FC = () => {
                                       }
                                     }}
                                   >
-                                    <ListItemIcon className="list-item-icon">
+                                    <ListItemIcon className='list-item-icon'>
                                       {subItem.icon}
                                     </ListItemIcon>
                                     {isExpanded && (
                                       <ListItemText
                                         primary={subItem.label}
-                                        className="list-item-text"
+                                        className='list-item-text'
                                       />
                                     )}
                                   </ListItem>
@@ -390,17 +397,17 @@ const Sidebar: React.FC = () => {
                   <Tooltip
                     key={item.label}
                     disableHoverListener={isExpanded && !isDisabled}
-                    placement="right"
+                    placement='right'
                     title={
-                      isDisabled ? "Complete onboarding to access" : item.label
+                      isDisabled ? 'Complete onboarding to access' : item.label
                     }
                   >
                     <ListItem
                       className={`list-item ${
-                        activeItem === item.label ? "active" : ""
-                      } ${isDisabled ? "disabled" : ""}`}
-                      component={!isDisabled ? Link : "div"}
-                      to={!isDisabled ? item.path : ""}
+                        activeItem === item.label ? 'active' : ''
+                      } ${isDisabled ? 'disabled' : ''}`}
+                      component={!isDisabled ? Link : 'div'}
+                      to={!isDisabled ? item.path : ''}
                       onClick={
                         !isDisabled
                           ? () => handleListItemClick(item.label)
@@ -408,7 +415,7 @@ const Sidebar: React.FC = () => {
                       }
                       aria-disabled={isDisabled}
                     >
-                      <ListItemIcon className="list-item-icon">
+                      <ListItemIcon className='list-item-icon'>
                         {item.iconPath ? (
                           <img src={item.iconPath} alt={item.label} />
                         ) : (
@@ -418,7 +425,7 @@ const Sidebar: React.FC = () => {
                       {isExpanded && (
                         <ListItemText
                           primary={item.label}
-                          className="list-item-text"
+                          className='list-item-text'
                         />
                       )}
                     </ListItem>
@@ -427,44 +434,44 @@ const Sidebar: React.FC = () => {
               })}
             </List>
           </div>
-          <div className="sidebar-list-container"></div>
+          <div className='sidebar-list-container'></div>
 
           <IconButton
             onClick={toggleSidenav}
             className={`toggle-button ${
-              !isExpanded && isHovered ? "show" : ""
+              !isExpanded && isHovered ? 'show' : ''
             }`}
           >
             {isExpanded ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           </IconButton>
         </div>
       </Drawer>
-      <div className="sidebar--main-content">
+      <div className='sidebar--main-content'>
         <Toolbar
           handleMenu={handleMenu}
           isMobileMenuOpen={isMobileMenuOpen}
           setIsMobileMenuOpen={setIsMobileMenuOpen}
         />
 
-        <div className="sidebar--outlet-content">
+        <div className='sidebar--outlet-content'>
           <Outlet />
         </div>
         <div
           className={`mobile-sidebar-container ${
             isMobileMenuOpen
-              ? "mobile__sidebar-container_open"
-              : "mobile__sidebar-container_close"
+              ? 'mobile__sidebar-container_open'
+              : 'mobile__sidebar-container_close'
           }`}
         >
-          <div className="mobile-sidebar-header-wrapper">
-            <div className="mobile_sidebar_logo_container">
+          <div className='mobile-sidebar-header-wrapper'>
+            <div className='mobile_sidebar_logo_container'>
               <img
-                src="/src/assets/logo/full-logo.svg"
-                alt="logo"
-                className="mobile_sidebar_logo"
+                src='/src/assets/logo/full-logo.svg'
+                alt='logo'
+                className='mobile_sidebar_logo'
               />
             </div>
-            <CloseIcon className="close_icon" onClick={closeMobileNav} />
+            <CloseIcon className='close_icon' onClick={closeMobileNav} />
           </div>
           <SideBarList
             isMobileMenuOpen={isMobileMenuOpen}

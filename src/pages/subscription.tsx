@@ -1,44 +1,11 @@
-import {
-  Box,
-  Grid,
-  Card,
-  CardContent,
-  CardActions,
-  Typography,
-  Button,
-  Modal,
-} from '@mui/material';
-import SubscriptionCard from '../features/subscription/subscription-card';
-import { useEffect, useState } from 'react';
-
-const subscriptionPlans = [
-  {
-    id: 1,
-    name: 'Club Admin',
-    price: '$9.99 / month',
-    details: ['Access to basic features', 'Email support', 'Limited usage'],
-  },
-  {
-    id: 2,
-    name: 'Member',
-    price: '$19.99 / month',
-    details: [
-      'Access to all features',
-      'Priority email support',
-      'Unlimited usage',
-    ],
-  },
-  {
-    id: 3,
-    name: 'Enterprise Plan',
-    price: '$49.99 / month',
-    details: [
-      'Customized solutions',
-      'Dedicated support',
-      'Unlimited usage + analytics',
-    ],
-  },
-];
+import { Box, Grid, Typography, Button, Modal, Chip } from '@mui/material';
+import SubscriptionCard from '../features/subscription/components/subscripton-card/subscription-card';
+import { useRef, useState } from 'react';
+import { useGetRoles } from '../features/subscription/api/useGetRoles';
+import { useMutateAssignRole } from '../features/subscription/api/useMutateAssignRole';
+import { useGetUserDetails } from '../features/subscription/api/useGetUserDetails';
+import { useGetOrganizations } from '../features/subscription/api/useGetOrganization';
+import { toast } from 'react-toastify';
 
 const style = {
   position: 'absolute',
@@ -53,21 +20,43 @@ const style = {
 };
 
 const SubscriptionPage = () => {
+  const { data: roles, isLoading } = useGetRoles();
+  const { mutate } = useMutateAssignRole({
+    onSuccessCallback: () => {
+      toast.success('role assigned successfully!');
+
+      handleClose();
+    },
+    onErrorCallback: () => {
+      toast.error('error while assing role');
+      handleClose();
+    },
+  });
+  const { data: userDetails, isLoading: loadingUserDetails } =
+    useGetUserDetails();
+  const { data: organizationData, isLoading: loadingOrg } =
+    useGetOrganizations();
+  const assignRoleData = useRef({});
   const handleOpen = () => {
     setOpenModal(true);
   };
-  const handlePayment = (plan) => {
-    console.log('handle payment is called');
+  const handlePayment = (role, orgName) => {
     handleOpen();
-    // alert(`You selected the ${plan.name} for ${plan.price}`);
-    // You can hook this into a payment gateway here!
+    assignRoleData.current = {
+      userEmail: userDetails.email,
+      organizationName: orgName,
+      roleName: role.name,
+    };
+    console.log('assigning role : ', assignRoleData.current);
   };
 
   const [openMoal, setOpenModal] = useState(false);
   const handleClose = () => {
     setOpenModal(false);
   };
-
+  if (isLoading || loadingUserDetails || loadingOrg) {
+    return 'loading...';
+  }
   return (
     <Box sx={{ p: 4 }}>
       <Modal
@@ -79,12 +68,16 @@ const SubscriptionPage = () => {
       >
         <Box sx={style}>
           <Typography id='keep-mounted-modal-title' variant='h6' component='h2'>
-            Choose your Organization
+            Make Payment
           </Typography>
-          <Typography id='keep-mounted-modal-description' sx={{ mt: 2 }}>
-            Organization names...
-          </Typography>
-          <Button onClick={() => handleClose()}>Proceed</Button>
+          <Button
+            onClick={() => {
+              mutate(assignRoleData.current);
+              handleClose();
+            }}
+          >
+            Proceed
+          </Button>
         </Box>
       </Modal>
       <Typography variant='h4' align='center' gutterBottom>
@@ -92,10 +85,54 @@ const SubscriptionPage = () => {
       </Typography>
 
       <Grid container spacing={4} justifyContent='center'>
-        {subscriptionPlans.map((plan) =>
-          SubscriptionCard({ plan, handlePayment })
-        )}
+        {roles.map((role) => (
+          <SubscriptionCard
+            key={role.id} // Always add a key inside map!
+            role={role}
+            handlePayment={handlePayment}
+            organizationsData={organizationData}
+          />
+        ))}
       </Grid>
+
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-start',
+          flexWrap: 'wrap',
+          mt: 3,
+        }}
+      >
+        <Typography
+          variant='h6'
+          sx={{
+            whiteSpace: 'nowrap',
+            mr: 2,
+            minWidth: '100px',
+          }}
+        >
+          Your Roles:
+        </Typography>
+
+        <Box
+          sx={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: 1,
+          }}
+        >
+          {userDetails.roles.map((role) => (
+            <Chip
+              key={role.name}
+              label={role.name}
+              color='primary'
+              variant='outlined'
+              sx={{ fontSize: '0.875rem' }}
+            />
+          ))}
+        </Box>
+      </Box>
     </Box>
   );
 };

@@ -46,6 +46,13 @@ const Header = () => {
       >
         Login
       </button>
+      <button
+        className="header-btn"
+        type="button"
+        onClick={() => navigate("/signup")}
+      >
+        Sign Up
+      </button>
     </div>
   );
 };

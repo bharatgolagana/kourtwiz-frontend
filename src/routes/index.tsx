@@ -6,6 +6,7 @@ import PrivateRoute from "./PrivateRoute";
 import ServerNotFound from "../shared/components/ErrorPages/server-not-found/ServerNotFound";
 import PageNotFound from "../shared/components/ErrorPages/page-not-found/PageNotFound";
 import HomeRoute from "./HomeRoutes";
+import SignUpRoutes from "./SIgnUpRoutes"
 
 const createRoutes = (): RouteObject[] => {
   return [
@@ -13,7 +14,7 @@ const createRoutes = (): RouteObject[] => {
       path: "/",
       children: [{ index: true, element: <LandingPage /> }],
     },
-
+    ...SignUpRoutes,
     {
       element: <PrivateRoute />,
       children: [

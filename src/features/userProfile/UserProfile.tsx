@@ -36,6 +36,7 @@ const UserProfile: React.FC = () => {
     // keycloak.logout({
     //   redirectUri: window.location.origin,
     // });
+    localStorage.removeItem("token");
     localStorage.removeItem("onboardingComplete");
     localStorage.removeItem("availability");
     setLogoutDialogOpen(false);

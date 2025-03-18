@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 const Header = () => {
   const [navigation, setNavigation] = useState(false);
   const navigate = useNavigate();
-  const navRef = useRef<HTMLDivElement | null>(null);
+  const navRef = useRef(null);
 
   useEffect(() => {
     const navToggle = () => {
@@ -20,8 +20,8 @@ const Header = () => {
   }, []);
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (navRef.current && !navRef.current.contains(event.target as Node)) {
+    const handleClickOutside = (event) => {
+      if (navRef.current && !navRef.current.contains(event.target)) {
         setNavigation(false);
       }
     };
@@ -39,13 +39,17 @@ const Header = () => {
 
   return (
     <div className="header">
-      <button
-        className="header-btn"
-        type="button"
-        onClick={() => navigate("/home")}
-      >
-        Login
-      </button>
+      <nav className="nav" ref={navRef}>
+        <div className="nav-links">
+          <p><a href="#features" className="nav-spacing">Features </a> <a href="#pricing" className="nav-spacing">Pricing </a>
+          <a href="#about" className="nav-spacing">About </a>
+          <a href="#contact" className="nav-spacing">Contact </a></p>
+        </div>
+        <div className="nav-buttons">
+          <button className="btn" onClick={() => navigate("/login")}>Login</button>
+          <button className="btn primary" onClick={() => navigate("/register")}>Try it Out</button>
+        </div>
+      </nav>
     </div>
   );
 };

@@ -47,7 +47,6 @@ const SubscriptionPage = () => {
       organizationName: orgName,
       roleName: role.name,
     };
-    console.log('assigning role : ', assignRoleData.current);
   };
 
   const [openMoal, setOpenModal] = useState(false);

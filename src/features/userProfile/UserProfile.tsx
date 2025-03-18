@@ -1,6 +1,6 @@
-import React, { useContext, useRef, useState, useEffect } from "react";
-import { UserInfoContext } from "../../context/UserInfoContext";
-import "./UserProfile.css";
+import React, { useContext, useRef, useState, useEffect } from 'react';
+import { UserInfoContext } from '../../context/UserInfoContext';
+import './UserProfile.css';
 import {
   Avatar,
   Button,
@@ -8,13 +8,13 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-} from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { Slide } from "@mui/material";
+} from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Slide } from '@mui/material';
 // import { useKeycloak } from "@react-keycloak/web";
-import Logout from "../../assets/Vector.svg";
-import CloseIcon from "@mui/icons-material/Close";
-import { useNavigate } from "react-router-dom";
+import Logout from '../../assets/Vector.svg';
+import CloseIcon from '@mui/icons-material/Close';
+import { useNavigate } from 'react-router-dom';
 
 const UserProfile: React.FC = () => {
   const { userInfo } = useContext(UserInfoContext) || {};
@@ -22,7 +22,7 @@ const UserProfile: React.FC = () => {
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
   // const { keycloak } = useKeycloak();
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const userDetails = () => {
     setUserDisplay((prev) => !prev);
   };
@@ -36,10 +36,10 @@ const UserProfile: React.FC = () => {
     // keycloak.logout({
     //   redirectUri: window.location.origin,
     // });
-    localStorage.removeItem("onboardingComplete");
-    localStorage.removeItem("availability");
+    localStorage.removeItem('onboardingComplete');
+    localStorage.removeItem('availability');
     setLogoutDialogOpen(false);
-    navigate('/')
+    navigate('/');
   };
 
   const openLogoutDialog = () => {
@@ -57,76 +57,75 @@ const UserProfile: React.FC = () => {
   };
 
   useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
 
   return (
-    <div className="user-profile-main-container">
-      <div ref={ref} className="user-profile-container" onClick={userDetails}>
+    <div className='user-profile-main-container'>
+      <div ref={ref} className='user-profile-container' onClick={userDetails}>
         <Avatar
-          className="user-profile__avatar"
+          className='user-profile__avatar'
           src={userInfo?.profile?.profileImages?.[0] || undefined}
         >
           {!userInfo?.profile?.profileImages?.[0] &&
             userInfo?.userName?.charAt(0).toUpperCase()}
-          {"B "}
+          {'A '}
         </Avatar>
         <ExpandMoreIcon
-          className={`expand-icon ${userDisplay ? "rotate" : ""}`}
+          className={`expand-icon ${userDisplay ? 'rotate' : ''}`}
         />
       </div>
 
-      <Slide direction="left" in={userDisplay} mountOnEnter unmountOnExit>
-        <div ref={ref} className="user-profile-details">
-          <div className="user-profile__name">
+      <Slide direction='left' in={userDisplay} mountOnEnter unmountOnExit>
+        <div ref={ref} className='user-profile-details'>
+          <div className='user-profile__name'>
             {userInfo?.firstName} {userInfo?.lastName}
           </div>
-          <div className="user-profile__email">{userInfo?.email}</div>
-          <hr className="user-profile__hr"></hr>
-          <hr className="user-profile__hr"></hr>
-          <div className="user__profile__logout__container">
-           
-              <Button onClick={openLogoutDialog} className="logout-btn">
-                Logout
-                <img src={Logout} />
-              </Button>
-            
+          <div className='user-profile__email'>{userInfo?.email}</div>
+          <hr className='user-profile__hr'></hr>
+          <hr className='user-profile__hr'></hr>
+          <div className='user__profile__logout__container'>
+            <Button onClick={openLogoutDialog} className='logout-btn'>
+              Logout
+              <img src={Logout} />
+            </Button>
+
             <div
               onClick={() => setUserDisplay(false)}
-              className="profile__close-icon"
+              className='profile__close-icon'
             >
               <CloseIcon />
             </div>
           </div>
         </div>
       </Slide>
-      <div className="profile-logout-dialog-container">
+      <div className='profile-logout-dialog-container'>
         <Dialog
           open={logoutDialogOpen}
           onClose={closeLogoutDialog}
-          classes={{ paper: "logout-dialog-paper" }}
+          classes={{ paper: 'logout-dialog-paper' }}
         >
-          <DialogTitle className="logout-dialog-title">
+          <DialogTitle className='logout-dialog-title'>
             Do you want to Logout?
           </DialogTitle>
-          <DialogContent className="logout-dialog-content">
+          <DialogContent className='logout-dialog-content'>
             Logging out will end your session and you will need to sign in again
             to access your profile.
           </DialogContent>
-          <DialogActions className="logout-dialog-actions">
+          <DialogActions className='logout-dialog-actions'>
             <Button
               onClick={closeLogoutDialog}
-              className="logout-dialog-cancel-btn"
+              className='logout-dialog-cancel-btn'
             >
               Cancel
             </Button>
             <Button
-              variant="outlined"
+              variant='outlined'
               onClick={handleLogout}
-              className="logout-dialog-logout-btn"
+              className='logout-dialog-logout-btn'
               autoFocus
             >
               Logout

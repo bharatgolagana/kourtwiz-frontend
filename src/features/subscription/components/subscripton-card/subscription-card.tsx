@@ -16,7 +16,6 @@ const SubscriptionCard = ({
   handlePayment,
   organizationsData,
 }): JSX.Element => {
-  console.log('organization data : ', organizationsData);
   const [orgName, setOrgName] = useState('');
   const handleSelect = (orgName) => {
     setOrgName(orgName);

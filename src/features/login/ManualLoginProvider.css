@@ -18,9 +18,9 @@
   & button{
     width: 100%;
     padding: 10px;
-    background-color: #ff9800;
+    background-color: white;
     border: none;
-    color: white;
+    color: black;
     font-size: 16px;
     border-radius: 5px;
     cursor: pointer;
@@ -40,7 +40,8 @@ input {
 }
 
 button:hover {
-  background-color: #e68900;
+  background-color: black;
+  color: white;
 }
 
 .error-message {

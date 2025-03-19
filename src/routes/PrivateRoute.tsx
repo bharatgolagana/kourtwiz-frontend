@@ -9,7 +9,7 @@ function PrivateRoute(): JSX.Element {
     <UserInfoProvider>
       <ManualLoginProvider>
         <Sidebar />
-        </ManualLoginProvider>
+      </ManualLoginProvider>
     </UserInfoProvider>
   );
 }

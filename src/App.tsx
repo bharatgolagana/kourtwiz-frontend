@@ -3,10 +3,10 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import createRoutes from "./routes/index";
 import ErrorBoundary from "./ErrorBoundary";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import "./App.css";
+import { AuthProvider } from "./context/AuthContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import "./App.css";
 
 const App: React.FC = () => {
   const routes = createRoutes();
@@ -28,7 +28,9 @@ const App: React.FC = () => {
         theme="light"
       />
       <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
+        <AuthProvider>
+          <RouterProvider router={router} />
+        </AuthProvider>
       </QueryClientProvider>
     </ErrorBoundary>
   );

@@ -1,23 +1,39 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
+import { AuthContext } from '../../context/AuthContext';
 import './ManualLoginProvider.css';
 
 const ManualLoginProvider = ({ children }: { children: React.ReactNode }) => {
+  const { user, setUser } = useContext(AuthContext)!;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [credentials, setCredentials] = useState({
-    username: '',
-    password: '',
-  });
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
-    () => !!localStorage.getItem('jwtToken')
-  );
+  const [credentials, setCredentials] = useState({ username: '', password: '' });
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => !!localStorage.getItem('jwtToken'));
 
   useEffect(() => {
-    if (localStorage.getItem('jwtToken')) {
-      setIsAuthenticated(true);
+    const token = localStorage.getItem('jwtToken');
+    if (token && !user) {
+      fetchUserData(token);
     }
   }, []);
+
+  const fetchUserData = async (token: string) => {
+    try {
+      const response = await fetch('http://44.216.113.234:8080/users/me', {
+        method: 'GET',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!response.ok) throw new Error('Failed to fetch user data');
+
+      const userData = await response.json();
+      setUser(userData);
+      setIsAuthenticated(true);
+    } catch (err) {
+      console.error(err.message);
+      setIsAuthenticated(false);
+    }
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,13 +47,12 @@ const ManualLoginProvider = ({ children }: { children: React.ReactNode }) => {
         body: JSON.stringify(credentials),
       });
 
-      if (!response.ok) {
-        throw new Error('Invalid username or password');
-      }
+      if (!response.ok) throw new Error('Invalid username or password');
 
       const data = await response.json();
       localStorage.setItem('jwtToken', data.token);
-      setIsAuthenticated(true);
+
+      await fetchUserData(data.token);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -51,24 +66,20 @@ const ManualLoginProvider = ({ children }: { children: React.ReactNode }) => {
     return (
       <div className='login-container'>
         <div className='login-box'>
-          <h2>Pickleball Court Login</h2>
+          <h2>Login</h2>
           {error && <p className='error-message'>{error}</p>}
           <form onSubmit={handleLogin}>
             <input
               type='text'
               placeholder='Username'
               value={credentials.username}
-              onChange={(e) =>
-                setCredentials({ ...credentials, username: e.target.value })
-              }
+              onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
             />
             <input
               type='password'
               placeholder='Password'
               value={credentials.password}
-              onChange={(e) =>
-                setCredentials({ ...credentials, password: e.target.value })
-              }
+              onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
             />
             <button type='submit'>Login</button>
           </form>

@@ -7,7 +7,8 @@ import ServerNotFound from '../shared/components/ErrorPages/server-not-found/Ser
 import PageNotFound from '../shared/components/ErrorPages/page-not-found/PageNotFound';
 import HomeRoute from './HomeRoutes';
 import SubscriptionRoutes from './SubscriptionRoutes';
-import SignUpRoutes from './SignUpRoutes';
+
+import ClubLandingRoutes from "./ClubLandingRoutes";
 
 const createRoutes = (): RouteObject[] => {
   return [
@@ -15,7 +16,7 @@ const createRoutes = (): RouteObject[] => {
       path: '/',
       children: [{ index: true, element: <LandingPage /> }],
     },
-    ...SignUpRoutes,
+    ...ClubLandingRoutes,
     {
       element: <PrivateRoute />,
       children: [

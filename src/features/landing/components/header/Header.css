@@ -1,16 +1,18 @@
 .header {
-  position: fixed;  /* Fix the navbar at the top */
+  position: fixed; 
   top: 0;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: linear-gradient(to bottom, #026d18, #026d18);
+  background: black;
   padding: 5px;
+  z-index: 5;
+  height: 4rem;
 }
 
 .logo img {
-  height: 50px;
+  height: 25px;
 }
 
 .nav-links {
@@ -42,5 +44,5 @@
 
 .contact-btn:hover {
   background: white;
-  color: #026d18;
+  color: black;
 }

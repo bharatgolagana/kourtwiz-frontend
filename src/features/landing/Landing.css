@@ -386,6 +386,13 @@
   text-decoration: none;
 }
 
+.buttons{
+  & button{
+    background-color: rgb(151, 137, 137);
+    color: black;
+  }
+}
+
 @media screen and (max-width: 850px) {
   .default-padding {
     padding: 1.5rem;

@@ -16,9 +16,9 @@ const WebcamCapture: React.FC = () => {
     const [lastCapturedImage, setLastCapturedImage] = useState<string | null>(null);
     const [responseData, setResponseData] = useState<any>(null); 
     const [pauseDetection, setPauseDetection] = useState(false);
-const [successMessage, setSuccessMessage] = useState<string | null>(null);
+    const [processing, setProcessing] = useState(false);
+    const [showWebcam, setShowWebcam] = useState(true);
     
-
     const { mutate: sendImage, isPending } = useSendImage({
         onCompleteCallback: (data) => {
             console.log('📩 Response received:', data);
@@ -80,17 +80,6 @@ const [successMessage, setSuccessMessage] = useState<string | null>(null);
             captureAndSendFromCanvas();
         }
     };
-    useEffect(() => {
-        if (responseData?.message?.includes("Authenticated: ")) {
-            setSuccessMessage("✅ You can now walk into the gate!");
-            setPauseDetection(true);
-    
-            setTimeout(() => {
-                setPauseDetection(false);
-                setSuccessMessage(null);
-            }, 5000); 
-        }
-    }, [responseData]);
 
     useEffect(() => {
         if (!modelsLoaded || pauseDetection) return;
@@ -101,11 +90,31 @@ const [successMessage, setSuccessMessage] = useState<string | null>(null);
     
         return () => clearInterval(interval);
     }, [modelsLoaded, pauseDetection]);
-    
 
+    useEffect(() => {
+        if (responseData) {
+            setProcessing(false);
+            setShowWebcam(false);
+
+            if (responseData?.message?.includes("Authenticated:")) {
+                setTimeout(() => {
+                    setResponseData(null);
+                    setShowWebcam(true);
+                }, 5000);
+            } else {
+                setTimeout(() => {
+                    setShowWebcam(true);
+                }, 5000);
+            }
+        }
+    }, [responseData]);
+    
     const captureAndSendFromCanvas = useCallback(() => {
         if (!canvasRef.current) return;
     
+        setProcessing(true);
+        setShowWebcam(false);
+        
         const canvas = canvasRef.current;
         const imageDataUrl = canvas.toDataURL('image/jpeg');
     
@@ -117,58 +126,40 @@ const [successMessage, setSuccessMessage] = useState<string | null>(null);
         }
     }, [sendImage, clubName]);
 
-    if(responseData){
-        console.log(responseData.message)
-
-    }
     return (
         <div style={{ textAlign: 'center' }}>
-            <h3>Align Your Face Inside the Box</h3>
-            <div style={{ position: 'relative', display: 'inline-block' }}>
-                <Webcam
-                    ref={webcamRef}
-                    audio={false}
-                    screenshotFormat="image/jpeg"
-                    style={{
-                        borderRadius: '10px',
-                        border: '2px solid gray',
-                        width: '400px',
-                    }}
-                />
-                <canvas ref={canvasRef} style={{ display: 'none' }} />
-            </div>
-    
-            <p>{faceDetected ? '✅ Face Detected' : '❌ No Face Detected'}</p>
-            <p>{lowLightDetected ? '⚠️ Low Light Detected' : '✅ Good Lighting'}</p>
-            <p>{isPending && '📤 Uploading image...'}</p>
-    
-            {successMessage && (
-                <div style={{ marginTop: '20px', color: 'green', fontWeight: 'bold' }}>
-                    {successMessage}
-                </div>
-            )}
-    
-            {lastCapturedImage && !successMessage && (
-                <div style={{ marginTop: '20px' }}>
-                    <h4>📸 Image Being Sent:</h4>
-                    <img
-                        src={lastCapturedImage}
-                        alt="Captured Frame"
-                        style={{
-                            width: '400px',
-                            borderRadius: '10px',
-                            border: '1px solid #ccc',
-                        }}
-                    />
-                </div>
-            )}
-    
-            {responseData && !successMessage && (
-                <div style={{ marginTop: '20px', textAlign: 'left', display: 'inline-block' }}>
+            {processing ? (
+                <h3>PROCESSING...</h3>
+            ) : responseData ? (
+                <div>
                     <h4>🔍 Detection Results:</h4>
                     <p>{responseData.message}</p>
+                    {responseData.message.includes("Authenticated:") && (
+                        <div style={{ marginTop: '20px', color: 'green', fontWeight: 'bold' }}>
+                            ✅ You can now walk into the gate!
+                        </div>
+                    )}
                 </div>
-            )}
+            ) : showWebcam ? (
+                <div>
+                    <h3>Align Your Face Inside the Box</h3>
+                    <div style={{ position: 'relative', display: 'inline-block' }}>
+                        <Webcam
+                            ref={webcamRef}
+                            audio={false}
+                            screenshotFormat="image/jpeg"
+                            style={{
+                                borderRadius: '10px',
+                                border: '2px solid gray',
+                                width: '400px',
+                            }}
+                        />
+                        <canvas ref={canvasRef} style={{ display: 'none' }} />
+                    </div>
+                    <p>{faceDetected ? '✅ Face Detected' : '❌ No Face Detected'}</p>
+                    <p>{lowLightDetected ? '⚠️ Low Light Detected' : '✅ Good Lighting'}</p>
+                </div>
+            ) : null}
         </div>
     );
 };

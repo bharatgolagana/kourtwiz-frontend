@@ -11,7 +11,7 @@ const Footer = () => {
           <a href="#pricing">Pricing</a>
           <a href="#clubs">Clubs</a>
           <a href="#contact">Contact</a>
-          <a href="/home">SSO</a>
+          <a href="/home">ZETA</a>
         </div>
 
         <p className="footer-copy">&copy; {new Date().getFullYear()} Kourtwiz. All rights reserved.</p>

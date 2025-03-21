@@ -12,6 +12,7 @@ import ClubLandingRoutes from "./ClubLandingRoutes";
 import CreateClubRoutes from './CreateClubRoutes';
 import ClubsListRoutes from './ClubsListRoutes';
 import RequestsRoutes from './RequestsRoutes';
+import TBDRoutes from './TBDRoutes';
 
 const createRoutes = (): RouteObject[] => {
   return [
@@ -30,7 +31,7 @@ const createRoutes = (): RouteObject[] => {
         ...SubscriptionRoutes,
         ...RequestsRoutes,
         ...ClubsListRoutes,
-
+        ...TBDRoutes,
         {
           path: '/server-not-found',
           element: <ServerNotFound />,

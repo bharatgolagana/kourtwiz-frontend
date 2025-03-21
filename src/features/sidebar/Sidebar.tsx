@@ -81,6 +81,26 @@ const sidebarItems = [
     path: '/clubs',
     isExpandable: false,
   },
+  {
+    label: 'Courts',
+    path: '/TBD',
+    isExpandable: false,
+  },
+  {
+    label: 'Settings',
+    path: '/TBD',
+    isExpandable: false,
+  },
+  {
+    label: 'Schedules',
+    path: '/TBD',
+    isExpandable: false,
+  },
+  {
+    label: 'Assets',
+    path: '/TBD',
+    isExpandable: false,
+  },
 ];
 
 const Sidebar: React.FC = () => {
@@ -410,7 +430,7 @@ const Sidebar: React.FC = () => {
                 else if(user?.userOrganizationRole?.some(
                   (role) => role.roleName === "MasterAdmin"
                 )){
-                  if (item.label !== 'Requests' && item.label !== 'Clubs') {
+                  if (item.label !== 'Requests' && item.label !== 'Clubs' && item.label !=='Assets' && item.label !=='Courts' && item.label !=='Settings' && item.label !=='Schedules') {
                     return;
                   }
                 }

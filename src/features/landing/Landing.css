@@ -403,3 +403,10 @@
     grid-template-columns: 1fr;
   }
 }
+
+.buttons{
+  & button{
+    background-color: rgb(151, 137, 137);
+    color: black;
+  }
+}

@@ -20,6 +20,13 @@ const ClubMembersPage = () => {
           Authorization: `Bearer ${token}`,
         },
       });
+      const sortedMembers = response.data.sort((a, b) => {
+        if (a.role.name === "Club Admin") return -1;
+        if (b.role.name === "Club Admin") return 1;
+        return 0;
+      });
+  
+      setMembers(sortedMembers);
       setMembers(response.data);
     } catch (error) {
       console.error("Error fetching members:", error);
@@ -35,6 +42,7 @@ const ClubMembersPage = () => {
             <tr>
               <th>Member Name</th>
               <th>Email</th>
+              <th>Role</th>
             </tr>
           </thead>
           <tbody>
@@ -42,6 +50,7 @@ const ClubMembersPage = () => {
               <tr key={member.id}>
                 <td>{member.user.name}</td>
                 <td>{member.user.email}</td>
+                <td>{member.role.name}</td>
               </tr>
             ))}
           </tbody>

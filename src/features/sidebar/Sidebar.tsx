@@ -100,6 +100,12 @@ const sidebarItems = [
     path: '/TBD',
     isExpandable: false,
   },
+  {
+    label: 'Approve Members',
+    icon: <img src={UserIcomImg} />,
+    path: '/approve-members',
+    isExpandable: false,
+  },
 ];
 
 const Sidebar: React.FC = () => {
@@ -113,18 +119,6 @@ const Sidebar: React.FC = () => {
   const userInfo = useUserInfo();
   const navigate = useNavigate();
   const hasPermission = useHasPermission(userInfo.userInfo.role);
-  if (
-    user &&
-    user?.userOrganizationRole.some((org) => org.roleName === 'Club Admin') &&
-    !sidebarItems.some((item) => item.label === 'Approve Members')
-  )
-    sidebarItems.push({
-      label: 'Approve Members',
-      icon: <img src={UserIcomImg} />,
-      path: '/approve-members',
-      isExpandable: false,
-      permission: 'VIEW_ROLES',
-    });
   useEffect(() => {
     const sideBarClose = () => {
       if (width > 1024) {
@@ -448,6 +442,14 @@ const Sidebar: React.FC = () => {
                     item.label !== 'Settings' &&
                     item.label !== 'Schedules'
                   ) {
+                    return;
+                  }
+                } else if (
+                  user?.userOrganizationRole?.some(
+                    (role) => role.roleName === 'Club Admin'
+                  )
+                ) {
+                  if (item.label !== 'Approve Members') {
                     return;
                   }
                 }

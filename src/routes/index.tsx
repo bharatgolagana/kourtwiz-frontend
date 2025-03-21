@@ -8,6 +8,7 @@ import PageNotFound from '../shared/components/ErrorPages/page-not-found/PageNot
 import HomeRoute from './HomeRoutes';
 import SubscriptionRoutes from './SubscriptionRoutes';
 import SignUpRoutes from './SignUpRoutes';
+import MemberApproval from '../pages/member-approval/MemberApproval';
 
 const createRoutes = (): RouteObject[] => {
   return [
@@ -23,7 +24,10 @@ const createRoutes = (): RouteObject[] => {
         ...HomeRoute,
         ...userRoutes,
         ...SubscriptionRoutes,
-
+        {
+          path: '/approve-members',
+          element: <MemberApproval />,
+        },
         {
           path: '/server-not-found',
           element: <ServerNotFound />,

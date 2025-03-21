@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Drawer,
   List,
@@ -30,6 +30,7 @@ import UserIcomImg from '../../assets/userIcoImage.svg';
 
 import { useViewportSize } from '../../shared/components/ViewportSize/useViewPortSize';
 import Logo from '../logo/Logo';
+import AuthContext from '../../context/AuthContext';
 
 const sidebarItems = [
   {
@@ -53,7 +54,6 @@ const sidebarItems = [
     isExpandable: false,
     permission: 'view_users',
   },
-
   {
     label: 'Roles',
     icon: <img src={UserIcomImg} />,
@@ -77,11 +77,22 @@ const Sidebar: React.FC = () => {
   const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { width } = useViewportSize();
-
+  const { user } = useContext(AuthContext)!;
   const userInfo = useUserInfo();
   const navigate = useNavigate();
   const hasPermission = useHasPermission(userInfo.userInfo.role);
-
+  if (
+    user &&
+    user?.userOrganizationRole.some((org) => org.roleName === 'Club Admin') &&
+    !sidebarItems.some((item) => item.label === 'Approve Members')
+  )
+    sidebarItems.push({
+      label: 'Approve Members',
+      icon: <img src={UserIcomImg} />,
+      path: '/approve-members',
+      isExpandable: false,
+      permission: 'VIEW_ROLES',
+    });
   useEffect(() => {
     const sideBarClose = () => {
       if (width > 1024) {

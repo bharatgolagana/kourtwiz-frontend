@@ -26,8 +26,7 @@ const Landing = () => {
           <h1>Level up your PickleBall game with Kourtwiz</h1>
           <p>Experience the best services with us. Start your journey today!</p>
           <div className="buttons">
-            <button className="btn">Find a Place to Play</button>
-            <button className="btn">Add a Player</button>
+            <button className="btn" onClick={() => navigate('/createClub')}>Register Club</button>
           </div>
           <img src={pickleball1} alt="Pickleball Game" className="home-image" />
         </div>

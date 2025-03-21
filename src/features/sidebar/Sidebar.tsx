@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Drawer,
   List,
@@ -30,6 +30,7 @@ import UserIcomImg from '../../assets/userIcoImage.svg';
 
 import { useViewportSize } from '../../shared/components/ViewportSize/useViewPortSize';
 import Logo from '../logo/Logo';
+import AuthContext from '../../context/AuthContext';
 
 const sidebarItems = [
   {
@@ -68,6 +69,18 @@ const sidebarItems = [
     isExpandable: false,
     permission: 'VIEW_ROLES',
   },
+  {
+    label: 'Requests',
+    icon: <img src={MySchedule} />,
+    path: '/requests',
+    isExpandable: false,
+  },
+  {
+    label: 'Clubs',
+    icon: <img src='src\assets\pickleballclub.svg' />,
+    path: '/clubs',
+    isExpandable: false,
+  },
 ];
 
 const Sidebar: React.FC = () => {
@@ -79,6 +92,7 @@ const Sidebar: React.FC = () => {
   const { width } = useViewportSize();
 
   const userInfo = useUserInfo();
+  const {user}= useContext(AuthContext)!;
   const navigate = useNavigate();
   const hasPermission = useHasPermission(userInfo.userInfo.role);
 
@@ -391,6 +405,13 @@ const Sidebar: React.FC = () => {
                         )}
                       </React.Fragment>
                     );
+                  }
+                }
+                else if(user?.userOrganizationRole?.some(
+                  (role) => role.roleName === "MasterAdmin"
+                )){
+                  if (item.label !== 'Requests' && item.label !== 'Clubs') {
+                    return;
                   }
                 }
                 return (

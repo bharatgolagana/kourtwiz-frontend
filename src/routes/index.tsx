@@ -9,6 +9,9 @@ import HomeRoute from './HomeRoutes';
 import SubscriptionRoutes from './SubscriptionRoutes';
 
 import ClubLandingRoutes from "./ClubLandingRoutes";
+import CreateClubRoutes from './CreateClubRoutes';
+import ClubsListRoutes from './ClubsListRoutes';
+import RequestsRoutes from './RequestsRoutes';
 
 const createRoutes = (): RouteObject[] => {
   return [
@@ -17,6 +20,7 @@ const createRoutes = (): RouteObject[] => {
       children: [{ index: true, element: <LandingPage /> }],
     },
     ...ClubLandingRoutes,
+    ...CreateClubRoutes,
     {
       element: <PrivateRoute />,
       children: [
@@ -24,6 +28,8 @@ const createRoutes = (): RouteObject[] => {
         ...HomeRoute,
         ...userRoutes,
         ...SubscriptionRoutes,
+        ...RequestsRoutes,
+        ...ClubsListRoutes,
 
         {
           path: '/server-not-found',

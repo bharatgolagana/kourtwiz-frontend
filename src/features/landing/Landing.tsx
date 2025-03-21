@@ -6,17 +6,17 @@ import pickleball2 from "../../assets/pickleball2.jpg";
 import Footer from "./components/header/Footer/Footer";
 
 const clubs = [
-  { id: 1, name: "Elite Pickleball Club", description: "Premium coaching and top-tier facilities.", bgColor: "#ffcccb" },
-  { id: 2, name: "City Pickleball Hub", description: "A great place for community play and tournaments.", bgColor: "#d1e7dd" },
-  { id: 3, name: "Champion's Court", description: "Train like a pro with experienced instructors.", bgColor: "#cce5ff" }
+  { id: "67d261f783c50d6c7df9dd50", name: "New Jersey Club", description: "Premium coaching and top-tier facilities.", bgColor: "#ffcccb" },
+  { id: "67d2620383c50d6c7df9dd51", name: "Houston Club", description: "A great place for community play and tournaments.", bgColor: "#d1e7dd" },
+  { id: "67d2cc08c1534675fa24ff39", name: "Manchester-pickball", description: "Train like a pro with experienced instructors.", bgColor: "#cce5ff" }
 ];
 
 const Landing = () => {
   const navigate = useNavigate();
 
-  const handleClubClick = (id) => {
-    navigate(`/clubs/${id}`);
-  };
+  const handleClubClick = (id, name) => {
+  navigate(`/clubs/${id}`, { state: { clubName: name } });
+};
 
   return (
     <div className="landing">
@@ -48,17 +48,17 @@ const Landing = () => {
           <h2>Clubs</h2>
           <p>Find the best club for your Pickleball journey.</p>
           <div className="clubs-container">
-            {clubs.map((club) => (
-              <div
-                key={club.id}
-                className="club-card"
-                onClick={() => handleClubClick(club.id)}
-                style={{ backgroundColor: club.bgColor }}
-              >
-                <h3>{club.name}</h3>
-                <p>{club.description}</p>
-              </div>
-            ))}
+          {clubs.map((club) => (
+          <div
+            key={club.id}
+            className="club-card"
+            onClick={() => handleClubClick(club.id, club.name)}
+            style={{ backgroundColor: club.bgColor }}
+          >
+            <h3>{club.name}</h3>
+            <p>{club.description}</p>
+          </div>
+        ))}
           </div>
         </div>
       </section>

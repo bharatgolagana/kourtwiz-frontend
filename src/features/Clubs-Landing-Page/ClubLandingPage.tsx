@@ -25,7 +25,7 @@ const ClubLandingPage = () => {
             <p>{club.name}</p>
               <button className="btn" onClick={() => navigate("/home")}>Login</button>
               <button className="btn" onClick={() => navigate("")}>Become a Member</button>
-              <button className="btn" onClick={() => navigate("")}>Authenticate</button>
+              <button className="btn" onClick={() => navigate(`/clubs/${id}/authentication`, { state: { clubName: club.name } })}>Authenticate</button>
             </div>
       <div className="club-landing" style={{ backgroundColor: club.bgColor }}>
           <div className="club-container">

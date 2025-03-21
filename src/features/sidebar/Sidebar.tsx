@@ -75,9 +75,26 @@ const sidebarItems = [
     isExpandable: false,
   },
   {
+    label: 'Approve Members',
+    icon: <img src={UserIcomImg} />,
+    path: '/approve-members',
+    isExpandable: false,
+  },
+  {
+    label: 'Members',
+    icon: <img src={UserIcomImg} />,
+    path: '/members',
+    isExpandable: false,
+  },
+  {
     label: 'Clubs',
     icon: <img src='src\assets\pickleballclub.svg' />,
     path: '/clubs',
+    isExpandable: false,
+  },
+  {
+    label: 'Membership Plans',
+    path: '/TBD',
     isExpandable: false,
   },
   {
@@ -100,12 +117,7 @@ const sidebarItems = [
     path: '/TBD',
     isExpandable: false,
   },
-  {
-    label: 'Approve Members',
-    icon: <img src={UserIcomImg} />,
-    path: '/approve-members',
-    isExpandable: false,
-  },
+  
 ];
 
 const Sidebar: React.FC = () => {
@@ -449,7 +461,7 @@ const Sidebar: React.FC = () => {
                     (role) => role.roleName === 'Club Admin'
                   )
                 ) {
-                  if (item.label !== 'Approve Members') {
+                  if (item.label !== 'Approve Members' && item.label !== 'Assets' && item.label !== 'Settings' && item.label !== 'Members' && item.label !== 'Courts' && item.label !== 'Membership Plans') {
                     return;
                   }
                 }

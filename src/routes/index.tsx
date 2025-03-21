@@ -8,11 +8,13 @@ import PageNotFound from '../shared/components/ErrorPages/page-not-found/PageNot
 import HomeRoute from './HomeRoutes';
 import SubscriptionRoutes from './SubscriptionRoutes';
 
-import ClubLandingRoutes from "./ClubLandingRoutes";
+import ClubLandingRoutes from './ClubLandingRoutes';
 import CreateClubRoutes from './CreateClubRoutes';
 import ClubsListRoutes from './ClubsListRoutes';
 import RequestsRoutes from './RequestsRoutes';
 import TBDRoutes from './TBDRoutes';
+import SignUpRoutes from './SignUpRoutes';
+import MemberApproval from '../pages/member-approval/MemberApproval';
 
 const createRoutes = (): RouteObject[] => {
   return [
@@ -22,6 +24,7 @@ const createRoutes = (): RouteObject[] => {
     },
     ...ClubLandingRoutes,
     ...CreateClubRoutes,
+    ...SignUpRoutes,
     {
       element: <PrivateRoute />,
       children: [
@@ -32,6 +35,10 @@ const createRoutes = (): RouteObject[] => {
         ...RequestsRoutes,
         ...ClubsListRoutes,
         ...TBDRoutes,
+        {
+          path: '/approve-members',
+          element: <MemberApproval />,
+        },
         {
           path: '/server-not-found',
           element: <ServerNotFound />,

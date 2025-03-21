@@ -54,7 +54,6 @@ const sidebarItems = [
     isExpandable: false,
     permission: 'view_users',
   },
-
   {
     label: 'Roles',
     icon: <img src={UserIcomImg} />,
@@ -101,6 +100,12 @@ const sidebarItems = [
     path: '/TBD',
     isExpandable: false,
   },
+  {
+    label: 'Approve Members',
+    icon: <img src={UserIcomImg} />,
+    path: '/approve-members',
+    isExpandable: false,
+  },
 ];
 
 const Sidebar: React.FC = () => {
@@ -110,12 +115,10 @@ const Sidebar: React.FC = () => {
   const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { width } = useViewportSize();
-
+  const { user } = useContext(AuthContext)!;
   const userInfo = useUserInfo();
-  const {user}= useContext(AuthContext)!;
   const navigate = useNavigate();
   const hasPermission = useHasPermission(userInfo.userInfo.role);
-
   useEffect(() => {
     const sideBarClose = () => {
       if (width > 1024) {
@@ -426,11 +429,27 @@ const Sidebar: React.FC = () => {
                       </React.Fragment>
                     );
                   }
-                }
-                else if(user?.userOrganizationRole?.some(
-                  (role) => role.roleName === "MasterAdmin"
-                )){
-                  if (item.label !== 'Requests' && item.label !== 'Clubs' && item.label !=='Assets' && item.label !=='Courts' && item.label !=='Settings' && item.label !=='Schedules') {
+                } else if (
+                  user?.userOrganizationRole?.some(
+                    (role) => role.roleName === 'MasterAdmin'
+                  )
+                ) {
+                  if (
+                    item.label !== 'Requests' &&
+                    item.label !== 'Clubs' &&
+                    item.label !== 'Assets' &&
+                    item.label !== 'Courts' &&
+                    item.label !== 'Settings' &&
+                    item.label !== 'Schedules'
+                  ) {
+                    return;
+                  }
+                } else if (
+                  user?.userOrganizationRole?.some(
+                    (role) => role.roleName === 'Club Admin'
+                  )
+                ) {
+                  if (item.label !== 'Approve Members') {
                     return;
                   }
                 }

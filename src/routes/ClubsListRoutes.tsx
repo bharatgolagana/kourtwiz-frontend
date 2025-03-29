@@ -1,14 +1,19 @@
-import ClubMembersPage from "../pages/clubMembersPage/ClubMembersPage";
-import ClubsListPage from "../pages/clubsListPage/ClubsListPage";
+import ClubCourtPage from '../pages/club-courts/ClubCourtPage';
+import ClubMembersPage from '../pages/clubMembersPage/ClubMembersPage';
+import ClubsListPage from '../pages/clubsListPage/ClubsListPage';
 
 const ClubsListRoutes = [
   {
-    path: "/clubs",
+    path: '/clubs',
     element: <ClubsListPage />,
   },
   {
-    path: "/clubs/members/:clubId",
+    path: '/clubs/members/:clubId',
     element: <ClubMembersPage />,
+  },
+  {
+    path: 'club/court',
+    element: <ClubCourtPage />,
   },
 ];
 

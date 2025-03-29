@@ -99,7 +99,7 @@ const sidebarItems = [
   },
   {
     label: 'Courts',
-    path: '/TBD',
+    path: 'club/court',
     isExpandable: false,
   },
   {
@@ -117,7 +117,6 @@ const sidebarItems = [
     path: '/TBD',
     isExpandable: false,
   },
-  
 ];
 
 const Sidebar: React.FC = () => {
@@ -461,7 +460,14 @@ const Sidebar: React.FC = () => {
                     (role) => role.roleName === 'Club Admin'
                   )
                 ) {
-                  if (item.label !== 'Approve Members' && item.label !== 'Assets' && item.label !== 'Settings' && item.label !== 'Members' && item.label !== 'Courts' && item.label !== 'Membership Plans') {
+                  if (
+                    item.label !== 'Approve Members' &&
+                    item.label !== 'Assets' &&
+                    item.label !== 'Settings' &&
+                    item.label !== 'Members' &&
+                    item.label !== 'Courts' &&
+                    item.label !== 'Membership Plans'
+                  ) {
                     return;
                   }
                 }

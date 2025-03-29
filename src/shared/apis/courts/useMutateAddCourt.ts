@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const addCourt = async ({ clubId, courtData }) => {
   const token = localStorage.getItem('jwtToken');
@@ -26,10 +26,12 @@ const addCourt = async ({ clubId, courtData }) => {
 };
 
 export const useMutateAddCourt = ({ onSuccessCallback, onErrorCallback }) => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: addCourt,
     onSuccess: (data) => {
       onSuccessCallback?.(data);
+      queryClient.invalidateQueries(['club-court']);
     },
     onError: (error) => {
       onErrorCallback?.(error);

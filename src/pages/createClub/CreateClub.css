@@ -1,52 +1,119 @@
-.create-club-container{
-    background-image: url('/images/club.jpeg');
-    background-size: cover;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 5rem;
+.create-club-container {
+  background-image: url('/images/club.jpeg');
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 5rem;
+  .MuiOutlinedInput-root {
+    background-color: white !important; /* Ensures input fields are solid white */
+    border-radius: 8px;
+  }
+
+  .MuiOutlinedInput-root .MuiOutlinedInput-input {
+    padding: 12px; /* Adds space inside inputs */
+  }
+
+  .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+    border-color: #16a249; /* Green border on hover */
+  }
+
+  .MuiOutlinedInput-notchedOutline {
+    border: 1px solid rgba(0, 0, 0, 0.2); /* Light gray border */
+  }
+
+  .MuiButton-root {
+    background-color: #16a249 !important;
+    color: white !important;
+    border-radius: 2rem;
+    margin-top: 1rem;
+    width: 100%;
+  }
+
+  .MuiButton-root:hover {
+    background-color: black !important;
+  }
 }
 
 .create-club-content {
-    backdrop-filter: blur(5px); 
-    padding: 24px;
-    border-radius: 1rem;
-    width: 25rem;
+  backdrop-filter: blur(8px); /* Increase blur for a softer effect */
+  background: rgba(0, 0, 0, 0.6); /* Black with 60% opacity */
+  padding: 24px;
+  border-radius: 1rem;
+  width: 30rem; /* Adjusted for better layout */
 
-    & h2{
-        color: rgb(255, 255, 255);
-    }
+  & h2 {
+    color: rgb(255, 255, 255);
+  }
 
-    & button{
-        background-color: rgb(22, 162, 73);
-        color: white;
-        width: 22rem;
-        border-radius: 2rem;
-        margin-top: 1rem;
-    }
-    & button:hover{
-        background-color: black;
-        color: white;
-    }
-}
-
-.testimonials-container{
+  & button {
+    background-color: rgb(22, 162, 73);
+    color: white;
+    width: 22rem;
+    border-radius: 2rem;
+    margin-top: 1rem;
+  }
+  & button:hover {
     background-color: black;
     color: white;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 2.5rem;
-    & h2{
-        color: white;
-    }
+  }
+}
+.create-club-content label {
+  font-weight: bold;
+  font-size: 1rem;
+  margin-bottom: 4px;
+  display: block;
+}
+.testimonials-container {
+  background-color: black;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2.5rem;
+  & h2 {
+    color: white;
+  }
 }
 
 .testimonials-grid {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    flex-wrap: wrap;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+/* Navigation Buttons Container */
+.form-navigation {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 1rem;
+  gap: 1rem;
+  .MuiButton-root {
+    width: 5rem;
+  }
+}
+
+/* Previous Button - Bottom Left */
+.prev-button {
+  background-color: #ccc !important;
+  color: black !important;
+  padding: 8px 16px;
+  border-radius: 10px;
+}
+
+/* Next Button - Bottom Right */
+.next-button {
+  background-color: #16a249 !important;
+  color: white !important;
+  padding: 8px 16px;
+  border-radius: 10px;
+}
+
+.prev-button:hover,
+.next-button:hover {
+  background-color: black !important;
 }

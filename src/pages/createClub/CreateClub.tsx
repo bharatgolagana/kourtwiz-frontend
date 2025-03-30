@@ -1,172 +1,141 @@
-import { useForm } from "react-hook-form";
-import axios from "axios";
-import "./CreateClub.css";
-import { toast } from "react-toastify";
-import TestimonialCard from "../../features/createClub/TestimonialCard";
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  clubSchema,
+  ClubSchema,
+} from '../../features/createClub/schema/clubSchema';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import { Button, Box, Typography } from '@mui/material';
+import TestimonialCard from '../../features/createClub/components/testimonial-card/TestimonialCard';
+import BasicDetailsForm from '../../features/createClub/components/basic-details-form/BasicDetailsForm';
+import PaymentDetailsForm from '../../features/createClub/components/payment-details-form/paymentDetailsForm';
+import './CreateClub.css';
+import EmailPhoneVerification from '../../features/createClub/components/email-phone-verification/EmailPhoneVerification';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useMutateCreateClub } from '../../shared/apis/clubs/useMutateCreateClub';
 
 const CreateClub = () => {
-    
-
-
+  const location = useLocation();
+  const membershipId = location.state?.membershipId;
+  const navigate = useNavigate();
+  console.log('membership ID: ', membershipId);
+  const [step, setStep] = useState(1);
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
-  } = useForm();
+  } = useForm({ resolver: zodResolver(clubSchema) });
+  const { mutate: mutateCreateClub } = useMutateCreateClub({
+    onSuccessCallback: () => {
+      toast.success('account created!');
+      navigate('/home');
+    },
+    onErrorCallback: () => {
+      toast.error('error while creating the account');
+    },
+  });
+  const [verifyOtp, setVerifyOtp] = useState({ email: false, phone: false });
+  const handleOtpVerificationStatus = ({
+    type,
+    result,
+  }: {
+    type: string;
+    result: boolean;
+  }) => {
+    setVerifyOtp((prevOtp) => ({
+      ...prevOtp,
+      [type]: result,
+    }));
+  };
 
-
-  const API_URL = "http://44.216.113.234:8080/temp-clubs";
-
-
-  const onSubmit = async (data) => {
-    try {
-      const response = await axios.post(API_URL, data);
-      console.log("Response:", response.data);
-      toast.success(
-        "Request has been sent. Waiting for Zeta approval to allow you to log in.",
-        {
-          position: "top-right",
-          autoClose: 4000, 
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          theme: "light",
-        }
-      );
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      toast.error("Failed to register club. Please try again.", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        theme: "light",
-      });
-    }
+  const onSubmit = async (data: ClubSchema) => {
+    mutateCreateClub({ clubData: data, planId: membershipId });
   };
 
   return (
-    <>
-        <div className="create-club-container">
-        <div className="create-club-content">
-            <h2>Join our network of <br/>Pickleball Clubs</h2>
-            <form onSubmit={handleSubmit(onSubmit)}>
-            <div >
-                <input
-                type="text"
-                {...register("name", { required: "Club Name is required" })}
-                placeholder="Club Name"
-                />
-                {errors.name && <p className="error">{errors.name.message}</p>}
-            </div>
+    <div className='create-club-container'>
+      <Box className='create-club-content'>
+        <Typography variant='h5' gutterBottom color='white'>
+          Join our network of Pickleball Clubs
+        </Typography>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          {step === 1 && (
+            <BasicDetailsForm register={register} errors={errors} />
+          )}
+          {step === 2 && (
+            <EmailPhoneVerification
+              register={register}
+              errors={errors}
+              watch={watch}
+              handleOtpVerificationStatus={handleOtpVerificationStatus}
+            />
+          )}
+          {step === 3 && (
+            <PaymentDetailsForm register={register} errors={errors} />
+          )}
+          <div className='form-navigation'>
+            <Button
+              variant='contained'
+              className='prev-button'
+              onClick={() => setStep(step - 1)}
+              disabled={step <= 1}
+            >
+              Prev
+            </Button>
 
-            <div >
-                <input
-                type="text"
-                {...register("address", { required: "Address is required" })}
-                placeholder="Address"
-                />
-                {errors.address && <p className="error">{errors.address.message}</p>}
-            </div>
-
-            <div >
-                <input
-                type="text"
-                {...register("url", { required: "URL is required" })}
-                placeholder="URL"
-                />
-                {errors.url && <p className="error">{errors.url.message}</p>}
-            </div>
-
-            <div >
-                <input
-                type="text"
-                {...register("ownerName", { required: "Full Name is required" })}
-                placeholder="Full Name"
-                />
-                {errors.ownerName && <p className="error">{errors.ownerName.message}</p>}
-            </div>
-
-            <div>
-                <input
-                type="email"
-                {...register("ownerEmail", {
-                    required: "Email is required",
-                    pattern: {
-                    value: /^\S+@\S+$/i,
-                    message: "Invalid email address",
-                    },
-                })}
-                placeholder="Email"
-                />
-                {errors.ownerEmail && <p className="error">{errors.ownerEmail.message}</p>}
-            </div>
-
-
-            <div>
-                <input
-                {...register("ownerPhoneNumber", {
-                    required: "Phone Number is required",
-                    pattern: {
-                    value: /^[0-9]{10}$/,
-                    message: "Phone number must be 10 digits",
-                    },
-                })}
-                placeholder="Phone Number"
-                />
-                {errors.ownerPhoneNumber && (
-                <p className="error">{errors.ownerPhoneNumber.message}</p>
-                )}
-            </div>
-
-            <div>
-                <input
-                type="password"
-                {...register("password", {
-                    required: "Password is required",
-                    minLength: {
-                    value: 6,
-                    message: "Password must be at least 6 characters",
-                    },
-                })}
-                placeholder="Password"
-                />
-                {errors.password && <p className="error">{errors.password.message}</p>}
-            </div>
-
-            <button type="submit">
-                Register Club
-            </button>
-            </form>
+            {step < 3 && (
+              <Button
+                variant='contained'
+                className='next-button'
+                onClick={() => setStep(step + 1)}
+                disabled={step >= 3}
+              >
+                Next
+              </Button>
+            )}
+            {step === 3 && (
+              <Button
+                type='submit'
+                variant='contained'
+                className='submit-button'
+                onClick={() => onSubmit}
+                // disabled={!verifyOtp.email || !verifyOtp.phone}
+              >
+                Submit
+              </Button>
+            )}
+          </div>
+        </form>
+      </Box>
+      <div className='testimonials-container'>
+        <Typography variant='h6' gutterBottom>
+          What Our Users Say
+        </Typography>
+        <div className='testimonials-grid'>
+          <TestimonialCard
+            stars={5}
+            review='Amazing platform!'
+            avatar='/images/menavatar.png'
+            name='John Smith'
+          />
+          <TestimonialCard
+            stars={4}
+            review='Great features!'
+            avatar='/images/femaleavatar.png'
+            name='Emily Johnson'
+          />
+          <TestimonialCard
+            stars={3}
+            review='Good experience!'
+            avatar='/images/menavatar.png'
+            name='Michael Lee'
+          />
         </div>
-        </div>
-        <div className="testimonials-container">
-            <h3>What Our Users Say</h3>
-            <div className="testimonials-grid">
-                <TestimonialCard
-                stars={5}
-                review="Amazing platform! Our club has grown tremendously since joining."
-                avatar="public\images\menavatar.png"
-                name="John Smith"
-                />
-                <TestimonialCard
-                stars={4}
-                review="Great features and easy to use. Customer support is very responsive."
-                avatar="public\images\femaleavatar.png"
-                name="Emily Johnson"
-                />
-                <TestimonialCard
-                stars={3}
-                review="Good experience overall, but hoping for more customization options."
-                avatar="public\images\menavatar.png"
-                name="Michael Lee"
-                />
-            </div>
-        </div>
-    </>
+      </div>
+    </div>
   );
 };
 

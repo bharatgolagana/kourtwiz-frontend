@@ -36,7 +36,7 @@ const schema = z
     country: z.string().min(1, "Country is required"),
     zipCode: z.string().min(1, "Zip code is required"),
     emailOTP: z.string().min(6, "Email OTP is required"),
-    phoneOTP: z.string().min(6, "Phone OTP is required"),
+    phoneOTP: z.string().optional(),
     skillLevel: z.string().min(1, "Skill level is required"),
     preferredTime: z.string().min(1, "Preferred time is required"),
   })
@@ -117,7 +117,7 @@ const MemberRegistrationSignupPage = () => {
       validateOTP.mutate(
         { recipient: email, otp: emailOtpValue },
         {
-          onSuccess: (isValid) => setIsEmailOtpValid(isValid),
+          onSuccess: (isValid) => {setIsEmailOtpValid(isValid); toast.success("OTP verified");},
           onError: () => setIsEmailOtpValid(false),
         }
       );
@@ -129,7 +129,7 @@ const MemberRegistrationSignupPage = () => {
       validateOTP.mutate(
         { recipient: phoneNumber, otp: phoneOtpValue },
         {
-          onSuccess: (isValid) => setIsPhoneOtpValid(isValid),
+          onSuccess: (isValid) => {setIsPhoneOtpValid(isValid); toast.success("OTP verified");},
           onError: () => setIsPhoneOtpValid(false),
         }
       );

@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 
 const sendEmailOTP = async (email: string) => {
-  return axios.post(`http://44.216.113.234:8080/otp/send-email?email=${email}`);
+  return axios.post(`http://44.216.113.234:8080/temp-otp/send-email?email=${email}`);
 };
 
 const sendPhoneOTP = async (phoneNumber: string) => {

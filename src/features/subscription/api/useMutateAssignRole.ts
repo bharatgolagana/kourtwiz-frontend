@@ -31,7 +31,7 @@ const assignRole = async ({
     throw new Error(responseText || 'Failed to assign role');
   }
 
-  return responseText; // <- Return raw text
+  return responseText;
 };
 
 export const useMutateAssignRole = ({ onSuccessCallback, onErrorCallback }) => {
@@ -41,7 +41,7 @@ export const useMutateAssignRole = ({ onSuccessCallback, onErrorCallback }) => {
     mutationFn: assignRole,
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['currentUser'] });
-      onSuccessCallback(data); // <- Pass back response text
+      onSuccessCallback(data);
     },
     onError: (error) => {
       onErrorCallback(error);

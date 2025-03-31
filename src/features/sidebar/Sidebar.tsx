@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Drawer,
   List,
@@ -30,6 +30,7 @@ import UserIcomImg from '../../assets/userIcoImage.svg';
 
 import { useViewportSize } from '../../shared/components/ViewportSize/useViewPortSize';
 import Logo from '../logo/Logo';
+import AuthContext from '../../context/AuthContext';
 
 const sidebarItems = [
   {
@@ -53,7 +54,6 @@ const sidebarItems = [
     isExpandable: false,
     permission: 'view_users',
   },
-
   {
     label: 'Roles',
     icon: <img src={UserIcomImg} />,
@@ -68,6 +68,61 @@ const sidebarItems = [
     isExpandable: false,
     permission: 'VIEW_ROLES',
   },
+  {
+    label: 'Requests',
+    icon: <img src={MySchedule} />,
+    path: '/requests',
+    isExpandable: false,
+  },
+  {
+    label: 'Approve Members',
+    icon: <img src={UserIcomImg} />,
+    path: '/approve-members',
+    isExpandable: false,
+  },
+  {
+    label: 'Members',
+    icon: <img src={UserIcomImg} />,
+    path: '/members',
+    isExpandable: false,
+  },
+  {
+    label: 'Clubs',
+    icon: <img src='src\assets\pickleballclub.svg' />,
+    path: '/clubs',
+    isExpandable: false,
+  },
+  {
+    label: 'Bookings',
+    icon: <img src='src\assets\pickleballclub.svg' />,
+    path: '/bookings',
+    isExpandable: false,
+  },
+  {
+    label: 'Membership Plans',
+    path: '/TBD',
+    isExpandable: false,
+  },
+  {
+    label: 'Courts',
+    path: 'club/court',
+    isExpandable: false,
+  },
+  {
+    label: 'Settings',
+    path: '/TBD',
+    isExpandable: false,
+  },
+  {
+    label: 'Schedules',
+    path: '/TBD',
+    isExpandable: false,
+  },
+  {
+    label: 'Assets',
+    path: '/TBD',
+    isExpandable: false,
+  },
 ];
 
 const Sidebar: React.FC = () => {
@@ -77,11 +132,10 @@ const Sidebar: React.FC = () => {
   const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { width } = useViewportSize();
-
+  const { user } = useContext(AuthContext)!;
   const userInfo = useUserInfo();
   const navigate = useNavigate();
   const hasPermission = useHasPermission(userInfo.userInfo.role);
-
   useEffect(() => {
     const sideBarClose = () => {
       if (width > 1024) {
@@ -391,6 +445,36 @@ const Sidebar: React.FC = () => {
                         )}
                       </React.Fragment>
                     );
+                  }
+                } else if (
+                  user?.userOrganizationRole?.some(
+                    (role) => role.roleName === 'MasterAdmin'
+                  )
+                ) {
+                  if (
+                    item.label !== 'Requests' &&
+                    item.label !== 'Clubs' &&
+                    item.label !== 'Assets' &&
+                    item.label !== 'Courts' &&
+                    item.label !== 'Settings' &&
+                    item.label !== 'Schedules'
+                  ) {
+                    return;
+                  }
+                } else if (
+                  user?.userOrganizationRole?.some(
+                    (role) => role.roleName === 'Club Admin'
+                  )
+                ) {
+                  if (
+                    item.label !== 'Approve Members' &&
+                    item.label !== 'Assets' &&
+                    item.label !== 'Settings' &&
+                    item.label !== 'Members' &&
+                    item.label !== 'Courts' &&
+                    item.label !== 'Membership Plans'
+                  ) {
+                    return;
                   }
                 }
                 return (

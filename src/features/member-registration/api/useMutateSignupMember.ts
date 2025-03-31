@@ -1,28 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
 
-const signUp = async ({
-  name,
-  email,
-  phoneNumber,
-  password,
-  profilePictureUrl,
-  dateOfBirth,
-  gender,
-  address,
-  city,
-  state,
-  country,
-  zipCode,
-  currentActiveClubId,
-  skillLevel,
-  preferredTime,
-  membershipTypeId,
-}: {
+const signUp = async (payload: {
   name: string;
   email: string;
   phoneNumber: string;
   password: string;
-  profilePictureUrl: string | undefined;
+  profilePictureUrl?: string;
   dateOfBirth: string;
   gender: string;
   address: string;
@@ -30,35 +13,31 @@ const signUp = async ({
   state: string;
   country: string;
   zipCode: string;
-  currentActiveClubId: string,
-  skillLevel: string,
-  preferredTime: string,
+  currentActiveClubId: string;
+  skillLevel: string;
+  preferredTime: string;
   membershipTypeId: string;
+  paymentDetails: {
+    cardNumber: string;
+    cvv: string;
+    expiryDate: string;
+    cardHolderName: string;
+    cardTypeEnum: string;
+  };
 }) => {
-  const response = await fetch(`http://44.216.113.234:8080/users/assign-club-membership/${currentActiveClubId}?membershipTypeId=${membershipTypeId}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "*/*",
-    },
-    body: JSON.stringify({
-      name,
-      email,
-      phoneNumber, 
-      password,
-      profilePictureUrl,
-      dateOfBirth,
-      gender,
-      address,
-      city,
-      state,
-      country,
-      zipCode,
-      currentActiveClubId,
-      skillLevel,
-      preferredTime,
-    }),
-  });
+  const { currentActiveClubId, membershipTypeId } = payload; // Extract needed values
+
+  const response = await fetch(
+    `http://44.216.113.234:8080/users/assign-club-membership/${currentActiveClubId}?membershipTypeId=${membershipTypeId}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "*/*",
+      },
+      body: JSON.stringify(payload),
+    }
+  );
 
   if (!response.ok) {
     const errorMessage = await response.text();
@@ -69,6 +48,7 @@ const signUp = async ({
 
   return response;
 };
+
 export const useMutateSignUpMember = ({
   onSuccessCallback,
   onErrorCallback,

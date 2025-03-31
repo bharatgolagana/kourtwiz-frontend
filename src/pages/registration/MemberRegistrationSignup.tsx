@@ -8,13 +8,7 @@ import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import { useSendOTP } from "../../features/member-registration/api/useSendOTP";
 import { useValidateOTP } from "../../features/member-registration/api/useValidateOTP";
-import {
-  TextField,
-  Button,
-  Grid,
-  Typography,
-  Paper,
-} from "@mui/material";
+import { TextField, Button, Grid, Typography, Paper, Divider, MenuItem } from "@mui/material";
 
 const schema = z
   .object({
@@ -39,6 +33,18 @@ const schema = z
     phoneOTP: z.string().optional(),
     skillLevel: z.string().min(1, "Skill level is required"),
     preferredTime: z.string().min(1, "Preferred time is required"),
+    paymentDetails: z.object({
+      cardNumber: z.string().min(16, "Card number must be 16 digits"),
+      cvv: z
+        .string()
+        .min(3, "CVV must be at least 3 digits")
+        .max(4, "CVV must be at most 4 digits"),
+      expiryDate: z.string().min(5, "Expiry date is required"),
+      cardHolderName: z.string().min(1, "Cardholder name is required"),
+      cardTypeEnum: z
+        .enum(["VISA", "MASTERCARD", "AMEX"])
+        .default("VISA"),
+    }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     path: ["confirmPassword"],
@@ -117,7 +123,10 @@ const MemberRegistrationSignupPage = () => {
       validateOTP.mutate(
         { recipient: email, otp: emailOtpValue },
         {
-          onSuccess: (isValid) => {setIsEmailOtpValid(isValid); toast.success("OTP verified");},
+          onSuccess: (isValid) => {
+            setIsEmailOtpValid(isValid);
+            toast.success("OTP verified");
+          },
           onError: () => setIsEmailOtpValid(false),
         }
       );
@@ -129,7 +138,10 @@ const MemberRegistrationSignupPage = () => {
       validateOTP.mutate(
         { recipient: phoneNumber, otp: phoneOtpValue },
         {
-          onSuccess: (isValid) => {setIsPhoneOtpValid(isValid); toast.success("OTP verified");},
+          onSuccess: (isValid) => {
+            setIsPhoneOtpValid(isValid);
+            toast.success("OTP verified");
+          },
           onError: () => setIsPhoneOtpValid(false),
         }
       );
@@ -137,45 +149,18 @@ const MemberRegistrationSignupPage = () => {
   }, [phoneOtpValue]);
 
   const onSubmit = async (data: FormValues) => {
-    mutate({
+    const payload = {
+      ...data,
       name: `${data.firstName} ${data.lastName}`,
-      email: data.email,
-      phoneNumber: data.phoneNumber,
-      password: data.password,
-      profilePictureUrl: data.profilePictureUrl,
-      dateOfBirth: data.dateOfBirth,
-      gender: data.gender,
-      address: data.address,
-      city: data.city,
-      state: data.state,
-      country: data.country,
-      zipCode: data.zipCode,
-      currentActiveClubId: clubId,
-      skillLevel: data.skillLevel,
-      preferredTime: data.preferredTime,
+      currentActiveClubId: clubId, 
       membershipTypeId: membershipId,
-    });
+    };
+  
+    mutate(payload);
   };
 
-  const formFields = [
-    { label: "First Name", name: "firstName" },
-    { label: "Last Name", name: "lastName" },
-    { label: "Profile Picture URL", name: "profilePictureUrl" },
-    { label: "Date of Birth", name: "dateOfBirth", type: "date", shrink: true },
-    { label: "Gender", name: "gender" },
-    { label: "Address", name: "address" },
-    { label: "City", name: "city" },
-    { label: "State", name: "state" },
-    { label: "Country", name: "country" },
-    { label: "Zip Code", name: "zipCode" },
-    { label: "Skill Level", name: "skillLevel" },
-    { label: "Preferred Time", name: "preferredTime" },
-    { label: "Password", name: "password", type: "password" },
-    { label: "Confirm Password", name: "confirmPassword", type: "password" },
-  ];
-
   return (
-    <Paper elevation={3} className="signup-container" sx={{ p: 4,  }}>
+    <Paper elevation={3} className="signup-container" sx={{ p: 4 }}>
       <img
         src="/src/assets/memberSignup.jpg"
         alt="Background"
@@ -199,7 +184,36 @@ const MemberRegistrationSignupPage = () => {
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <Grid container spacing={2}>
-            {formFields.map(({ label, name, type }) => (
+            {/* PERSONAL INFO SECTION */}
+            <Grid item xs={12}>
+              <Typography variant="h6">Personal Information</Typography>
+              <Divider sx={{ mb: 2 }} />
+            </Grid>
+            {[
+              { label: "First Name", name: "firstName" },
+              { label: "Last Name", name: "lastName" },
+              { label: "Profile Picture URL", name: "profilePictureUrl" },
+              {
+                label: "Date of Birth",
+                name: "dateOfBirth",
+                type: "date",
+                shrink: true,
+              },
+              { label: "Gender", name: "gender" },
+              { label: "Address", name: "address" },
+              { label: "City", name: "city" },
+              { label: "State", name: "state" },
+              { label: "Country", name: "country" },
+              { label: "Zip Code", name: "zipCode" },
+              { label: "Skill Level", name: "skillLevel" },
+              { label: "Preferred Time", name: "preferredTime" },
+              { label: "Password", name: "password", type: "password" },
+              {
+                label: "Confirm Password",
+                name: "confirmPassword",
+                type: "password",
+              },
+            ].map(({ label, name, type }) => (
               <Grid item xs={12} sm={6} key={name}>
                 <TextField
                   label={label}
@@ -208,12 +222,18 @@ const MemberRegistrationSignupPage = () => {
                   error={!!errors[name]}
                   helperText={errors[name]?.message}
                   fullWidth
-                  InputLabelProps={type === "date" ? { shrink: true } : undefined}
+                  InputLabelProps={
+                    type === "date" ? { shrink: true } : undefined
+                  }
                 />
               </Grid>
             ))}
 
-            {/* Email & OTP */}
+            {/* VERIFICATION SECTION */}
+            <Grid item xs={12} sx={{ mt: 2 }}>
+              <Typography variant="h6">Verification</Typography>
+              <Divider sx={{ mb: 2 }} />
+            </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
                 label="Email"
@@ -223,7 +243,14 @@ const MemberRegistrationSignupPage = () => {
                 fullWidth
               />
             </Grid>
-            <Grid item xs={12} sm={6} display="flex" alignItems="center" gap={1}>
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              display="flex"
+              alignItems="center"
+              gap={1}
+            >
               <Button
                 onClick={sendEmailOTP}
                 disabled={emailSent}
@@ -241,8 +268,15 @@ const MemberRegistrationSignupPage = () => {
               />
             </Grid>
 
-            {/* Phone Number, OTP & Button Grouped */}
-            <Grid item xs={12} sm={6} display="flex" alignItems="center" gap={1}>
+            {/* Phone Number & OTP */}
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              display="flex"
+              alignItems="center"
+              gap={1}
+            >
               <TextField
                 label="Phone Number"
                 {...register("phoneNumber")}
@@ -270,9 +304,65 @@ const MemberRegistrationSignupPage = () => {
               />
             </Grid>
 
+            {/* PAYMENT DETAILS SECTION */}
+            <Grid item xs={12} sx={{ mt: 2 }}>
+              <Typography variant="h6">Payment Details</Typography>
+              <Divider sx={{ mb: 2 }} />
+            </Grid>
+            {[
+              {
+                label: "Card Number",
+                name: "paymentDetails.cardNumber",
+                type: "text",
+              },
+              { label: "CVV", name: "paymentDetails.cvv", type: "password" },
+              {
+                label: "Expiry Date",
+                name: "paymentDetails.expiryDate",
+                type: "text",
+              },
+              {
+                label: "Cardholder Name",
+                name: "paymentDetails.cardHolderName",
+                type: "text",
+              },
+            ].map(({ label, name, type }) => (
+              <Grid item xs={12} sm={6} key={name}>
+                <TextField
+                  label={label}
+                  type={type}
+                  {...register(name)}
+                  error={!!errors[name]}
+                  helperText={errors[name]?.message}
+                  fullWidth
+                />
+              </Grid>
+            ))}
+            <Grid item xs={12} sm={6}>
+              <TextField
+                select
+                label="Card Type"
+                {...register("paymentDetails.cardTypeEnum")}
+                error={!!errors.paymentDetails?.cardTypeEnum}
+                helperText={errors.paymentDetails?.cardTypeEnum?.message}
+                fullWidth
+              >
+                {["VISA", "MASTERCARD", "AMEX"].map((option) => (
+                  <MenuItem key={option} value={option}>
+                    {option}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+
             {/* Submit Button */}
-            <Grid item xs={12}>
-              <Button type="submit" variant="contained" color="primary" fullWidth>
+            <Grid item xs={12} sx={{ mt: 2 }}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                fullWidth
+              >
                 Register
               </Button>
             </Grid>

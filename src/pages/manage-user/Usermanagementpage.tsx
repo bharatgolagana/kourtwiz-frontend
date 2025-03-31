@@ -2,7 +2,6 @@ import UserManagement from '../../features/ClubMember/components/usermanagement/
 const Usermanagementpage = () => {
   return (
     <>
-      <h5>Manage user</h5>
       <UserManagement />
     </>
   );

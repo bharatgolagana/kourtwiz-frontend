@@ -1,5 +1,10 @@
+import UserManagement from '../../features/ClubMember/components/usermanagement/Usermanagment';
 const Usermanagementpage = () => {
-  return <>Manage user</>;
+  return (
+    <>
+      <UserManagement />
+    </>
+  );
 };
 
 export default Usermanagementpage;

@@ -1,13 +1,9 @@
 import axios from 'axios';
 import { useMutation } from '@tanstack/react-query';
 
-const sendOtpSms = async ({ phone }) => {
-  const token = localStorage.getItem('jwtToken');
+const sendOtpSms = async ({ phone }: { phone: string }) => {
   if (!phone) {
     throw new Error('Phone number is required');
-  }
-  if (!token) {
-    throw new Error('No token found');
   }
 
   const response = await axios.post(
@@ -15,7 +11,6 @@ const sendOtpSms = async ({ phone }) => {
     {},
     {
       headers: {
-        Authorization: `Bearer ${token}`,
         Accept: '*/*',
       },
     }

@@ -41,7 +41,10 @@ const Landing = () => {
           <h1>Level up your PickleBall game with Kourtwiz</h1>
           <p>Experience the best services with us. Start your journey today!</p>
           <div className='buttons'>
-            <button className='btn' onClick={() => navigate('/createClub')}>
+            <button
+              className='btn'
+              onClick={() => navigate('/club-memberships')}
+            >
               Register Club
             </button>
           </div>

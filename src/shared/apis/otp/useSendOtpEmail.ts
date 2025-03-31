@@ -2,22 +2,18 @@ import axios from 'axios';
 import { useMutation } from '@tanstack/react-query';
 
 const sendOtpEmail = async ({ email }) => {
-  const token = localStorage.getItem('jwtToken');
+  console.log('email otp : ', email);
   if (!email) {
     throw new Error('Email is required');
   }
-  if (!token) {
-    throw new Error('No token found');
-  }
 
   const response = await axios.post(
-    `http://44.216.113.234:8080/otp/send-email?email=${encodeURIComponent(
+    `http://44.216.113.234:8080/temp-otp/send-email?email=${encodeURIComponent(
       email
     )}`,
     {},
     {
       headers: {
-        Authorization: `Bearer ${token}`,
         Accept: '*/*',
       },
     }
@@ -33,6 +29,7 @@ export const useSendOtpEmail = ({ onSuccessCallback, onErrorCallback }) => {
       onSuccessCallback?.(data);
     },
     onError: (error) => {
+      console.log('error : ', error);
       onErrorCallback?.(error);
     },
   });

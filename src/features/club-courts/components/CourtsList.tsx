@@ -30,6 +30,7 @@ const CourtsList = () => {
   });
 
   const onSubmit = (data) => {
+    console.log('booking court : ', data);
     const courtData = {
       name: data.name,
       slug: data.slug,
@@ -38,8 +39,8 @@ const CourtsList = () => {
       capacity: parseInt(data.capacity, 10),
       surface: data.surface,
       pricePerHour: parseFloat(data.pricePerHour),
-      openingTime: data.openingTime,
-      closingTime: data.closingTime,
+      openingTime: data.openingTime + ' AM',
+      closingTime: data.closingTime + ' PM',
       blockedDates: blockedDatesArray,
       available: data.available === 'true',
       indoor: data.indoor === 'true',

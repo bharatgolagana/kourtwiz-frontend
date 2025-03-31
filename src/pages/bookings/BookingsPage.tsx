@@ -1,10 +1,11 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect, useMemo } from "react";
 import AuthContext from "../../context/AuthContext";
-import { useGetCourts } from "../../features/bookings/api/useGetCourts";
 import { useGetPreviousBookings } from "../../features/bookings/api/useGetUserPreviousBookings";
 import { useBookCourt } from "../../features/bookings/api/useBookCourt";
 import Modal from "../../features/bookings/components/Modal";
-import "./BookingsPage.css"
+import "./BookingsPage.css";
+import { useGetCourts } from "../../features/bookings/api/useGetCourts";
+import { useGetCourtDetails } from "../../features/bookings/api/useGetCourtDetails";
 
 const BookingsPage = () => {
     const { user } = useContext(AuthContext)!;
@@ -14,10 +15,30 @@ const BookingsPage = () => {
     }
 
     const userId = user?.userId ?? "";
-    const clubId = user?.userClubRole?.[0]?.clubId ?? "";
+    const clubIds = user?.userClubRole?.map((role) => role.clubId) ?? [];
+    const clubNames = user?.userClubRole?.map((name) => name.clubName) ?? [];
 
+    const [courtsData, setCourtsData] = useState([]);
 
-    const { data: courtsData, isLoading: courtsLoading, error: courtsError } = useGetCourts(clubId);
+    const courtsResponses = clubIds.map((clubId) => useGetCourts(clubId));
+
+    const courtsLoading = courtsResponses.some((res) => res.isLoading);
+    const courtsError = courtsResponses.find((res) => res.error)?.error;
+
+    useEffect(() => {
+        const newMergedCourts = courtsResponses.flatMap((res, index) =>
+            (res.data || []).map((court) => ({
+                ...court,
+                clubId: clubIds[index], 
+            }))
+        );
+    
+        if (JSON.stringify(courtsData) !== JSON.stringify(newMergedCourts)) {
+            setCourtsData(newMergedCourts);
+        }
+    }, [JSON.stringify(courtsResponses.map((res) => res.data))]);
+    
+
     const { data: previousBookings, isLoading: bookingsLoading, error: bookingsError, refetch } = useGetPreviousBookings(userId);
 
     const [selectedCourt, setSelectedCourt] = useState(null);
@@ -26,7 +47,11 @@ const BookingsPage = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleOpenModal = (court) => {
-        setSelectedCourt(court);
+        const clubId = clubIds.find((clubId, index) =>
+            (courtsResponses[index].data || []).some((c) => c.id === court.id)
+        );
+    
+        setSelectedCourt({ ...court, clubId });
         setIsModalOpen(true);
     };
 
@@ -36,15 +61,79 @@ const BookingsPage = () => {
     };
 
     const { bookCourt, bookingLoading } = useBookCourt(() => {
-        handleCloseModal()
+        handleCloseModal();
         refetch();
     });
+
+    const { data: bookedTimes } = useGetCourtDetails(selectedCourt?.id || "");
+
+    const convertTo24HourFormat = (time) => {
+        if (!time) return "00:00"; 
+        const [hour, minutePart] = time.split(":");
+        const [minute, period] = minutePart.split(" ");
+        let hours = parseInt(hour, 10);
+
+        if (period === "PM" && hours !== 12) {
+            hours += 12;
+        } else if (period === "AM" && hours === 12) {
+            hours = 0;
+        }
+
+        return `${hours.toString().padStart(2, "0")}:${minute}`;
+    };
+    const getUnavailableTimes = () => {
+        if (!bookedTimes) return [];
+        return bookedTimes.map((booking) => ({
+            start: booking.startTime,
+            end: booking.endTime,
+        }));
+    };
+
+    const unavailableTimes = getUnavailableTimes();
+
+    const formatHour = (timeArray) => {
+        if (!Array.isArray(timeArray) || timeArray.length < 1) return "";
+        return timeArray[0].toString().padStart(2, "0");
+    };
+    const generateTimeSlots = (openingTime, closingTime, unavailableTimes) => {
+        const slots = [];
+
+        let currentTime = parseInt(openingTime.split(":")[0], 10);
+        const endTime = parseInt(closingTime.split(":")[0], 10);
+
+        while (currentTime < endTime) {
+            const slotStart = `${currentTime}`;
+            const slotEnd = `${currentTime + 1}`;
+
+            const isUnavailable = unavailableTimes.some((time) => {
+                const formattedStart = formatHour(time.start);
+                const formattedEnd = formatHour(time.end);
+
+                return formattedStart <= slotStart && formattedEnd > slotStart;
+            });
+
+            slots.push({ label: `${slotStart} - ${slotEnd}`, value: `${slotStart}-${slotEnd}`, disabled: isUnavailable });
+            currentTime++;
+        }
+
+        return slots;
+    };
+
+
+
+    const availableTimeSlots = useMemo(() => {
+        const openingTime24 = convertTo24HourFormat(selectedCourt?.openingTime || "08:00 AM");
+        const closingTime24 = convertTo24HourFormat(selectedCourt?.closingTime || "10:00 PM");
+
+        return generateTimeSlots(openingTime24, closingTime24, unavailableTimes);
+    }, [selectedCourt, unavailableTimes]);
+
     const handleConfirmBooking = () => {
         if (!selectedCourt) return;
 
         const bookingData = {
             userId,
-            clubId,
+            clubId: selectedCourt.clubId,
             courtId: selectedCourt.id,
             date: new Date().toISOString().split("T")[0],
             startTime: `${startTime}:00`,
@@ -54,6 +143,8 @@ const BookingsPage = () => {
 
         bookCourt(bookingData);
     };
+
+    console.log(courtsData)
 
     return (
         <div className="BookingsPage">
@@ -67,7 +158,8 @@ const BookingsPage = () => {
                     <table>
                         <thead>
                             <tr>
-                                <th>Name</th>
+                            <th>Club Name</th>
+                                <th>Court Name</th>
                                 <th>Location</th>
                                 <th>Type</th>
                                 <th>Capacity</th>
@@ -82,8 +174,9 @@ const BookingsPage = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {courtsData?.map((court) => (
+                            {courtsData.map((court) => (
                                 <tr key={court.id}>
+                                    <td>{clubNames[clubIds.indexOf(court.clubId)] || "Unknown Club"}</td>
                                     <td>{court.name}</td>
                                     <td>{court.location}</td>
                                     <td>{court.type}</td>
@@ -109,7 +202,6 @@ const BookingsPage = () => {
                     </table>
                 )}
             </div>
-
             <h2>Previous Bookings</h2>
             <div className="table-container">
                 {bookingsLoading ? (
@@ -120,8 +212,8 @@ const BookingsPage = () => {
                     <table>
                         <thead>
                             <tr>
-                            
-                                <th>Court </th>
+                                <th>Club ID</th>
+                                <th>Court</th>
                                 <th>Date</th>
                                 <th>Start Time</th>
                                 <th>End Time</th>
@@ -132,22 +224,23 @@ const BookingsPage = () => {
                             {previousBookings?.length > 0 ? (
                                 previousBookings.map((booking) => {
                                     const courtName =
-                                        courtsData?.find((court) => court.id === booking.courtId)?.name || "Unknown Court";
+                                        courtsData.find((court) => court.id === booking.courtId)?.name || "Unknown Court";
+                                    const formatTime = (time) => {
+                                        if (!Array.isArray(time) || time.length < 2) return "Invalid Time"; // Ensure valid format
+
+                                        const [hour, minute] = time.map(num => String(num).padStart(2, "0")); // Convert to "HH:MM"
+
+                                        return `${hour}:${minute}`;
+                                    };
+
 
                                     return (
                                         <tr key={booking.id}>
-                                            <td>{courtName}</td> 
-                                            <td>
-                                                {`${booking.date[0]}-${String(booking.date[1]).padStart(2, "0")}-${String(
-                                                    booking.date[2]
-                                                ).padStart(2, "0")}`}
-                                            </td>
-                                            <td>
-                                                {`${booking.startTime[0]}:${String(booking.startTime[1]).padStart(2, "0")}`}
-                                            </td>
-                                            <td>
-                                                {`${booking.endTime[0]}:${String(booking.endTime[1]).padStart(2, "0")}`}
-                                            </td>
+                                            <td>{booking.clubId}</td>
+                                            <td>{courtName}</td>
+                                            <td>{booking.date}</td>
+                                            <td>{formatTime(booking.startTime)}</td>
+                                            <td>{formatTime(booking.endTime)}</td>
                                             <td>{booking.participants.join(", ")}</td>
                                         </tr>
                                     );
@@ -162,22 +255,41 @@ const BookingsPage = () => {
                 )}
             </div>
 
+
             {isModalOpen && (
                 <Modal onClose={handleCloseModal}>
                     <h3>Book {selectedCourt?.name}</h3>
                     <label>
-                        Start Time:
-                        <input type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} />
+                        Select Time:
+                        <select
+                            value={`${startTime}-${endTime}`}
+                            onChange={(e) => {
+                                const [start, end] = e.target.value.split("-");
+                                setStartTime(start);
+                                setEndTime(end);
+                            }}
+                        >
+                            {availableTimeSlots.map(({ label, value, disabled }) => (
+                                <option key={value} value={value} disabled={disabled}>
+                                    {label} {disabled ? "(Unavailable)" : ""}
+                                </option>
+                            ))}
+                        </select>
                     </label>
-                    <label>
-                        End Time:
-                        <input type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} />
-                    </label>
+                    <p>
+                        Unavailable Times:{" "}
+                        {unavailableTimes
+                            .map(({ start, end }) =>
+                                `${start[0]}:${start[1].toString().padStart(2, "0")} - ${end[0]}:${end[1].toString().padStart(2, "0")}`
+                            )
+                            .join(", ")}
+                    </p>
                     <button onClick={handleConfirmBooking} disabled={bookingLoading}>
                         {bookingLoading ? "Booking..." : "Confirm Booking"}
                     </button>
                 </Modal>
             )}
+
         </div>
     );
 };

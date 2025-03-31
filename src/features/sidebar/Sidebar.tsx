@@ -83,7 +83,7 @@ const sidebarItems = [
   {
     label: 'Members',
     icon: <img src={UserIcomImg} />,
-    path: '/members',
+    path: '/manage-user',
     isExpandable: false,
   },
   {

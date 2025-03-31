@@ -27,7 +27,7 @@ const ClubMembershipPage = () => {
     <Box style={styles}>
       <Container>
         <Typography variant='h3' align='center' gutterBottom color='white'>
-          Choose Your Membership
+          Choose memberShip Plan For Club
         </Typography>
         <Box
           sx={{

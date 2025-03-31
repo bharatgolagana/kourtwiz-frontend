@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 
-const fetchClubCourt = async (clubId: string) => {
+const fetchClubCourt = async (clubId) => {
   const token = localStorage.getItem('jwtToken');
   if (!clubId) {
     throw new Error('Club ID is required');
@@ -23,7 +23,7 @@ const fetchClubCourt = async (clubId: string) => {
   return response.data;
 };
 
-export const useGetClubCourt = (clubId: string) => {
+export const useGetClubCourt = (clubId) => {
   return useQuery({
     queryKey: ['club-court', clubId],
     queryFn: () => fetchClubCourt(clubId),

@@ -2,13 +2,11 @@ import CourtsList from '../../features/club-courts/components/CourtsList';
 
 const ClubCourtPage = () => {
   return (
-    <>
-      {' '}
-      <h1>Your courts</h1>{' '}
-      <div>
-        <CourtsList />
-      </div>
-    </>
+    <div>
+      <h1>Your Courts</h1>
+      <CourtsList />
+      
+    </div>
   );
 };
 

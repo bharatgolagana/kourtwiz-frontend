@@ -7,6 +7,7 @@
   }
   .membership-types{
     background-color: black;
+    align-items: center;
   }
   .membership-types h2{
     background-color: black;
@@ -14,9 +15,10 @@
     margin-top: 0rem;
   }
   .membership-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 50px;
     padding: 20px;
     background-color: black;
   }

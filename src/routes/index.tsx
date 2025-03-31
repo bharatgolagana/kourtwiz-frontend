@@ -16,6 +16,7 @@ import TBDRoutes from './TBDRoutes';
 import SignUpRoutes from './SignUpRoutes';
 import MemberApproval from '../pages/member-approval/MemberApproval';
 import BookingsPage from '../pages/bookings/BookingsPage';
+import ClubBookingsRoutes from './ClubBookingsRoutes';
 import { ManageUsers } from './ManageUser';
 
 const createRoutes = (): RouteObject[] => {
@@ -37,6 +38,7 @@ const createRoutes = (): RouteObject[] => {
         ...RequestsRoutes,
         ...ClubsListRoutes,
         ...TBDRoutes,
+        ...ClubBookingsRoutes,
         ...ManageUsers,
 
         {

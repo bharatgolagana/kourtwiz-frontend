@@ -119,6 +119,11 @@ const sidebarItems = [
     isExpandable: false,
   },
   {
+    label: 'Club Bookings',
+    path: '/club-bookings',
+    isExpandable: false,
+  },
+  {
     label: 'Assets',
     path: '/TBD',
     isExpandable: false,
@@ -447,7 +452,7 @@ const Sidebar: React.FC = () => {
                     );
                   }
                 } else if (
-                  user?.userOrganizationRole?.some(
+                  user?.userClubRole?.some(
                     (role) => role.roleName === 'MasterAdmin'
                   )
                 ) {
@@ -462,8 +467,8 @@ const Sidebar: React.FC = () => {
                     return;
                   }
                 } else if (
-                  user?.userOrganizationRole?.some(
-                    (role) => role.roleName === 'Club Admin'
+                  user?.userClubRole?.some(
+                    (role) => role.roleName === 'ClubAdmin'
                   )
                 ) {
                   if (
@@ -472,10 +477,24 @@ const Sidebar: React.FC = () => {
                     item.label !== 'Settings' &&
                     item.label !== 'Members' &&
                     item.label !== 'Courts' &&
-                    item.label !== 'Membership Plans'
+                    item.label !== 'Membership Plans' &&
+                    item.label !==  'Club Bookings'
                   ) {
                     return;
                   }
+                  
+                }
+                else if (
+                  user?.userClubRole?.some(
+                    (role) => role.roleName === 'Member'
+                  )
+                ) {
+                  if (
+                    item.label !== 'Bookings'
+                  ) {
+                    return;
+                  }
+                  
                 }
                 return (
                   <Tooltip

@@ -99,7 +99,9 @@ const Landing = () => {
           ) : (
             <div className='clubs-container' ref={clubsRef}>
               {clubs
-                .filter((club) => club.name.toLowerCase().includes(search.toLowerCase()))
+                .filter((club) => club.name.toLowerCase().includes(search.toLowerCase()) ||
+                club.clubCity.toLowerCase().includes(search.toLowerCase()))
+
                 .map((club) => (
                   <div
                     key={club.id}

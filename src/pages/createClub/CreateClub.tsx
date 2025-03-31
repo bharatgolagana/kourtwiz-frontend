@@ -7,7 +7,7 @@ import {
 } from '../../features/createClub/schema/clubSchema';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { Button, Box, Typography } from '@mui/material';
+import { Button, Box, Typography, Divider } from '@mui/material';
 import TestimonialCard from '../../features/createClub/components/testimonial-card/TestimonialCard';
 import BasicDetailsForm from '../../features/createClub/components/basic-details-form/BasicDetailsForm';
 import PaymentDetailsForm from '../../features/createClub/components/payment-details-form/paymentDetailsForm';
@@ -61,6 +61,7 @@ const CreateClub = () => {
         <Typography variant='h5' gutterBottom color='white'>
           Join our network of Pickleball Clubs
         </Typography>
+        <Divider className='createclub-divider' />
         <form onSubmit={handleSubmit(onSubmit)}>
           {step === 1 && (
             <BasicDetailsForm register={register} errors={errors} />

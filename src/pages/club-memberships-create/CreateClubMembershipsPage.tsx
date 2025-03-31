@@ -1,28 +1,43 @@
 import { useGetmembershipsByClubId } from '../../shared/apis/memberships/useGetmembershipsByClubId';
 import { Card, CardContent, Typography } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
 import './CreateClubMembershipsPage.css';
 import CreateClubmembershipModal from '../../features/club-memberships-create/components/create-club-membership-modal/createClubmembershipModal';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { useMutateCreateClubMembership } from '../../shared/apis/memberships/useMutateCreateClubMembership';
+import AuthContext from '../../context/AuthContext';
 
 const CreateClubMembershipsPage = () => {
-  const navigate = useNavigate();
+  const { user } = useContext(AuthContext)!;
+  const currentClubId = user?.currentActiveClubId;
   const { data: clubMembershipdata, isLoading } = useGetmembershipsByClubId(
-    '67e66d174ac81260061a2a8c'
+    currentClubId ?? ''
   );
   const [openCreateMembershipModal, setOpenCreateMembershipModal] =
     useState(false);
   const onCloseModal = () => setOpenCreateMembershipModal(false);
-  if (isLoading) return <p>Loading...</p>;
-  p;
+
+  const { mutate: createMembership } = useMutateCreateClubMembership({
+    clubId: currentClubId,
+    onSuccessCallback: () => {
+      onCloseModal();
+    },
+    onErrorCallback: () => {
+      onCloseModal();
+    },
+  });
+  const onSubmit = (data: any) => {
+    createMembership(data);
+  };
+  if (isLoading || !user) return <p>Loading...</p>;
+
   return (
     <div>
       <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>
         Your Club Memberships
       </h2>
       <div className='club-memberships-container'>
-        {clubMembershipdata?.map((membership) => (
+        {clubMembershipdata?.map((membership: any) => (
           <Card key={membership.id} className='membership-card'>
             <CardContent>
               <Typography variant='h5'>{membership.name}</Typography>
@@ -38,10 +53,9 @@ const CreateClubMembershipsPage = () => {
         ))}
         <CreateClubmembershipModal
           open={openCreateMembershipModal}
-          onClose={() => onCloseModal}
-          onSubmit={() => {}}
+          onClose={onCloseModal}
+          onSubmit={onSubmit}
         />
-        {/* Add Membership Card */}
         <div
           className='add-membership-card'
           onClick={() => setOpenCreateMembershipModal(true)}

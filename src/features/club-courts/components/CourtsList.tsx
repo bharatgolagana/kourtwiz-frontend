@@ -1,16 +1,22 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useUserInfo } from '../../../context/UserInfoContext';
 import { useGetClubCourt } from '../../../shared/apis/courts/useGetClubCourts';
 import { useMutateAddCourt } from '../../../shared/apis/courts/useMutateAddCourt';
+import AuthContext from '../../../context/AuthContext';
 
 const CourtsList = () => {
-  const { userInfo } = useUserInfo();
-  const { data: clubList, isLoading, error } = useGetClubCourt('67e66d174ac81260061a2a8c');
+  const { user } = useContext(AuthContext)!;
+  const currentClubId = user?.currentActiveClubId;
+  const { data: clubList, isLoading, error } = useGetClubCourt(currentClubId);
   const [showModal, setShowModal] = useState(false);
   const [blockedDatesArray, setBlockedDatesArray] = useState([]);
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm();
   const { mutate } = useMutateAddCourt({
     onSuccessCallback: () => {
       alert('Court added successfully!');
@@ -39,13 +45,17 @@ const CourtsList = () => {
       indoor: data.indoor === 'true',
     };
 
-    mutate({ clubId: '67e66d174ac81260061a2a8c', courtData });
+    mutate({ clubId: currentClubId, courtData });
   };
 
   const handleAddDate = (e) => {
     const newDate = e.target.value;
 
-    if (newDate && !blockedDatesArray.includes(newDate) && blockedDatesArray.length < 2) {
+    if (
+      newDate &&
+      !blockedDatesArray.includes(newDate) &&
+      blockedDatesArray.length < 2
+    ) {
       setBlockedDatesArray((prev) => [...prev, newDate]);
     } else {
       alert('You can add a maximum of 2 blocked dates.');
@@ -63,7 +73,6 @@ const CourtsList = () => {
   return (
     <div style={styles.wrapper}>
       <div style={styles.container}>
-        
         {/* Courts Table */}
         <div style={styles.section}>
           <h3 style={styles.subHeading}>Courts List</h3>
@@ -90,7 +99,8 @@ const CourtsList = () => {
                       key={court.id}
                       style={{
                         ...styles.tr,
-                        backgroundColor: index % 2 === 0 ? '#f9f9f9' : '#ffffff',
+                        backgroundColor:
+                          index % 2 === 0 ? '#f9f9f9' : '#ffffff',
                       }}
                     >
                       <td style={styles.td}>{court.name}</td>
@@ -103,9 +113,16 @@ const CourtsList = () => {
                         {court.openingTime} - {court.closingTime}
                       </td>
                       <td style={styles.td}>
-                        {court.blockedDates.length > 0 ? court.blockedDates.join(', ') : 'None'}
+                        {court.blockedDates.length > 0
+                          ? court.blockedDates.join(', ')
+                          : 'None'}
                       </td>
-                      <td style={{ ...styles.td, color: court.available ? '#27ae60' : '#e74c3c' }}>
+                      <td
+                        style={{
+                          ...styles.td,
+                          color: court.available ? '#27ae60' : '#e74c3c',
+                        }}
+                      >
                         {court.available ? 'Available' : 'Booked'}
                       </td>
                       <td style={styles.td}>{court.indoor ? 'Yes' : 'No'}</td>
@@ -132,39 +149,77 @@ const CourtsList = () => {
             <div style={styles.modal}>
               <h3>Add New Court</h3>
               <form onSubmit={handleSubmit(onSubmit)} style={styles.form}>
-                <input {...register('name', { required: true })} placeholder="Name" />
-                <input {...register('slug', { required: true })} placeholder="Slug" />
-                <input {...register('location', { required: true })} placeholder="Location" />
+                <input
+                  {...register('name', { required: true })}
+                  placeholder='Name'
+                />
+                <input
+                  {...register('slug', { required: true })}
+                  placeholder='Slug'
+                />
+                <input
+                  {...register('location', { required: true })}
+                  placeholder='Location'
+                />
                 <select {...register('type', { required: true })}>
-                  <option value="">Select Type</option>
-                  <option value="Singles">Singles</option>
-                  <option value="Doubles">Doubles</option>
-                  <option value="Singles & Doubles">Singles & Doubles</option>
+                  <option value=''>Select Type</option>
+                  <option value='Singles'>Singles</option>
+                  <option value='Doubles'>Doubles</option>
+                  <option value='Singles & Doubles'>Singles & Doubles</option>
                 </select>
-                <input {...register('capacity', { required: true })} placeholder="Capacity" type="number" min={0} />
-                <input {...register('surface', { required: true })} placeholder="Surface" />
-                <input {...register('pricePerHour', { required: true })} placeholder="Price per hour" type="number" min={0} />
-                <input {...register('openingTime', { required: true })} placeholder="Opening Time" type="time" />
-                <input {...register('closingTime', { required: true })} placeholder="Closing Time" type="time" />
-                <input type="date" onChange={handleAddDate} />
+                <input
+                  {...register('capacity', { required: true })}
+                  placeholder='Capacity'
+                  type='number'
+                  min={0}
+                />
+                <input
+                  {...register('surface', { required: true })}
+                  placeholder='Surface'
+                />
+                <input
+                  {...register('pricePerHour', { required: true })}
+                  placeholder='Price per hour'
+                  type='number'
+                  min={0}
+                />
+                <input
+                  {...register('openingTime', { required: true })}
+                  placeholder='Opening Time'
+                  type='time'
+                />
+                <input
+                  {...register('closingTime', { required: true })}
+                  placeholder='Closing Time'
+                  type='time'
+                />
+                <input type='date' onChange={handleAddDate} />
                 <div>
                   {blockedDatesArray.map((date, index) => (
                     <span key={index} style={{ margin: '5px' }}>
-                      {date} <button onClick={() => removeDate(index)}>X</button>
+                      {date}{' '}
+                      <button onClick={() => removeDate(index)}>X</button>
                     </span>
                   ))}
                 </div>
                 <select {...register('available', { required: true })}>
-                  <option value="true">Available</option>
-                  <option value="false">Booked</option>
+                  <option value='true'>Available</option>
+                  <option value='false'>Booked</option>
                 </select>
                 <select {...register('indoor', { required: true })}>
-                  <option value="true">Indoor</option>
-                  <option value="false">Outdoor</option>
+                  <option value='true'>Indoor</option>
+                  <option value='false'>Outdoor</option>
                 </select>
                 <div style={styles.buttonContainer}>
-                  <button type="submit" style={styles.submitButton}>Submit</button>
-                  <button onClick={() => setShowModal(false)} style={styles.cancelButton}>Cancel</button>
+                  <button type='submit' style={styles.submitButton}>
+                    Submit
+                  </button>
+                  <button
+                    onClick={() => setShowModal(false)}
+                    style={styles.cancelButton}
+                  >
+                    Cancel
+                  </button>
                 </div>
               </form>
             </div>
@@ -180,11 +235,30 @@ const styles = {
   table: { width: '100%', borderCollapse: 'collapse' },
   th: { padding: '12px', backgroundColor: '#3498db', color: '#fff' },
   td: { padding: '12px' },
-  addButton: { padding: '10px 20px', backgroundColor: '#3498db', color: '#fff' },
-  modalOverlay: { position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex', justifyContent: 'center', alignItems: 'center' },
-  modal: { backgroundColor: '#fff', padding: '30px', borderRadius: '10px', width: '400px' },
+  addButton: {
+    padding: '10px 20px',
+    backgroundColor: '#3498db',
+    color: '#fff',
+  },
+  modalOverlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modal: {
+    backgroundColor: '#fff',
+    padding: '30px',
+    borderRadius: '10px',
+    width: '400px',
+  },
   submitButton: { backgroundColor: '#2ecc71', color: '#fff' },
-  cancelButton: { backgroundColor: '#e74c3c', color: '#fff' }
+  cancelButton: { backgroundColor: '#e74c3c', color: '#fff' },
 };
 
 export default CourtsList;

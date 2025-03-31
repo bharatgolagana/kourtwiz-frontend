@@ -11,8 +11,8 @@ import {
   Checkbox,
   FormControlLabel,
   Button,
-  Grid,
 } from '@mui/material';
+import './createClubMembershipModal.css';
 
 const MEMBERSHIP_BENEFITS = [
   'PRIORITY_BOOKING',
@@ -24,7 +24,15 @@ const MEMBERSHIP_BENEFITS = [
 
 const UPGRADE_OPTIONS = ['Silver', 'Gold'];
 
-const CreateClubMembershipModal = ({ open, onClose, onSubmit }) => {
+const CreateClubMembershipModal = ({
+  open,
+  onClose,
+  onSubmit,
+}: {
+  open: boolean;
+  onClose: () => void;
+  onSubmit: (data: any) => void;
+}) => {
   const { register, handleSubmit, control } = useForm({
     defaultValues: {
       name: '',
@@ -41,124 +49,101 @@ const CreateClubMembershipModal = ({ open, onClose, onSubmit }) => {
     },
   });
 
-  const handleFormSubmit = (data) => {
+  const handleFormSubmit = (data: any) => {
     onSubmit(data);
-    onClose();
   };
 
   return (
     <Modal open={open} onClose={onClose}>
-      <Box
-        sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 500,
-          bgcolor: 'background.paper',
-          boxShadow: 24,
-          p: 4,
-          borderRadius: 2,
-        }}
-      >
-        <Typography variant='h6' gutterBottom>
-          Create Membership
-        </Typography>
-        <form onSubmit={handleSubmit(handleFormSubmit)}>
-          <Grid container spacing={2}>
-            {/* Left Column */}
-            <Grid item xs={6}>
-              <TextField fullWidth label='Name' {...register('name')} />
-              <TextField
-                fullWidth
-                label='Description'
-                {...register('description')}
-              />
-              <TextField
-                fullWidth
-                label='Price'
-                type='number'
-                {...register('price')}
-              />
-              <TextField
-                fullWidth
-                label='Duration (Days)'
-                type='number'
-                {...register('durationInDays')}
-              />
-              <FormControl fullWidth>
-                <InputLabel>Benefits</InputLabel>
-                <Controller
-                  name='benefits'
-                  control={control}
-                  render={({ field }) => (
-                    <Select multiple {...field}>
-                      {MEMBERSHIP_BENEFITS.map((benefit) => (
-                        <MenuItem key={benefit} value={benefit}>
-                          {benefit}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  )}
-                />
-              </FormControl>
-            </Grid>
+      <Box className='modal-container'>
+        <Typography className='modal-title'>Create Membership</Typography>
+        <form onSubmit={handleSubmit(handleFormSubmit)} className='modal-form'>
+          <TextField
+            label='Name'
+            {...register('name')}
+            className='full-width'
+          />
+          <TextField
+            label='Description'
+            {...register('description')}
+            className='full-width'
+          />
+          <TextField label='Price' type='number' {...register('price')} />
+          <TextField
+            label='Duration (Days)'
+            type='number'
+            {...register('durationInDays')}
+          />
 
-            {/* Right Column */}
-            <Grid item xs={6}>
-              <FormControlLabel
-                control={<Checkbox {...register('isFamilyPlan')} />}
-                label='Family Plan'
-              />
-              <TextField
-                fullWidth
-                label='Max Family Members'
-                type='number'
-                {...register('maxFamilyMembers')}
-              />
-              <TextField
-                fullWidth
-                label='Guest Passes'
-                type='number'
-                {...register('guestPasses')}
-              />
-              <TextField
-                fullWidth
-                label='Discount %'
-                type='number'
-                {...register('discountPercentage')}
-              />
-              <FormControlLabel
-                control={<Checkbox {...register('autoRenewalAllowed')} />}
-                label='Auto Renewal Allowed'
-              />
-              <FormControl fullWidth>
-                <InputLabel>Upgradable To</InputLabel>
-                <Controller
-                  name='upgradableTo'
-                  control={control}
-                  render={({ field }) => (
-                    <Select multiple {...field}>
-                      {UPGRADE_OPTIONS.map((option) => (
-                        <MenuItem key={option} value={option}>
-                          {option}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  )}
-                />
-              </FormControl>
-            </Grid>
-          </Grid>
+          <FormControl className='full-width'>
+            <InputLabel>Benefits</InputLabel>
+            <Controller
+              name='benefits'
+              control={control}
+              render={({ field }) => (
+                <Select multiple {...field}>
+                  {MEMBERSHIP_BENEFITS.map((benefit) => (
+                    <MenuItem key={benefit} value={benefit}>
+                      {benefit}
+                    </MenuItem>
+                  ))}
+                </Select>
+              )}
+            />
+          </FormControl>
 
-          <Box mt={2} display='flex' justifyContent='space-between'>
-            <Button onClick={onClose} variant='outlined'>
+          <FormControlLabel
+            control={<Checkbox {...register('isFamilyPlan')} />}
+            label='Family Plan'
+            className='checkbox-group'
+          />
+          <TextField
+            label='Max Family Members'
+            type='number'
+            {...register('maxFamilyMembers')}
+          />
+          <TextField
+            label='Guest Passes'
+            type='number'
+            {...register('guestPasses')}
+          />
+          <TextField
+            label='Discount %'
+            type='number'
+            {...register('discountPercentage')}
+          />
+
+          <FormControlLabel
+            control={<Checkbox {...register('autoRenewalAllowed')} />}
+            label='Auto Renewal Allowed'
+            className='checkbox-group'
+          />
+
+          <FormControl className='full-width'>
+            <InputLabel>Upgradable To</InputLabel>
+            <Controller
+              name='upgradableTo'
+              control={control}
+              render={({ field }) => (
+                <Select multiple {...field}>
+                  {UPGRADE_OPTIONS.map((option) => (
+                    <MenuItem key={option} value={option}>
+                      {option}
+                    </MenuItem>
+                  ))}
+                </Select>
+              )}
+            />
+          </FormControl>
+
+          <div className='button-group-create-membership full-width'>
+            <Button onClick={() => onClose()} variant='outlined'>
               Cancel
             </Button>
             <Button type='submit' variant='contained' color='primary'>
               Submit
             </Button>
-          </Box>
+          </div>
         </form>
       </Box>
     </Modal>

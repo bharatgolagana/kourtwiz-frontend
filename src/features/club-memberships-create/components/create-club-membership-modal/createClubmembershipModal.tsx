@@ -1,14 +1,4 @@
-const CreateClubmembershipModal = () => {
-  return (
-    <>
-      <h1>Create Membership Modal</h1>
-    </>
-  );
-};
-
-export default CreateClubmembershipModal;
-
-import React, { useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
 import {
   Modal,
   Box,
@@ -24,33 +14,35 @@ import {
   Grid,
 } from '@mui/material';
 
-const MembershipFormModal = ({ open, onClose, onSubmit }) => {
-  const [formData, setFormData] = useState({
-    name: '',
-    price: '',
-    billingCycle: '',
-    maxCourts: '',
-    guestCheckIns: '',
-    priorityBooking: false,
-    supportLevel: '',
-    features: [],
+const MEMBERSHIP_BENEFITS = [
+  'PRIORITY_BOOKING',
+  'DISCOUNT',
+  'GUEST_ACCESS',
+  'FAMILY_ACCESS',
+  'TOURNAMENT_DISCOUNT',
+];
+
+const UPGRADE_OPTIONS = ['Silver', 'Gold'];
+
+const CreateClubMembershipModal = ({ open, onClose, onSubmit }) => {
+  const { register, handleSubmit, control } = useForm({
+    defaultValues: {
+      name: '',
+      description: '',
+      price: '',
+      durationInDays: '',
+      benefits: [],
+      isFamilyPlan: false,
+      maxFamilyMembers: '',
+      guestPasses: '',
+      discountPercentage: '',
+      autoRenewalAllowed: false,
+      upgradableTo: [],
+    },
   });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleCheckboxChange = (e) => {
-    setFormData({ ...formData, priorityBooking: e.target.checked });
-  };
-
-  const handleMultiSelectChange = (e) => {
-    setFormData({ ...formData, features: e.target.value });
-  };
-
-  const handleSubmit = () => {
-    onSubmit(formData);
+  const handleFormSubmit = (data) => {
+    onSubmit(data);
     onClose();
   };
 
@@ -72,97 +64,105 @@ const MembershipFormModal = ({ open, onClose, onSubmit }) => {
         <Typography variant='h6' gutterBottom>
           Create Membership
         </Typography>
-        <Grid container spacing={2}>
-          {/* Left Column */}
-          <Grid item xs={6}>
-            <TextField
-              fullWidth
-              label='Name'
-              name='name'
-              value={formData.name}
-              onChange={handleChange}
-            />
-            <TextField
-              fullWidth
-              label='Price'
-              name='price'
-              type='number'
-              value={formData.price}
-              onChange={handleChange}
-            />
-            <FormControl fullWidth>
-              <InputLabel>Billing Cycle</InputLabel>
-              <Select
-                name='billingCycle'
-                value={formData.billingCycle}
-                onChange={handleChange}
-              >
-                <MenuItem value='MONTHLY'>Monthly</MenuItem>
-                <MenuItem value='QUARTERLY'>Quarterly</MenuItem>
-                <MenuItem value='YEARLY'>Yearly</MenuItem>
-              </Select>
-            </FormControl>
-            <TextField
-              fullWidth
-              label='Max Courts'
-              name='maxCourts'
-              type='number'
-              value={formData.maxCourts}
-              onChange={handleChange}
-            />
-          </Grid>
-          {/* Right Column */}
-          <Grid item xs={6}>
-            <TextField
-              fullWidth
-              label='Guest Check-Ins'
-              name='guestCheckIns'
-              type='number'
-              value={formData.guestCheckIns}
-              onChange={handleChange}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={formData.priorityBooking}
-                  onChange={handleCheckboxChange}
+        <form onSubmit={handleSubmit(handleFormSubmit)}>
+          <Grid container spacing={2}>
+            {/* Left Column */}
+            <Grid item xs={6}>
+              <TextField fullWidth label='Name' {...register('name')} />
+              <TextField
+                fullWidth
+                label='Description'
+                {...register('description')}
+              />
+              <TextField
+                fullWidth
+                label='Price'
+                type='number'
+                {...register('price')}
+              />
+              <TextField
+                fullWidth
+                label='Duration (Days)'
+                type='number'
+                {...register('durationInDays')}
+              />
+              <FormControl fullWidth>
+                <InputLabel>Benefits</InputLabel>
+                <Controller
+                  name='benefits'
+                  control={control}
+                  render={({ field }) => (
+                    <Select multiple {...field}>
+                      {MEMBERSHIP_BENEFITS.map((benefit) => (
+                        <MenuItem key={benefit} value={benefit}>
+                          {benefit}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  )}
                 />
-              }
-              label='Priority Booking'
-            />
-            <TextField
-              fullWidth
-              label='Support Level'
-              name='supportLevel'
-              value={formData.supportLevel}
-              onChange={handleChange}
-            />
-            <FormControl fullWidth>
-              <InputLabel>Features</InputLabel>
-              <Select
-                multiple
-                name='features'
-                value={formData.features}
-                onChange={handleMultiSelectChange}
-              >
-                <MenuItem value='PRIORITY_BOOKING'>Priority Booking</MenuItem>
-                <MenuItem value='DISCOUNT'>Discount</MenuItem>
-                <MenuItem value='EXCLUSIVE_EVENTS'>Exclusive Events</MenuItem>
-              </Select>
-            </FormControl>
+              </FormControl>
+            </Grid>
+
+            {/* Right Column */}
+            <Grid item xs={6}>
+              <FormControlLabel
+                control={<Checkbox {...register('isFamilyPlan')} />}
+                label='Family Plan'
+              />
+              <TextField
+                fullWidth
+                label='Max Family Members'
+                type='number'
+                {...register('maxFamilyMembers')}
+              />
+              <TextField
+                fullWidth
+                label='Guest Passes'
+                type='number'
+                {...register('guestPasses')}
+              />
+              <TextField
+                fullWidth
+                label='Discount %'
+                type='number'
+                {...register('discountPercentage')}
+              />
+              <FormControlLabel
+                control={<Checkbox {...register('autoRenewalAllowed')} />}
+                label='Auto Renewal Allowed'
+              />
+              <FormControl fullWidth>
+                <InputLabel>Upgradable To</InputLabel>
+                <Controller
+                  name='upgradableTo'
+                  control={control}
+                  render={({ field }) => (
+                    <Select multiple {...field}>
+                      {UPGRADE_OPTIONS.map((option) => (
+                        <MenuItem key={option} value={option}>
+                          {option}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  )}
+                />
+              </FormControl>
+            </Grid>
           </Grid>
-        </Grid>
-        <Box mt={2} display='flex' justifyContent='space-between'>
-          <Button onClick={onClose} variant='outlined'>
-            Cancel
-          </Button>
-          <Button onClick={handleSubmit} variant='contained' color='primary'>
-            Submit
-          </Button>
-        </Box>
+
+          <Box mt={2} display='flex' justifyContent='space-between'>
+            <Button onClick={onClose} variant='outlined'>
+              Cancel
+            </Button>
+            <Button type='submit' variant='contained' color='primary'>
+              Submit
+            </Button>
+          </Box>
+        </form>
       </Box>
     </Modal>
   );
 };
 
-export default MembershipFormModal;
+export default CreateClubMembershipModal;

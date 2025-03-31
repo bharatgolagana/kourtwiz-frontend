@@ -1,36 +1,53 @@
 import './Landing.css';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from './components/header/Header';
 import pickleball1 from '../../assets/pickleball1.jpg';
 import pickleball2 from '../../assets/pickleball2.jpg';
 import Footer from './components/header/Footer/Footer';
+import { fetchClubs } from './api/useGetclubsListService';
 
-const clubs = [
-  {
-    id: '67d261f783c50d6c7df9dd50',
-    name: 'New Jersey Club',
-    description: 'Premium coaching and top-tier facilities.',
-    bgColor: '#ffcccb',
-  },
-  {
-    id: '67d2620383c50d6c7df9dd51',
-    name: 'Houston Club',
-    description: 'A great place for community play and tournaments.',
-    bgColor: '#d1e7dd',
-  },
-  {
-    id: '67d2cc08c1534675fa24ff39',
-    name: 'Manchester-pickball',
-    description: 'Train like a pro with experienced instructors.',
-    bgColor: '#cce5ff',
-  },
-];
 
 const Landing = () => {
   const navigate = useNavigate();
+  const [clubs, setClubs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [search, setSearch] = useState('');
+  const clubsRef = useRef(null);
+  
 
-  const handleClubClick = (id, name) => {
-    navigate(`/clubs/${id}`, { state: { clubName: name } });
+  useEffect(() => {
+    const getClubs = async () => {
+      try {
+        const data = await fetchClubs();
+        setClubs(data);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    getClubs();
+  }, []);
+  
+
+
+
+  const handleClubClick = (club) => {
+    console.log('Selected Club Membership Types:', club.clubMembershipTypes);
+    navigate(`/clubs/${club.id}`, { state: { 
+      clubName: club.name,
+      clubId:club.id,
+      membershipTypes: club.clubMembershipTypes } });
+  };
+  
+
+  const handleScroll = (direction) => {
+    if (clubsRef.current) {
+      clubsRef.current.scrollBy({ left: direction === 'left' ? -250 : 250, behavior: 'smooth' });
+    }
   };
 
   return (
@@ -41,7 +58,7 @@ const Landing = () => {
           <h1>Level up your PickleBall game with Kourtwiz</h1>
           <p>Experience the best services with us. Start your journey today!</p>
           <div className='buttons'>
-            <button className='btn' onClick={() => navigate('/createClub')}>
+            <button className='btn' onClick={() => navigate('/club-memberships')}>
               Register Club
             </button>
           </div>
@@ -51,17 +68,10 @@ const Landing = () => {
 
       <section id='about'>
         <div className='about-content'>
-          <img
-            src={pickleball2}
-            alt='Pickleball Game'
-            className='about-image'
-          />
+          <img src={pickleball2} alt='Pickleball Game' className='about-image' />
           <div className='about-text-box'>
             <h2>Level Up Your Game</h2>
-            <p>
-              Join Kourtwiz to enhance your Pickleball skills with expert
-              coaching and top-tier facilities.
-            </p>
+            <p>Join Kourtwiz to enhance your Pickleball skills with expert coaching and top-tier facilities.</p>
             <button className='btn'>Learn More</button>
           </div>
         </div>
@@ -71,41 +81,39 @@ const Landing = () => {
         <div className='clubs-content'>
           <h2>Clubs</h2>
           <p>Find the best club for your Pickleball journey.</p>
-          <div className='clubs-container'>
-            {clubs.map((club) => (
-              <div
-                key={club.id}
-                className='club-card'
-                onClick={() => handleClubClick(club.id, club.name)}
-                style={{ backgroundColor: club.bgColor }}
-              >
-                <h3>{club.name}</h3>
-                <p>{club.description}</p>
-              </div>
-            ))}
+          <input
+            type='text'
+            className='search-bar'
+            placeholder='Search clubs...'
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <div className='scroll-buttons'>
+            <button className='scroll-btn' onClick={() => handleScroll('left')}>&lt;</button>
+            <button className='scroll-btn' onClick={() => handleScroll('right')}>&gt;</button>
           </div>
-        </div>
-      </section>
-
-      <section id='pricing'>
-        <div className='pricing-content'>
-          <h2>Pricing</h2>
-          <p>Choose the best plan for your Pickleball journey.</p>
-          <div className='pricing-plans'>
-            <div className='plan'>
-              <h3>Basic Plan - Monthly</h3>
-              <p>Perfect for casual players looking to improve their game.</p>
-              <h4>$20 / month</h4>
-              <button className='btn'>Get Monthly Plan</button>
+          {loading ? (
+            <p>Loading clubs...</p>
+          ) : error ? (
+            <p style={{ color: 'red' }}>{error}</p>
+          ) : (
+            <div className='clubs-container' ref={clubsRef}>
+              {clubs
+                .filter((club) => club.name.toLowerCase().includes(search.toLowerCase()))
+                .map((club) => (
+                  <div
+                    key={club.id}
+                    className='club-card'
+                    onClick={() => handleClubClick(club)}
+                    style={{ backgroundColor: club.bgColor || '#f0f0f0' }}
+                  >
+                    <h3>{club.name}</h3>
+                    <p>{club.clubCity}</p>
+                  </div>
+                ))}
             </div>
-            <div className='plan'>
-              <h3>Basic Plan - Yearly</h3>
-              <p>Great value for dedicated players who train year-round.</p>
-              <h4>$200 / year</h4>
-              <button className='btn'>Get Yearly Plan</button>
-            </div>
-          </div>
-        </div>
+          )}
+      </div>
       </section>
 
       <section id='services'>

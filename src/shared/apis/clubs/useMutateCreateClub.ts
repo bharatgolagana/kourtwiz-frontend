@@ -8,17 +8,11 @@ const createClub = async ({
   planId: string;
   clubData: any;
 }) => {
-  const token = localStorage.getItem('jwtToken');
-  if (!token) {
-    throw new Error('No token found');
-  }
-
   const response = await axios.post(
     `http://44.216.113.234:8080/clubs?planId=${planId}`,
     clubData,
     {
       headers: {
-        Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
         Accept: '*/*',
       },
@@ -28,13 +22,15 @@ const createClub = async ({
   return response.data;
 };
 
-export const useMutateCreateClub = (
-  onSuccess?: (data: any) => void,
-  onError?: (error: unknown) => void
-) => {
+export const useMutateCreateClub = ({ onSuccessCallback, onErrorCallback }) => {
   return useMutation({
     mutationFn: createClub,
-    onSuccess,
-    onError,
+    onSuccess: (data) => {
+      onSuccessCallback?.(data);
+    },
+    onError: (error) => {
+      console.log('error: ', error);
+      onErrorCallback?.(error);
+    },
   });
 };

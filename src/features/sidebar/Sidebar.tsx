@@ -93,6 +93,12 @@ const sidebarItems = [
     isExpandable: false,
   },
   {
+    label: 'Bookings',
+    icon: <img src='src\assets\pickleballclub.svg' />,
+    path: '/bookings',
+    isExpandable: false,
+  },
+  {
     label: 'Membership Plans',
     path: '/club/memberships',
     isExpandable: false,

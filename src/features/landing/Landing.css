@@ -90,11 +90,6 @@
   max-width: 50%;
   
 }
-.clubs-content{
-  padding-top: 3rem;
-  background-color:  black;
-  padding-bottom: 3rem;
-}
 
 .clubs-content h2{
   background-color: black;
@@ -105,26 +100,90 @@
   color: white;
   padding-bottom: 2rem;
 }
+.clubs-content {
+  position: relative;
+  text-align: center;
+  padding: 20px;
+  background-color: black;
+}
+
+.search-bar {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
 .clubs-container {
   display: flex;
-  gap: 20px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-.clubs-container p{
-  color:black
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 10px 0;
+  white-space: nowrap;
+  gap: 15px;
+  background-color: black;
 }
 
 .club-card {
+  flex: 0 0 auto;
+  cursor: pointer;
+  transition: transform 0.2s;
   background-color: azure;
   border-radius: 0.5rem;
   padding: 1.5rem;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   text-align: center;
   cursor: pointer;
-  transition: transform 0.2s ease-in-out;
   width: 18rem;
   height: 15rem;
+}
+.club-card h3 {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  margin-bottom: 0rem;
+}
+
+.club-card p{
+  font-size: 1.2rem;
+  margin-top: 3rem;
+}
+
+.club-card:hover {
+  transform: scale(1.05);
+}
+
+.scroll-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.scroll-btn {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 18px;
+}
+
+.scroll-btn:hover {
+  background: #0056b3;
+}
+
+.clubs-container p{
+  color:black
+}
+
+.club-card {
+  
 }
 
 .club-card:hover {
@@ -176,6 +235,54 @@
   .home-content p {
     font-size: 1rem;
   }
+}
+
+.pricing-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.pricing-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  text-align: center;
+}
+
+.pricing-card h3 {
+  margin-bottom: 10px;
+}
+
+.price {
+  font-size: 20px;
+  font-weight: bold;
+  color: #007bff;
+}
+
+.pricing-card ul {
+  list-style: none;
+  padding: 0;
+}
+
+.pricing-card li {
+  margin: 5px 0;
+}
+
+.btn {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: #0056b3;
 }
 #pricing {
   text-align: center;

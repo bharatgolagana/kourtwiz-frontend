@@ -16,6 +16,7 @@ import TBDRoutes from './TBDRoutes';
 import SignUpRoutes from './SignUpRoutes';
 import MemberApproval from '../pages/member-approval/MemberApproval';
 import BookingsPage from '../pages/bookings/BookingsPage';
+import ClubBookingsRoutes from './ClubBookingsRoutes';
 
 const createRoutes = (): RouteObject[] => {
   return [
@@ -36,6 +37,7 @@ const createRoutes = (): RouteObject[] => {
         ...RequestsRoutes,
         ...ClubsListRoutes,
         ...TBDRoutes,
+        ...ClubBookingsRoutes,
         {
           path: '/approve-members',
           element: <MemberApproval />,

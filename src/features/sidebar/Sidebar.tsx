@@ -94,7 +94,7 @@ const sidebarItems = [
   },
   {
     label: 'Membership Plans',
-    path: '/TBD',
+    path: '/club/memberships',
     isExpandable: false,
   },
   {

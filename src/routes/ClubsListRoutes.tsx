@@ -1,7 +1,7 @@
 import ClubCourtPage from '../pages/club-courts/ClubCourtPage';
+import CreateClubMembershipsPage from '../pages/club-memberships-create/CreateClubMembershipspage';
 import ClubMembersPage from '../pages/clubMembersPage/ClubMembersPage';
 import ClubsListPage from '../pages/clubsListPage/ClubsListPage';
-
 const ClubsListRoutes = [
   {
     path: '/clubs',
@@ -14,6 +14,10 @@ const ClubsListRoutes = [
   {
     path: 'club/court',
     element: <ClubCourtPage />,
+  },
+  {
+    path: '/club/memberships',
+    element: <CreateClubMembershipsPage />,
   },
 ];
 

@@ -1,0 +1,24 @@
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+
+const fetchClubMemberships = async (clubId: string) => {
+  console.log('club Id : ', clubId);
+  const { data } = await axios.get(
+    `http://44.216.113.234:8080/api/membership-types/club-memberships/${clubId}`,
+    {
+      headers: {
+        Accept: '*/*',
+        Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
+      },
+    }
+  );
+  return data;
+};
+
+export const useGetmembershipsByClubId = (clubId: string) => {
+  return useQuery({
+    queryKey: ['clubMemberships', clubId],
+    queryFn: () => fetchClubMemberships(clubId),
+    enabled: !!clubId, // Only fetch if clubId is available
+  });
+};

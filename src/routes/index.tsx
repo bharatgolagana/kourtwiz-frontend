@@ -15,6 +15,7 @@ import RequestsRoutes from './RequestsRoutes';
 import TBDRoutes from './TBDRoutes';
 import SignUpRoutes from './SignUpRoutes';
 import MemberApproval from '../pages/member-approval/MemberApproval';
+import BookingsPage from '../pages/bookings/BookingsPage';
 
 const createRoutes = (): RouteObject[] => {
   return [
@@ -38,6 +39,10 @@ const createRoutes = (): RouteObject[] => {
         {
           path: '/approve-members',
           element: <MemberApproval />,
+        },
+        {
+          path: '/bookings',
+          element: <BookingsPage />,
         },
         {
           path: '/server-not-found',

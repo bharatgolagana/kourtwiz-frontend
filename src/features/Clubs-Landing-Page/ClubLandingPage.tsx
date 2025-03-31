@@ -17,6 +17,7 @@ const ClubLandingPage = () => {
       state: {
         clubId: id,
         membershipId,
+        clubName,
       },
     });
   };

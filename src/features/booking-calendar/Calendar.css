@@ -3,9 +3,6 @@
     flex-direction: row;
 }
 
-.color-class{
-    background-color: #e5e5ef;
-}
 
 .full-calendar, .full-calendar * {
   font-family:Arial, Helvetica, sans-serif;
@@ -48,9 +45,7 @@ ul.ordering li span{
   background-color: #2667f2 !important; 
 }
 
-.calendar-container {
-  position: relative;
-}
+
 
 .button-container {
   position: absolute;
@@ -58,3 +53,4 @@ ul.ordering li span{
   margin-left: 20px; 
 }
 
+  

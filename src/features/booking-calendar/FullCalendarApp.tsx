@@ -1,84 +1,140 @@
-import { useState, useEffect, JSX } from 'react';
+import { useState, useEffect, JSX, useContext } from 'react';
 import FullCalendar from '@fullcalendar/react';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import timeGridPlugin from '@fullcalendar/timegrid';
-import interactionPlugin from '@fullcalendar/interaction';
-import resourceTimelinePlugin from '@fullcalendar/resource-timeline';
+import resourceTimeGridPlugin from '@fullcalendar/resource-timegrid';
 import './Calendar.css';
 
 import 'react-calendar/dist/Calendar.css';
-const getScheduleData = async () => {
-    return {
-      events: [
-        {
-          reservation_id: '1',
-          name: 'Match 1',
-          date: '2025-04-02',
-          time: '10:00:00',
-          duration: 2, 
-          court: 'court-1'
-        },
-        {
-          reservation_id: '2',
-          name: 'Match 2',
-          date: '2025-04-02',
-          time: '12:00:00',
-          duration: 1.5, 
-          court: 'court-2'
-        },
-        {
-          reservation_id: '3',
-          name: 'Match 3',
-          date: '2025-04-02',
-          time: '14:00:00',
-          duration: 2, 
-          court: 'court-3'
-        }
-      ]
-    };
-};
+import AuthContext from '../../context/AuthContext';
+import { fetchCourts } from './api/getCourts';
+import { fetchBookings } from './api/getbookings';
 
 function FullCalendarApp(): JSX.Element {
-  const [schedules, setSchedules] = useState({ events: [] });
-  const [error, setError] = useState('');
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  useEffect(() => {
-    const fetchScheduleData = async () => {
-      try {
-        const data = await getScheduleData();
-        setSchedules(data);
-      } catch (err) {
-        setError(err.message);
-      }
+    const { user } = useContext(AuthContext)!;
+    const clubId = user?.currentActiveClubId;
+    const [courtsResponse, setCourtsResponse] = useState<{ id: string; name: string }[]>([]);
+    const [courtsLoading, setCourtsLoading] = useState(true);
+    const [courtsError, setCourtsError] = useState('');
+    const [schedules, setSchedules] = useState({ events: [] });
+    const [error, setError] = useState('');
+    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [events, setEvents] = useState([]);
+    const [eventsError, setEventsError] = useState('');
+    const renderEventContent = (arg) => {
+        const { event } = arg;
+        const isCourtBooking = event.title === 'Reserved'; 
+        const isFull = event.extendedProps.openSessionFull;
+        let backgroundColor = 'grey'; 
+        if (isCourtBooking) {
+            backgroundColor = 'red'; 
+        } else if (isFull) {
+            backgroundColor = 'blue'; 
+        }
+        return (
+            <div
+                style={{
+                fontSize: '14px',
+                padding: '5px',
+                height: '100%',
+                whiteSpace: 'normal',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                textAlign: 'center',
+                backgroundColor, 
+                color: isCourtBooking ? 'white' : 'black', 
+                borderRadius: '4px',
+                }}
+            >
+                {isCourtBooking ? (
+                <p style={{ fontWeight: 'bold', margin: 0 }}>Reserved</p>
+                ) : (
+                <>
+                    
+                    <p style={{ fontWeight: 'bold', margin: 0 }}>{event.extendedProps.skillLevel} - OPEN PLAY</p>
+        
+    
+                    <p style={{ margin: 0 }}>
+                    {event.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - 
+                    {event.end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </p>
+        
+                    
+                    {isFull ? (
+                    <p style={{ backgroundColor: 'red', color: 'white', padding: '2px 5px', borderRadius: '4px', margin: 0 }}>
+                        FULL
+                    </p>
+                    ) : (
+                    <p style={{ margin: 0 }}>
+                        {event.extendedProps?.slotsRemaining} of {event.extendedProps.totalSlots} slots left
+                    </p>
+                    )}
+        
+                    
+                    <button
+                    style={{
+                        marginTop: '5px',
+                        padding: '5px 10px',
+                        backgroundColor: isFull ? 'gray' : 'green',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                    }}
+                    onClick={()=>alert(event.extendedProps?.skillLevel)}
+                    >
+                    {isFull ? 'Join Waitlist' : 'Reserve Court'}
+                    </button>
+                </>
+                )}
+            </div>
+        );
+    };
+  
+    useEffect(() => {
+        const loadCourts = async () => {
+          try {
+            setCourtsLoading(true);
+            const courts = await fetchCourts(clubId!);
+            setCourtsResponse(courts);
+          } catch (error) {
+            setCourtsError(error.message);
+          } finally {
+            setCourtsLoading(false);
+          }
+        };
+    
+        if (clubId) loadCourts();
+      }, [clubId]);
+
+      useEffect(() => {
+        const loadBookings = async () => {
+          try {
+            const bookings = await fetchBookings(clubId!);
+            setEvents(bookings);
+          } catch (error) {
+            setEventsError(error.message);
+          }
+        };
+    
+        if (clubId) loadBookings();
+      }, [clubId]);
+
+    const handleDateChange = date => {
+        console.log(date);
+        setSelectedDate(date);
     };
 
-    fetchScheduleData();
-  }, [selectedDate]);
 
-  const handleDateChange = date => {
-    console.log(date);
-    setSelectedDate(date);
-  };
-
-  const formatFullCalendarDate = (date, isStartTime = true) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const hours = isStartTime ? '00' : '23';
-    const minutes = isStartTime ? '00' : '59';
-    const seconds = isStartTime ? '00' : '59';
-    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
-  };
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const options: Intl.DateTimeFormatOptions = {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
+    const formatDate = (dateString: string) => {
+        const date = new Date(dateString);
+        const options: Intl.DateTimeFormatOptions = {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+        };
+        return date.toLocaleDateString('en-GB', options);
     };
-    return date.toLocaleDateString('en-GB', options);
-  };
 
   return (
     <div className="App">
@@ -88,41 +144,25 @@ function FullCalendarApp(): JSX.Element {
           key={selectedDate.toISOString()}
           height="auto"
           // contentHeight="auto"
-          plugins={[resourceTimelinePlugin,dayGridPlugin, timeGridPlugin, interactionPlugin]}
-          initialView="resourceTimelineDay"
-          slotMinTime="09:00:00"
-            slotMaxTime="23:00:00"
+          plugins= {[ resourceTimeGridPlugin ]}
+  initialView='resourceTimeGridDay'
+        //   slotMinTime="09:00:00"
+        //     slotMaxTime="23:00:00"
         //   headerToolbar={{
         //     center: 'timeGridDay',
         //   }}
-        resources={[
-            { id: 'court-1', title: 'Court 1' },
-            { id: 'court-2', title: 'Court 2' },
-            { id: 'court-3', title: 'Court 3' }
-          ]}
-          events={schedules.events.map(event => ({
-            id: event.reservation_id,
-            title: event.name,
-            start: `${event.date}T${event.time}`,
-            end: `${event.date}T${parseInt(event.time.split(':')[0]) + event.duration}:00:00`,
-            resourceId: event.court,
-          }))}
+        resources={courtsResponse}
+          events={events}
           resourceAreaHeaderContent="Courts"
           eventBackgroundColor="#b3cde0"
           eventTextColor="#0f2657"
           nowIndicator
           views={{
-            dayGrid: {
-              dayMaxEvents: 2,
-            },
-            timeGridWeek: {
-              eventMaxStack: 1,
-            },
-            timeGridDay: {
-              eventMaxStack: 5,
+            resourceTimelineDay: {
+              slotHeight: 200, 
             },
           }}
-          initialDate={formatFullCalendarDate(selectedDate)}
+          eventContent={renderEventContent}
         />
       </div>
       {/* <div>

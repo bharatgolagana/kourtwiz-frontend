@@ -40,7 +40,7 @@ export const fetchBookings = async (clubId: string) => {
         resourceId: session.courtId,
         extendedProps: {
             skillLevel: session.skillLevel,
-            slotsRemaining: session.maxPlayers - session.registeredPlayers.length,
+            slotsRemaining: session.maxPlayers - (session.registeredPlayers ? session.registeredPlayers.length : 0),
             totalSlots: session.maxPlayers,  
             openSessionFull: session.openSessionFull, 
         } 

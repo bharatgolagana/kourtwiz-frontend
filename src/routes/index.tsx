@@ -18,6 +18,7 @@ import MemberApproval from '../pages/member-approval/MemberApproval';
 import BookingsPage from '../pages/bookings/BookingsPage';
 import ClubBookingsRoutes from './ClubBookingsRoutes';
 import { ManageUsers } from './ManageUser';
+import BookingCalendarPage from '../pages/bookings-calendar/BookingCalendarPage';
 
 const createRoutes = (): RouteObject[] => {
   return [
@@ -47,7 +48,7 @@ const createRoutes = (): RouteObject[] => {
         },
         {
           path: '/bookings',
-          element: <BookingsPage />,
+          element: <BookingCalendarPage/>,
         },
         {
           path: '/server-not-found',

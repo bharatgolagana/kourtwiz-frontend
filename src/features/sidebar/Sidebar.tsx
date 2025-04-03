@@ -128,6 +128,11 @@ const sidebarItems = [
     path: '/TBD',
     isExpandable: false,
   },
+  {
+    label: 'Open Play',
+    path: '/open-play',
+    isExpandable: false,
+  },
 ];
 
 const Sidebar: React.FC = () => {
@@ -478,7 +483,8 @@ const Sidebar: React.FC = () => {
                     item.label !== 'Members' &&
                     item.label !== 'Courts' &&
                     item.label !== 'Membership Plans' &&
-                    item.label !==  'Club Bookings'
+                    item.label !==  'Club Bookings' &&
+                    item.label !== 'Open Play'
                   ) {
                     return;
                   }

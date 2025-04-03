@@ -127,7 +127,7 @@ function FullCalendarApp(): JSX.Element {
                     }}
                     onClick={() => handleReserveOrWaitlist(event.id, isFull)}
                     >
-                    {isFull ? 'Join Waitlist' : 'Reserve Court'}
+                    {isFull ? 'Join Waitlist' : 'Join OPEN Play'}
                     </button>
                 </>
                 )}
@@ -190,8 +190,8 @@ function FullCalendarApp(): JSX.Element {
           // contentHeight="auto"
           plugins= {[ resourceTimeGridPlugin ]}
   initialView='resourceTimeGridDay'
-        //   slotMinTime="09:00:00"
-        //     slotMaxTime="23:00:00"
+          slotMinTime="09:00:00"
+            // slotMaxTime="23:00:00"
         //   headerToolbar={{
         //     center: 'timeGridDay',
         //   }}

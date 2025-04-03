@@ -17,12 +17,53 @@ function FullCalendarApp(): JSX.Element {
     const [courtsResponse, setCourtsResponse] = useState<{ id: string; name: string }[]>([]);
     const [courtsLoading, setCourtsLoading] = useState(true);
     const [courtsError, setCourtsError] = useState('');
-    const [schedules, setSchedules] = useState({ events: [] });
     const [error, setError] = useState('');
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [events, setEvents] = useState([]);
     const [eventsError, setEventsError] = useState('');
 
+    const generateEmptySlots = (bookings) => {
+        const emptySlots = [];
+    
+
+        const startTime = new Date(selectedDate);
+        startTime.setHours(9, 0, 0, 0); 
+    
+        const endTime = new Date(selectedDate);
+        endTime.setHours(23, 0, 0, 0); 
+    
+        courtsResponse.forEach((court) => {
+            let currentTime = new Date(startTime);
+    
+            while (currentTime < endTime) {
+                const nextTime = new Date(currentTime);
+                nextTime.setMinutes(nextTime.getMinutes() + 30); 
+    
+                const isSlotOccupied = bookings.some(
+                    (event) =>
+                        event.resourceId === court.id &&
+                        new Date(event.start) < nextTime &&
+                        new Date(event.end) > currentTime
+                );
+    
+                if (!isSlotOccupied) {
+                    emptySlots.push({
+                        id: `empty-${court.id}-${currentTime.getTime()}`,
+                        title: "Reserve",
+                        start: new Date(currentTime),
+                        end: new Date(nextTime),
+                        resourceId: court.id,
+                        extendedProps: { isTemporary: true,resourceId: court.id },
+                    });
+                }
+    
+                currentTime = nextTime;
+            }
+        });
+    
+        return emptySlots;
+    };
+    
     const handleReserveOrWaitlist = async (sessionId: string, isFull: boolean) => {
         const token=localStorage.getItem('jwtToken');
         try {
@@ -65,6 +106,36 @@ function FullCalendarApp(): JSX.Element {
     
     const renderEventContent = (arg) => {
         const { event } = arg;
+        if (event.extendedProps?.isTemporary) {
+            return (
+                <button
+                    style={{
+                        backgroundColor: 'white',
+                        color: 'black',
+                        border: '1px solid #ccc',
+                        padding: '5px',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontSize: '12px',
+                        width: "100%", 
+                        height: "100%", 
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        textAlign: "center"
+                    }}
+                    onClick={() => {
+                        const { start, end, resourceIds } = event;
+                        alert(`Date: ${new Date(start).toDateString()}
+                        Start Time: ${new Date(start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        End Time: ${new Date(end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        Court ID: ${event.extendedProps?.resourceId}`);
+                    }}
+                >
+                    Reserve
+                </button>
+            );
+        }
         const isCourtBooking = event.title === 'Reserved'; 
         const isFull = event.extendedProps.slotsRemaining==0;
         let backgroundColor = 'grey'; 
@@ -154,31 +225,21 @@ function FullCalendarApp(): JSX.Element {
       const loadBookings = async () => {
         try {
             const bookings = await fetchBookings(clubId!);
-            setEvents(bookings);
+            const emptySlots = generateEmptySlots(bookings);
+            setEvents([...bookings, ...emptySlots]); 
         } catch (error) {
             setEventsError(error.message);
         }
-        };
+    };
 
     useEffect(() => {
         if (clubId) loadBookings();
-    }, [clubId]);
+    }, [clubId,selectedDate]);
 
-    const handleDateChange = date => {
-        console.log(date);
-        setSelectedDate(date);
+    const handleDateChange = (info) => {
+        setSelectedDate(new Date(info.start)); 
     };
 
-
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString);
-        const options: Intl.DateTimeFormatOptions = {
-            day: '2-digit',
-            month: 'short',
-            year: 'numeric',
-        };
-        return date.toLocaleDateString('en-GB', options);
-    };
 
   return (
     <div className="App">
@@ -187,14 +248,11 @@ function FullCalendarApp(): JSX.Element {
         <FullCalendar
           key={selectedDate.toISOString()}
           height="auto"
-          // contentHeight="auto"
+          initialDate={selectedDate}
           plugins= {[ resourceTimeGridPlugin ]}
   initialView='resourceTimeGridDay'
           slotMinTime="09:00:00"
-            // slotMaxTime="23:00:00"
-        //   headerToolbar={{
-        //     center: 'timeGridDay',
-        //   }}
+            slotMaxTime="23:00:00"
         resources={courtsResponse}
           events={events}
           resourceAreaHeaderContent="Courts"
@@ -207,6 +265,7 @@ function FullCalendarApp(): JSX.Element {
             },
           }}
           eventContent={renderEventContent}
+          datesSet={handleDateChange}
         />
       </div>
       {/* <div>

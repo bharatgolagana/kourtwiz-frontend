@@ -5,7 +5,6 @@ import {
   clubSchema,
   ClubSchema,
 } from '../../features/createClub/schema/clubSchema';
-import axios from 'axios';
 import { toast } from 'react-toastify';
 import { Button, Box, Typography, Divider } from '@mui/material';
 import TestimonialCard from '../../features/createClub/components/testimonial-card/TestimonialCard';

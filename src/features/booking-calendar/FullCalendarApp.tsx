@@ -7,10 +7,13 @@ import 'react-calendar/dist/Calendar.css';
 import AuthContext from '../../context/AuthContext';
 import { fetchCourts } from './api/getCourts';
 import { fetchBookings } from './api/getbookings';
+import { toast } from 'react-toastify';
+import axios from 'axios';
 
 function FullCalendarApp(): JSX.Element {
     const { user } = useContext(AuthContext)!;
     const clubId = user?.currentActiveClubId;
+    const userId = user?.userId;
     const [courtsResponse, setCourtsResponse] = useState<{ id: string; name: string }[]>([]);
     const [courtsLoading, setCourtsLoading] = useState(true);
     const [courtsError, setCourtsError] = useState('');
@@ -19,10 +22,51 @@ function FullCalendarApp(): JSX.Element {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [events, setEvents] = useState([]);
     const [eventsError, setEventsError] = useState('');
+
+    const handleReserveOrWaitlist = async (sessionId: string, isFull: boolean) => {
+        const token=localStorage.getItem('jwtToken');
+        try {
+            const response = await axios.post(
+                `http://44.216.113.234:8080/api/openplay/bookings`,
+                null,
+                {
+                    headers: {
+
+                        Authorization: `Bearer ${token}`,
+
+                    },
+                    params: {
+                        sessionId,
+                        userId,
+                        isGuest: false,
+                    },
+                }
+            );
+
+            if (response.status === 200) {
+                toast.success(isFull ? 'You have been added to the waitlist!' : 'Court reserved successfully!');
+                loadBookings();
+            } else {
+                toast.error('Failed to process your request. Please try again.');
+            }
+        } catch (error) {
+            let errorMessage = "Failed to process your request. Please try again.";
+
+            if (error.response) {
+                if (error.response.data?.message) {
+                    errorMessage = error.response.data.message;  
+                } else if (error.response.data) {
+                    errorMessage = JSON.stringify(error.response.data); 
+                }
+            }
+            toast.error(errorMessage);
+        }
+    };
+    
     const renderEventContent = (arg) => {
         const { event } = arg;
         const isCourtBooking = event.title === 'Reserved'; 
-        const isFull = event.extendedProps.openSessionFull;
+        const isFull = event.extendedProps.slotsRemaining==0;
         let backgroundColor = 'grey'; 
         if (isCourtBooking) {
             backgroundColor = 'red'; 
@@ -61,7 +105,7 @@ function FullCalendarApp(): JSX.Element {
         
                     
                     {isFull ? (
-                    <p style={{ backgroundColor: 'red', color: 'white', padding: '2px 5px', borderRadius: '4px', margin: 0 }}>
+                    <p style={{ backgroundColor: 'red', color: 'white', padding: '1px', borderRadius: '4px', margin: 0 }}>
                         FULL
                     </p>
                     ) : (
@@ -81,7 +125,7 @@ function FullCalendarApp(): JSX.Element {
                         borderRadius: '4px',
                         cursor: 'pointer',
                     }}
-                    onClick={()=>alert(event.extendedProps?.skillLevel)}
+                    onClick={() => handleReserveOrWaitlist(event.id, isFull)}
                     >
                     {isFull ? 'Join Waitlist' : 'Reserve Court'}
                     </button>
@@ -107,18 +151,18 @@ function FullCalendarApp(): JSX.Element {
         if (clubId) loadCourts();
       }, [clubId]);
 
-      useEffect(() => {
-        const loadBookings = async () => {
-          try {
+      const loadBookings = async () => {
+        try {
             const bookings = await fetchBookings(clubId!);
             setEvents(bookings);
-          } catch (error) {
+        } catch (error) {
             setEventsError(error.message);
-          }
+        }
         };
-    
+
+    useEffect(() => {
         if (clubId) loadBookings();
-      }, [clubId]);
+    }, [clubId]);
 
     const handleDateChange = date => {
         console.log(date);

@@ -128,6 +128,17 @@ const sidebarItems = [
     path: '/TBD',
     isExpandable: false,
   },
+  {
+    label: 'Open Play',
+    path: '/open-play',
+    isExpandable: false,
+  },
+  {
+    label: 'Waitlist',
+    path: '/waitlist',
+    icon: <img src='src\assets\pickleballclub.svg' />,
+    isExpandable: false,
+  },
 ];
 
 const Sidebar: React.FC = () => {
@@ -478,7 +489,8 @@ const Sidebar: React.FC = () => {
                     item.label !== 'Members' &&
                     item.label !== 'Courts' &&
                     item.label !== 'Membership Plans' &&
-                    item.label !==  'Club Bookings'
+                    item.label !==  'Club Bookings' &&
+                    item.label !== 'Open Play'
                   ) {
                     return;
                   }
@@ -490,7 +502,9 @@ const Sidebar: React.FC = () => {
                   )
                 ) {
                   if (
-                    item.label !== 'Bookings'
+                    item.label !== 'Bookings'&&
+                    item.label !== 'Waitlist'
+
                   ) {
                     return;
                   }

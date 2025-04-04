@@ -18,6 +18,9 @@ import MemberApproval from '../pages/member-approval/MemberApproval';
 import BookingsPage from '../pages/bookings/BookingsPage';
 import ClubBookingsRoutes from './ClubBookingsRoutes';
 import { ManageUsers } from './ManageUser';
+import OpenPlayCreationRoutes from './OpenPlayCreationROutes';
+import BookingCalendarPage from '../pages/bookings-calendar/BookingCalendarPage';
+import WaitlistRoutes from './WaitlistRoutes';
 
 const createRoutes = (): RouteObject[] => {
   return [
@@ -40,14 +43,15 @@ const createRoutes = (): RouteObject[] => {
         ...TBDRoutes,
         ...ClubBookingsRoutes,
         ...ManageUsers,
-
+        ...OpenPlayCreationRoutes,
+        ...WaitlistRoutes,
         {
           path: '/approve-members',
           element: <MemberApproval />,
         },
         {
           path: '/bookings',
-          element: <BookingsPage />,
+          element: <BookingCalendarPage/>,
         },
         {
           path: '/server-not-found',

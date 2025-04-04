@@ -1,12 +1,12 @@
 import { useMutation } from '@tanstack/react-query';
 
 interface BookingData {
-  userId: number;
-  clubId: number;
-  courtId: number;
+  userId: string;
+  clubId: string;
+  courtId: string;
   date: string;
-  startTime: { hour: number; minute: number; second: number; nano: number };
-  endTime: { hour: number; minute: number; second: number; nano: number };
+  startTime: string;
+  endTime: string;
   participants: string;
   status: string;
 }

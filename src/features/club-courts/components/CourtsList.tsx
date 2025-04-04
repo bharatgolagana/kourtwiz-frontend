@@ -55,7 +55,7 @@ const CourtsList = () => {
     if (
       newDate &&
       !blockedDatesArray.includes(newDate) &&
-      blockedDatesArray.length < 2
+      blockedDatesArray?.length < 2
     ) {
       setBlockedDatesArray((prev) => [...prev, newDate]);
     } else {
@@ -77,7 +77,7 @@ const CourtsList = () => {
         {/* Courts Table */}
         <div style={styles.section}>
           <h3 style={styles.subHeading}>Courts List</h3>
-          {clubList && clubList.length > 0 ? (
+          {clubList && clubList?.length > 0 ? (
             <div style={styles.tableWrapper}>
               <table style={styles.table}>
                 <thead>
@@ -114,7 +114,7 @@ const CourtsList = () => {
                         {court.openingTime} - {court.closingTime}
                       </td>
                       <td style={styles.td}>
-                        {court.blockedDates.length > 0
+                        {court.blockedDates?.length > 0
                           ? court.blockedDates.join(', ')
                           : 'None'}
                       </td>

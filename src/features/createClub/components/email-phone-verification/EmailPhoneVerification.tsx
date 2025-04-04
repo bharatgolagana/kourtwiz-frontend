@@ -1,10 +1,11 @@
 import { Button, TextField, Typography, Box, Grid2 } from '@mui/material';
 import { UseFormRegister, FieldErrors, UseFormWatch } from 'react-hook-form';
 import { useSendOtpEmail } from '../../../../shared/apis/otp/useSendOtpEmail';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useValidateOtp } from '../../../../shared/apis/otp/useValidateOtp';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { useSendOtpSms } from '../../../../shared/apis/otp/useSendOtpSms';
+import { toast } from 'react-toastify';
 
 interface OtpVerificationStatus {
   type: string;
@@ -26,20 +27,52 @@ const EmailPhoneVerification: React.FC<VerificationProps> = ({
   const [enterEmailOtp, setEnterEmailOtp] = useState('');
   const [isEmailOtpSent, setIsEmailOtpSent] = useState(false);
   const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [emailTimer, setEmailTimer] = useState(120);
 
   const [enterPhoneOtp, setEnterPhoneOtp] = useState('');
   const [isPhoneOtpSent, setIsPhoneOtpSent] = useState(false);
   const [isPhoneVerified, setIsPhoneVerified] = useState(false);
+  const [phoneTimer, setPhoneTimer] = useState(120);
+
+  useEffect(() => {
+      let emailInterval, phoneInterval;
+  
+      if (isEmailOtpSent && emailTimer > 0) {
+        emailInterval = setInterval(() => {
+          setEmailTimer((prev) => prev - 1);
+        }, 1000);
+      } else if (emailTimer === 0) {
+        setIsEmailOtpSent(false);
+        setEmailTimer(120);
+      }
+  
+      if (isPhoneOtpSent && phoneTimer > 0) {
+        phoneInterval = setInterval(() => {
+          setPhoneTimer((prev) => prev - 1);
+        }, 1000);
+      } else if (phoneTimer === 0) {
+        setIsPhoneOtpSent(false);
+        setPhoneTimer(120);
+      }
+  
+      return () => {
+        clearInterval(emailInterval);
+        clearInterval(phoneInterval);
+      };
+    }, [isEmailOtpSent, emailTimer, setIsPhoneOtpSent, phoneTimer, isPhoneOtpSent]);
 
   const { mutate: mutateSendEmailOtp, status: emailOtpStatus } =
     useSendOtpEmail({
       onSuccessCallback: () => {
         setIsEmailOtpSent(true);
+        setEmailTimer(120);
         console.log('otp sent');
+        toast.success('OTP sent to your email');
       },
       onErrorCallback: () => {
         setIsEmailOtpSent(false);
         console.log('error while sending the otp');
+        toast.error('Error while sending the OTP');
       },
     });
   const { mutate: mutateValidateOtp, status: validateOtpStatus } =
@@ -58,6 +91,7 @@ const EmailPhoneVerification: React.FC<VerificationProps> = ({
         if (type === 'email') {
           setIsEmailVerified(false);
           handleOtpVerificationStatus({ type, result: false });
+          toast.error('Error while validating the OTP');
         } else {
           setIsPhoneVerified(true);
           handleOtpVerificationStatus({ type, result: true });
@@ -68,9 +102,12 @@ const EmailPhoneVerification: React.FC<VerificationProps> = ({
   const { mutate: mutateSendPhoneOtp } = useSendOtpSms({
     onSuccessCallback: () => {
       setIsPhoneOtpSent(true);
+      setPhoneTimer(120);
+      toast.success('OTP sent to your phone');
     },
     onErrorCallback: () => {
       setIsPhoneOtpSent(false);
+      toast.error('Error while sending the OTP');
     },
   });
   const sendEmailOtp = () => {
@@ -113,9 +150,14 @@ const EmailPhoneVerification: React.FC<VerificationProps> = ({
             color='primary'
             sx={{ mt: 1 }}
             onClick={() => sendEmailOtp()}
+            disabled={isEmailOtpSent}
             loading={emailOtpStatus == 'pending'}
           >
-            Send OTP
+            {isEmailOtpSent
+                  ? `Resend in ${Math.floor(emailTimer / 60)}:${String(
+                      emailTimer % 60
+                    ).padStart(2, "0")}`
+                  : "Send OTP"}
           </Button>
         </Grid2>
         <Grid2 size={{ xs: 12, sm: 'auto' }} item>
@@ -174,10 +216,15 @@ const EmailPhoneVerification: React.FC<VerificationProps> = ({
             onClick={() => {
               sendPhoneOtp();
             }}
+            disabled={isPhoneOtpSent}
             fullWidth
             sx={{ mt: 1 }}
           >
-            Send OTP
+            {isPhoneOtpSent
+              ? `Resend in ${Math.floor(phoneTimer / 60)}:${String(
+                  phoneTimer % 60
+                ).padStart(2, '0')}`
+              : 'Send OTP'}
           </Button>
         </Grid2>
         <Grid2 size={{ xs: 12, sm: 'auto' }} item>

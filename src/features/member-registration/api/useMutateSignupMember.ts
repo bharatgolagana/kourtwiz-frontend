@@ -4,7 +4,6 @@ const signUp = async (payload: {
   name: string;
   email: string;
   phoneNumber: string;
-  password: string;
   profilePictureUrl?: string;
   dateOfBirth: string;
   gender: string;
@@ -25,7 +24,7 @@ const signUp = async (payload: {
     cardTypeEnum: string;
   };
 }) => {
-  const { currentActiveClubId, membershipTypeId } = payload; // Extract needed values
+  const { currentActiveClubId, membershipTypeId } = payload;
 
   const response = await fetch(
     `http://44.216.113.234:8080/users/assign-club-membership/${currentActiveClubId}?membershipTypeId=${membershipTypeId}`,

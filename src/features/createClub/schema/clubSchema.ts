@@ -6,9 +6,6 @@ export const clubSchema = z.object({
   bannerUrl: z.string().url('Enter a valid Banner URL'),
   clubEmailId: z.string().email('Enter a valid email'),
   clubOwnerName: z.string().min(1, 'Owner name is required'),
-  clubOwnerPassword: z
-    .string()
-    .min(6, 'Password must be at least 6 characters'),
   clubPhoneNumber: z.string().min(10, 'Phone number is required'),
   clubAddress: z.string().min(1, 'Address is required'),
   clubCity: z.string().min(1, 'City is required'),

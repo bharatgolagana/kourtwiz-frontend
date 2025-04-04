@@ -25,11 +25,12 @@ const CreateClub = () => {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
-  } = useForm({ resolver: zodResolver(clubSchema) });
+  } = useForm({ resolver: zodResolver(clubSchema), mode: "onChange", });
   const { mutate: mutateCreateClub } = useMutateCreateClub({
     onSuccessCallback: () => {
-      toast.success('account created!');
+      toast.success('Account created! Check your email for login credentials.');
       navigate('/home');
     },
     onErrorCallback: () => {
@@ -63,7 +64,7 @@ const CreateClub = () => {
         <Divider className='createclub-divider' />
         <form onSubmit={handleSubmit(onSubmit)}>
           {step === 1 && (
-            <BasicDetailsForm register={register} errors={errors} />
+            <BasicDetailsForm register={register} errors={errors} watch={watch} setValue={setValue} />
           )}
           {step === 2 && (
             <EmailPhoneVerification

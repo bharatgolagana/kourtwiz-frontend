@@ -1,13 +1,17 @@
 import { TextField, Grid, Typography } from '@mui/material';
-import { UseFormRegister, FieldErrors } from 'react-hook-form';
-import { ClubSchema } from './clubSchema';
+import { UseFormRegister, FieldErrors, UseFormWatch, UseFormSetValue } from 'react-hook-form';
+import { ClubSchema } from '../../schema/clubSchema';
+import PhoneInput from "react-phone-number-input";
+import 'react-phone-number-input/style.css';
 
 interface BasicDetailsFormProps {
   register: UseFormRegister<ClubSchema>;
   errors: FieldErrors<ClubSchema>;
+  watch: UseFormWatch<ClubSchema>;
+  setValue: UseFormSetValue<ClubSchema>;
 }
 
-const BasicDetailsForm = ({ register, errors }: BasicDetailsFormProps) => {
+const BasicDetailsForm = ({ register, errors, watch, setValue }: BasicDetailsFormProps) => {
   return (
     <>
       <Typography variant='h6' gutterBottom color='white'>
@@ -70,29 +74,19 @@ const BasicDetailsForm = ({ register, errors }: BasicDetailsFormProps) => {
             variant='outlined'
           />
         </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            fullWidth
-            label='Password'
-            type='password'
-            {...register('clubOwnerPassword')}
-            error={!!errors.clubOwnerPassword}
-            helperText={errors.clubOwnerPassword?.message}
-            variant='outlined'
-          />
-        </Grid>
 
         {/* Row 4 */}
         <Grid item xs={12} sm={6}>
-          <TextField
-            fullWidth
-            label='Phone Number'
-            {...register('clubPhoneNumber')}
-            error={!!errors.clubPhoneNumber}
-            helperText={errors.clubPhoneNumber?.message}
-            variant='outlined'
-          />
-        </Grid>
+        <PhoneInput
+          international
+          defaultCountry="US"
+          countryCallingCodeEditable={false}
+          error={!!errors.clubPhoneNumber}
+          value={watch("clubPhoneNumber")}
+          onChange={(value) => setValue("clubPhoneNumber", value)} 
+          maxlength={15}
+        />
+      </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
             fullWidth

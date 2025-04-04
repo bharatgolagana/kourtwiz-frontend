@@ -9,47 +9,41 @@ import { useEffect, useState } from "react";
 import { useSendOTP } from "../../features/member-registration/api/useSendOTP";
 import { useValidateOTP } from "../../features/member-registration/api/useValidateOTP";
 import { TextField, Button, Grid, Typography, Paper, Divider, MenuItem } from "@mui/material";
+import PhoneInput from "react-phone-number-input";
+import 'react-phone-number-input/style.css';
 
 const schema = z
   .object({
-    firstName: z.string().min(1, "First name is required"),
-    lastName: z.string().min(1, "Last name is required"),
-    email: z
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  email: z
       .string()
       .min(1, "Email is required")
       .email("Invalid email address"),
-    phoneNumber: z.string().min(10, "Phone number is required"),
-    password: z.string().min(6, "Password must be at least 6 characters"),
-    confirmPassword: z.string().min(6, "Please confirm your password"),
-    profilePictureUrl: z.string().url("Invalid URL").optional(),
-    dateOfBirth: z.string().min(1, "Date of birth is required"),
-    gender: z.string().min(1, "Gender is required"),
-    address: z.string().min(1, "Address is required"),
-    city: z.string().min(1, "City is required"),
-    state: z.string().min(1, "State is required"),
-    country: z.string().min(1, "Country is required"),
-    zipCode: z.string().min(1, "Zip code is required"),
-    emailOTP: z.string().min(6, "Email OTP is required"),
-    phoneOTP: z.string().optional(),
-    skillLevel: z.string().min(1, "Skill level is required"),
-    preferredTime: z.string().min(1, "Preferred time is required"),
-    paymentDetails: z.object({
-      cardNumber: z.string().min(16, "Card number must be 16 digits"),
-      cvv: z
-        .string()
-        .min(3, "CVV must be at least 3 digits")
-        .max(4, "CVV must be at most 4 digits"),
-      expiryDate: z.string().min(5, "Expiry date is required"),
-      cardHolderName: z.string().min(1, "Cardholder name is required"),
-      cardTypeEnum: z
-        .enum(["VISA", "MASTERCARD", "AMEX"])
-        .default("VISA"),
-    }),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    path: ["confirmPassword"],
-    message: "Passwords do not match",
-  });
+  phoneNumber: z.string().min(10, "Phone number is required"),
+  profilePictureUrl: z.string().url("Invalid URL").optional(),
+  dateOfBirth: z.string().min(1, "Date of birth is required"),
+  gender: z.string().min(1, "Gender is required"),
+  address: z.string().min(1, "Address is required"),
+  city: z.string().min(1, "City is required"),
+  state: z.string().min(1, "State is required"),
+  country: z.string().min(1, "Country is required"),
+  zipCode: z.string().min(1, "Zip code is required"),
+  emailOTP: z.string().min(6, "Email OTP is required"),
+  phoneOTP: z.string().optional(),
+  skillLevel: z.string().min(1, "Skill level is required"),
+  preferredTime: z.string().min(1, "Preferred time is required"),
+  paymentDetails: z.object({
+    cardNumber: z.string().min(16, "Card number must be 16 digits"),
+    cvv: z
+      .string()
+      .min(3, "CVV must be at least 3 digits")
+      .max(4, "CVV must be at most 4 digits"),
+    expiryDate: z.string().min(5, "Expiry date is required"),
+    cardHolderName: z.string().min(1, "Cardholder name is required"),
+    cardTypeEnum: z.enum(["VISA", "MASTERCARD", "AMEX"]).default("VISA"),
+  }),
+});
 
 type FormValues = z.infer<typeof schema>;
 
@@ -59,7 +53,7 @@ const MemberRegistrationSignupPage = () => {
   const { clubId, clubName, membershipId } = location.state || {};
   const { mutate } = useMutateSignUpMember({
     onSuccessCallback: () => {
-      toast.success("Member created!");
+      toast.success("Member created! Check your email for login credentials.");
       setTimeout(() => {
         navigate("/home");
       }, 1000);
@@ -76,9 +70,11 @@ const MemberRegistrationSignupPage = () => {
     watch,
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
+    mode: "onChange",
   });
   const email = watch("email");
   const phoneNumber = watch("phoneNumber");
@@ -89,6 +85,35 @@ const MemberRegistrationSignupPage = () => {
   const [phoneSent, setPhoneSent] = useState(false);
   const [isEmailOtpValid, setIsEmailOtpValid] = useState<boolean | null>(null);
   const [isPhoneOtpValid, setIsPhoneOtpValid] = useState<boolean | null>(null);
+  const [emailTimer, setEmailTimer] = useState(120);
+  const [phoneTimer, setPhoneTimer] = useState(120);
+
+  useEffect(() => {
+    let emailInterval, phoneInterval;
+
+    if (emailSent && emailTimer > 0) {
+      emailInterval = setInterval(() => {
+        setEmailTimer((prev) => prev - 1);
+      }, 1000);
+    } else if (emailTimer === 0) {
+      setEmailSent(false);
+      setEmailTimer(120);
+    }
+
+    if (phoneSent && phoneTimer > 0) {
+      phoneInterval = setInterval(() => {
+        setPhoneTimer((prev) => prev - 1);
+      }, 1000);
+    } else if (phoneTimer === 0) {
+      setPhoneSent(false);
+      setPhoneTimer(120);
+    }
+
+    return () => {
+      clearInterval(emailInterval);
+      clearInterval(phoneInterval);
+    };
+  }, [emailSent, emailTimer, phoneSent, phoneTimer]);
 
   const sendEmailOTP = () => {
     if (!email) {
@@ -98,6 +123,7 @@ const MemberRegistrationSignupPage = () => {
     emailOTP.mutate(email, {
       onSuccess: () => {
         setEmailSent(true);
+        setEmailTimer(120);
         toast.success("OTP sent to email!");
       },
       onError: () => toast.error("Failed to send OTP."),
@@ -112,6 +138,7 @@ const MemberRegistrationSignupPage = () => {
     phoneOTP.mutate(phoneNumber, {
       onSuccess: () => {
         setPhoneSent(true);
+        setPhoneTimer(120);
         toast.success("OTP sent to phone!");
       },
       onError: () => toast.error("Failed to send OTP."),
@@ -127,7 +154,10 @@ const MemberRegistrationSignupPage = () => {
             setIsEmailOtpValid(isValid);
             toast.success("OTP verified");
           },
-          onError: () => setIsEmailOtpValid(false),
+          onError: () => {
+            setIsEmailOtpValid(false);
+            toast.error("Invalid OTP");
+          },
         }
       );
     }
@@ -142,7 +172,10 @@ const MemberRegistrationSignupPage = () => {
             setIsPhoneOtpValid(isValid);
             toast.success("OTP verified");
           },
-          onError: () => setIsPhoneOtpValid(false),
+          onError: () => {
+            setIsPhoneOtpValid(false);
+            toast.error("Invalid OTP");
+          },
         }
       );
     }
@@ -152,10 +185,10 @@ const MemberRegistrationSignupPage = () => {
     const payload = {
       ...data,
       name: `${data.firstName} ${data.lastName}`,
-      currentActiveClubId: clubId, 
+      currentActiveClubId: clubId,
       membershipTypeId: membershipId,
     };
-  
+
     mutate(payload);
   };
 
@@ -182,7 +215,7 @@ const MemberRegistrationSignupPage = () => {
           Sign Up
         </Typography>
 
-        <form onSubmit={handleSubmit(onSubmit)} noValidate>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={2}>
             {/* PERSONAL INFO SECTION */}
             <Grid item xs={12}>
@@ -207,12 +240,6 @@ const MemberRegistrationSignupPage = () => {
               { label: "Zip Code", name: "zipCode" },
               { label: "Skill Level", name: "skillLevel" },
               { label: "Preferred Time", name: "preferredTime" },
-              { label: "Password", name: "password", type: "password" },
-              {
-                label: "Confirm Password",
-                name: "confirmPassword",
-                type: "password",
-              },
             ].map(({ label, name, type }) => (
               <Grid item xs={12} sm={6} key={name}>
                 <TextField
@@ -237,6 +264,7 @@ const MemberRegistrationSignupPage = () => {
             <Grid item xs={12} sm={6}>
               <TextField
                 label="Email"
+                type="email"
                 {...register("email")}
                 error={!!errors.email}
                 helperText={errors.email?.message}
@@ -257,7 +285,11 @@ const MemberRegistrationSignupPage = () => {
                 variant="outlined"
                 sx={{ height: "100%" }}
               >
-                {emailSent ? "OTP Sent" : "Send Email OTP"}
+                {emailSent
+                  ? `Resend in ${Math.floor(emailTimer / 60)}:${String(
+                      emailTimer % 60
+                    ).padStart(2, "0")}`
+                  : "Send OTP"}
               </Button>
               <TextField
                 label="Email OTP"
@@ -269,6 +301,18 @@ const MemberRegistrationSignupPage = () => {
             </Grid>
 
             {/* Phone Number & OTP */}
+            <Grid item xs={12} sm={6}>
+              <PhoneInput
+                international
+                defaultCountry="US"
+                countryCallingCodeEditable={false}
+                error={!!errors.phoneNumber}
+                value={watch("phoneNumber")}
+                onChange={(value) =>
+                    setValue("phoneNumber", value)}
+                maxlength={15}
+              />
+            </Grid>
             <Grid
               item
               xs={12}
@@ -277,30 +321,24 @@ const MemberRegistrationSignupPage = () => {
               alignItems="center"
               gap={1}
             >
-              <TextField
-                label="Phone Number"
-                {...register("phoneNumber")}
-                error={!!errors.phoneNumber}
-                helperText={errors.phoneNumber?.message}
-                fullWidth
-              />
               <Button
                 onClick={sendPhoneOTP}
-                disabled={!phoneSent}
+                disabled={phoneSent}
                 variant="outlined"
                 sx={{ height: "100%" }}
               >
-                {phoneSent ? "OTP Sent" : "Send OTP"}
+                {phoneSent
+                  ? `Resend in ${Math.floor(phoneTimer / 60)}:${String(
+                      phoneTimer % 60
+                    ).padStart(2, "0")}`
+                  : "Send OTP"}
               </Button>
-            </Grid>
-            <Grid item xs={12} sm={6}>
               <TextField
                 label="Phone OTP"
                 {...register("phoneOTP")}
                 error={!!errors.phoneOTP}
                 helperText={errors.phoneOTP?.message}
                 fullWidth
-                disabled
               />
             </Grid>
 

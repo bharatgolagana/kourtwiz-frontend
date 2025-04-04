@@ -7,6 +7,9 @@ import AddUserModal from '../AddUserModal/AddUserModal';
 const UserManagement: React.FC = () => {
   const { user } = useContext(AuthContext)!;
   const currentClubId = user?.currentActiveClubId;
+  const currentOrgName = user?.userClubRole.find(
+    (club: any) => club.clubId === currentClubId
+  ).clubName;
   const [openAddUserModal, setopenAddUserModal] = useState(false);
   const handleCloseModal = () => setopenAddUserModal(false);
   const handleOpenModal = () => {
@@ -14,7 +17,7 @@ const UserManagement: React.FC = () => {
     setopenAddUserModal(true);
   };
   const { data: users, isLoading } = useGetUsersByClubId(currentClubId);
-  if (isLoading || !currentClubId) return <>Loading...</>;
+  if (!user || isLoading) return <>Loading..</>;
   return (
     <div>
       <p>Welcome to the User Management page!</p>
@@ -22,6 +25,7 @@ const UserManagement: React.FC = () => {
         open={openAddUserModal}
         onClose={handleCloseModal}
         currentClubId={currentClubId}
+        clubName={currentOrgName}
       />
       <Viewusers data={users} handleOpenModal={handleOpenModal} />
     </div>

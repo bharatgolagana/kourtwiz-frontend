@@ -1,6 +1,5 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
-import { toast } from 'react-toastify';
 
 const API_BASE_URL = 'http://44.216.113.234:8080/users';
 
@@ -31,8 +30,6 @@ export const useMutateAddUser = ({
   onSuccessCallback,
   onErrorCallback,
 }: useMutateAddUserProps) => {
-  const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: async (userData: UserData) => {
       const response = await axios.post(API_BASE_URL, userData, {
@@ -44,7 +41,6 @@ export const useMutateAddUser = ({
       return response.data;
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['usersByClubId'] }); // Invalidate relevant query keys
       onSuccessCallback?.(data);
     },
     onError: (error) => {

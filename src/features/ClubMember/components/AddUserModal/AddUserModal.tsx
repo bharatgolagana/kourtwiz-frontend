@@ -9,10 +9,12 @@ const AddUserModal = ({
   open,
   onClose,
   currentClubId,
+  clubName,
 }: {
   open: boolean;
   onClose: () => void;
   currentClubId: string;
+  clubName: string;
 }) => {
   const { register, handleSubmit } = useForm({
     defaultValues: {
@@ -34,10 +36,17 @@ const AddUserModal = ({
     },
   });
 
+  const handleAddMembership = (data: any) => {
+    assignMemberMutate({
+      userEmail: data.email,
+      clubName: clubName,
+      roleName: 'Member',
+    });
+  };
   const { mutate: addUserMutate } = useMutateAddUser({
-    onSuccessCallback: () => {
+    onSuccessCallback: (data) => {
       toast.success('User added successfully!');
-      assignMemberMutate({ userEmail: '', organizationName: '', roleName: '' });
+      handleAddMembership(data);
     },
     onErrorCallback: () => {
       toast.error('Failed to add user!');

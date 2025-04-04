@@ -2,11 +2,11 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const assignRole = async ({
   userEmail,
-  organizationName,
+  clubName,
   roleName,
 }: {
   userEmail: string;
-  organizationName: string;
+  clubName: string;
   roleName: string;
 }) => {
   const token = localStorage.getItem('jwtToken');
@@ -20,7 +20,7 @@ const assignRole = async ({
     },
     body: JSON.stringify({
       userEmail,
-      organizationName,
+      clubName,
       roleName,
     }),
   });
@@ -43,7 +43,7 @@ export const useMutateAssignRoleUser = ({
   return useMutation({
     mutationFn: assignRole,
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['currentUser'] });
+      queryClient.invalidateQueries({ queryKey: ['usersByClubId'] });
       onSuccessCallback(data);
     },
     onError: (error) => {

@@ -17,6 +17,7 @@ const Viewusers = ({
   data: any;
   handleOpenModal: () => void;
 }) => {
+  if (!data) return <>Loading...</>;
   // Filter out users with the "Club Admin" role
   const filteredUsers = data.filter((user) => user.role.name !== 'ClubAdmin');
 

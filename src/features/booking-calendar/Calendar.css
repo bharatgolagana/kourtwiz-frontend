@@ -19,7 +19,18 @@
     margin-left: 1vw;
     font-size: small;
   } */
-
+  .booking-button{
+    margin-top:0.5rem;
+    margin-bottom: 1rem;;
+  }
+  .modal-container h3{
+    margin-top: 0rem;
+  }
+  .modal-content{
+    width:300px;
+    padding: 0rem;
+  }
+  
 ul.ordering {    
   list-style:none;   
   min-width:250px; 

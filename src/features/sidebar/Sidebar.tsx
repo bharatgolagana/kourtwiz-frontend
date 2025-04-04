@@ -133,6 +133,12 @@ const sidebarItems = [
     path: '/open-play',
     isExpandable: false,
   },
+  {
+    label: 'Waitlist',
+    path: '/waitlist',
+    icon: <img src='src\assets\pickleballclub.svg' />,
+    isExpandable: false,
+  },
 ];
 
 const Sidebar: React.FC = () => {
@@ -496,7 +502,9 @@ const Sidebar: React.FC = () => {
                   )
                 ) {
                   if (
-                    item.label !== 'Bookings'
+                    item.label !== 'Bookings'&&
+                    item.label !== 'Waitlist'
+
                   ) {
                     return;
                   }

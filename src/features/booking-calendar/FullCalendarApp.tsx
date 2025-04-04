@@ -1,6 +1,7 @@
 import { useState, useEffect, JSX, useContext } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import resourceTimeGridPlugin from '@fullcalendar/resource-timegrid';
+import Modal from "../../features/bookings/components/Modal";
 import './Calendar.css';
 
 import 'react-calendar/dist/Calendar.css';
@@ -9,6 +10,7 @@ import { fetchCourts } from './api/getCourts';
 import { fetchBookings } from './api/getbookings';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import { useBookCourt } from '../bookings/api/useBookCourt';
 
 function FullCalendarApp(): JSX.Element {
     const { user } = useContext(AuthContext)!;
@@ -21,6 +23,9 @@ function FullCalendarApp(): JSX.Element {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [events, setEvents] = useState([]);
     const [eventsError, setEventsError] = useState('');
+    const [selectedCourt, setSelectedCourt] = useState<any>(null);
+    const [selectedEvent, setSelectedEvent] = useState<any>(null);
+    const [bookingDuration, setBookingDuration] = useState<number>(30);
 
     const generateEmptySlots = (bookings) => {
         const emptySlots = [];
@@ -63,7 +68,47 @@ function FullCalendarApp(): JSX.Element {
     
         return emptySlots;
     };
+    const [isModalOpen, setIsModalOpen] = useState(false);
     
+    const handleOpenModal = (event) => {
+      setSelectedEvent(event);
+      const court = courtsResponse.find((c) => c.id === event.extendedProps.resourceId);
+      setSelectedCourt(court);
+      setIsModalOpen(true);
+     };
+  
+    
+        const handleCloseModal = () => {
+            setIsModalOpen(false);
+            setSelectedCourt(null);
+        };
+        const { bookCourt, bookingLoading } = useBookCourt(() => {
+            handleCloseModal();
+            loadBookings();
+        });
+
+        const handleConfirmBooking = () => {
+          const startTimeEvent = new Date(selectedEvent.start);
+          const endTimeEvent = new Date(startTimeEvent.getTime() + bookingDuration * 60 * 1000);
+          const resourceId = selectedEvent.extendedProps?.resourceId;
+          const formatTime = (date: Date) =>
+            date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+        
+          const formattedStartTime = formatTime(startTimeEvent);
+          const formattedEndTime = formatTime(endTimeEvent);
+      
+          bookCourt({
+              userId,
+              clubId,
+              courtId: resourceId,
+              date: new Date(selectedEvent.start).toISOString().split("T")[0],
+              startTime: formattedStartTime,
+              endTime: formattedEndTime,
+              participants: [userId]
+     });
+      };
+      
+        
     const handleReserveOrWaitlist = async (sessionId: string, isFull: boolean) => {
         const token=localStorage.getItem('jwtToken');
         try {
@@ -125,11 +170,7 @@ function FullCalendarApp(): JSX.Element {
                         textAlign: "center"
                     }}
                     onClick={() => {
-                        const { start, end, resourceIds } = event;
-                        alert(`Date: ${new Date(start).toDateString()}
-                        Start Time: ${new Date(start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        End Time: ${new Date(end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        Court ID: ${event.extendedProps?.resourceId}`);
+                        handleOpenModal(event)
                     }}
                 >
                     Reserve
@@ -275,7 +316,31 @@ function FullCalendarApp(): JSX.Element {
           className="calendar"
         />
       </div> */}
-    </div>
+     {isModalOpen && selectedEvent && (
+        <Modal onClose={handleCloseModal}>
+          <h3>Book {selectedCourt?.name}</h3>
+          <p>
+            Date: <strong>{new Date(selectedEvent.start).toDateString()}</strong><br />
+            Start Time: <strong>{new Date(selectedEvent.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</strong>
+          </p>
+          <label>
+            Select Duration:
+            <select
+              value={bookingDuration}
+              onChange={(e) => setBookingDuration(Number(e.target.value))}
+            >
+              <option value={30}>30 minutes</option>
+              <option value={60}>60 minutes</option>
+            </select>
+          </label>
+          <br />
+          <button onClick={handleConfirmBooking} disabled={bookingLoading} className='booking-button'>
+            {bookingLoading ? "Booking..." : `Book for ${bookingDuration} minutes`}
+          </button>
+        </Modal>
+      )}
+  </div>
+
   );
 }
 

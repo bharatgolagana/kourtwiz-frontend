@@ -64,4 +64,6 @@ ul.ordering li span{
   margin-left: 20px; 
 }
 
-  
+.fc-timegrid-slot {
+    height: 50px !important; 
+}

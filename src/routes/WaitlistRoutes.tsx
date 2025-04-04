@@ -6,7 +6,7 @@ import WaitListPage from '../pages/waitlist/WaitListPage';
 const WaitlistRoutes: RouteObject[] = [
   {
     path: 'waitlist',
-    element: <WaitListPage />,
+    element: <WaitListPage/>,
   },
 ];
 

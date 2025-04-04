@@ -139,6 +139,11 @@ const sidebarItems = [
     icon: <img src='src\assets\pickleballclub.svg' />,
     isExpandable: false,
   },
+  {
+    label: 'Join Open Play',
+    path: '/openplay',
+    isExpandable: false,
+  },
 ];
 
 const Sidebar: React.FC = () => {
@@ -503,8 +508,8 @@ const Sidebar: React.FC = () => {
                 ) {
                   if (
                     item.label !== 'Bookings'&&
-                    item.label !== 'Waitlist'
-
+                    item.label !== 'Waitlist'&&
+                    item.label !== 'Join Open Play'
                   ) {
                     return;
                   }

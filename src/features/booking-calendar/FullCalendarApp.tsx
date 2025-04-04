@@ -294,17 +294,13 @@ function FullCalendarApp(): JSX.Element {
   initialView='resourceTimeGridDay'
           slotMinTime="09:00:00"
             slotMaxTime="23:00:00"
+            
         resources={courtsResponse}
           events={events}
           resourceAreaHeaderContent="Courts"
           eventBackgroundColor="#b3cde0"
           eventTextColor="#0f2657"
           nowIndicator
-          views={{
-            resourceTimelineDay: {
-              slotHeight: 200, 
-            },
-          }}
           eventContent={renderEventContent}
           datesSet={handleDateChange}
         />

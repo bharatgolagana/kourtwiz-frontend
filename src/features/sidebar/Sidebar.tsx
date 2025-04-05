@@ -99,6 +99,12 @@ const sidebarItems = [
     isExpandable: false,
   },
   {
+    label: 'Coach Bookings',
+    icon: <img src='src\assets\pickleballclub.svg' />,
+    path: '/coach-bookings',
+    isExpandable: false,
+  },
+  {
     label: 'Membership Plans',
     path: '/club/memberships',
     isExpandable: false,
@@ -509,7 +515,9 @@ const Sidebar: React.FC = () => {
                   if (
                     item.label !== 'Bookings'&&
                     item.label !== 'Waitlist'&&
-                    item.label !== 'Join Open Play'
+                    item.label !== 'Join Open Play' &&
+                    item.label !== 'Coach Bookings'
+
                   ) {
                     return;
                   }

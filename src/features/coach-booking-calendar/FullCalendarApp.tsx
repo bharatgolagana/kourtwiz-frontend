@@ -90,14 +90,22 @@ function FullCalendarApp(): JSX.Element {
           const startTimeEvent = new Date(selectedEvent.start);
           const endTimeEvent = new Date(startTimeEvent.getTime() + bookingDuration * 60 * 1000);
           const resourceId = selectedEvent.extendedProps?.resourceId;
-          const formatTime = (date: Date) =>
-            date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
-        
+          const formatTime = (date: Date) => {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+          
+            return `${year}-${month}-${day}T${hours}:${minutes}:00Z`;
+          };
+          console.log
           const formattedStartTime = formatTime(startTimeEvent);
           const formattedEndTime = formatTime(endTimeEvent);
           // console.log(new Date(selectedEvent.start).toISOString().split("T")[0], "date")
           // console.log(formattedStartTime)
           // console.log(formattedEndTime)
+          
       
           bookCoach({
               userId,

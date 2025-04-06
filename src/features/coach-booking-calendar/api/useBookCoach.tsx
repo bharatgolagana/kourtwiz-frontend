@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+import axios, { AxiosResponse } from 'axios';
 
 interface BookingData {
   userId: string;
@@ -8,35 +9,41 @@ interface BookingData {
   endTime: string;
 }
 
-const bookCoach = async (bookingData: BookingData): Promise<Response> => {
+const bookCoach = async (bookingData: BookingData): Promise<AxiosResponse<string>> => {
   const token = localStorage.getItem('jwtToken');
 
-  const response = await fetch('http://44.216.113.234:8080/api/book-coach', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(bookingData),
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || 'Failed to book a coach');
-  }
+  const response = await axios.post(
+    'http://44.216.113.234:8080/api/book-coach',
+    null, 
+    {
+      params: {
+        userId: bookingData.userId,
+        coachId: bookingData.coachId,
+        date: bookingData.date,
+        startTime: bookingData.startTime,
+        endTime: bookingData.endTime,
+      },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 
   return response;
 };
 
 export function useBookCoach(handleCloseModal: () => void) {
-  const { mutate, isPending } = useMutation<Response, Error, BookingData>({
+  const { mutate, isPending } = useMutation<AxiosResponse<string>, Error, BookingData>({
     mutationFn: bookCoach,
-    onSuccess: async (response) => {
+    onSuccess: (response) => {
       if (response.status === 200) {
-        const message = await response.text(); 
-        alert(message); 
+        alert(response.data); 
         handleCloseModal();
       }
+    },
+    onError: (error) => {
+      alert(error.message || 'Something went wrong while booking the coach.');
     },
   });
 

@@ -155,7 +155,7 @@ function FullCalendarApp(): JSX.Element {
             return (
                 <button
                     style={{
-                        backgroundColor: 'white',
+                        backgroundColor: '#D3D3D3',
                         color: 'black',
                         border: '1px solid #ccc',
                         padding: '5px',
@@ -179,11 +179,11 @@ function FullCalendarApp(): JSX.Element {
         }
         const isCourtBooking = event.title === 'Reserved'; 
         const isFull = event.extendedProps.slotsRemaining==0;
-        let backgroundColor = 'grey'; 
+        let backgroundColor = '#FDFD96'; 
         if (isCourtBooking) {
-            backgroundColor = 'red'; 
+            backgroundColor = '#575755'; 
         } else if (isFull) {
-            backgroundColor = 'blue'; 
+            backgroundColor = '#87CEEB'; 
         }
         return (
             <div

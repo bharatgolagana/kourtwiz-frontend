@@ -155,7 +155,7 @@ function FullCalendarApp(): JSX.Element {
             return (
                 <button
                     style={{
-                        backgroundColor: '#D3D3D3',
+                        backgroundColor: 'white',
                         color: 'black',
                         border: '1px solid #ccc',
                         padding: '5px',

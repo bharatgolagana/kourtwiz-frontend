@@ -16,25 +16,33 @@ const ClubParticipantsTable = () => {
 
   return (
     <div className="ClubSchedulePage">
-      <h2>Session Participants</h2>
+      <h2>My Waitlist</h2>
       <div className="table-container">
         {WaitlistData?.length > 0 ? (
           <table>
             <thead>
               <tr>
-                <th>Session </th>
-                <th>Participant</th>
-                <th>Joined At</th>
+                <th>Court </th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Duration(minutes)</th>
+                <th>Skill Level</th>
               </tr>
             </thead>
             <tbody>
-              {WaitlistData.map((participant) => (
-                <tr key={participant.id}>
-                  <td>{participant.sessionId}</td>
-                  <td>{participant.userId}</td>
-                  <td>{new Date(participant.joinedAt).toLocaleString()}</td>
+              {WaitlistData.map((participant) => {
+                const dateResponse=participant.startTime;
+                const date=dateResponse[0]+"-"+dateResponse[1]+'-'+dateResponse[2];
+                const time=dateResponse[3]+':'+dateResponse[4];
+                return(
+                <tr key={participant.courtName}>
+                  <td>{participant.courtName}</td>
+                  <td>{date}</td>
+                  <td>{time}</td>
+                  <td>{participant.durationMinutes}</td>
+                  <td>{participant.skillLevel}</td>
                 </tr>
-              ))}
+              )})}
             </tbody>
           </table>
         ) : (

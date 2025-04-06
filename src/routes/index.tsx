@@ -21,6 +21,7 @@ import { ManageUsers } from './ManageUser';
 import OpenPlayCreationRoutes from './OpenPlayCreationROutes';
 import BookingCalendarPage from '../pages/bookings-calendar/BookingCalendarPage';
 import WaitlistRoutes from './WaitlistRoutes';
+import ThemeRoutes from './Themes';
 
 const createRoutes = (): RouteObject[] => {
   return [
@@ -45,13 +46,14 @@ const createRoutes = (): RouteObject[] => {
         ...ManageUsers,
         ...OpenPlayCreationRoutes,
         ...WaitlistRoutes,
+        ...ThemeRoutes,
         {
           path: '/approve-members',
           element: <MemberApproval />,
         },
         {
           path: '/bookings',
-          element: <BookingCalendarPage/>,
+          element: <BookingCalendarPage />,
         },
         {
           path: '/server-not-found',

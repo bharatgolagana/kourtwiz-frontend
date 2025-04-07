@@ -22,6 +22,7 @@ import OpenPlayCreationRoutes from './OpenPlayCreationROutes';
 import BookingCalendarPage from '../pages/bookings-calendar/BookingCalendarPage';
 import WaitlistRoutes from './WaitlistRoutes';
 import OpenPlayListRoutes from './OpenPlayListRoutes';
+import UserDetailsRoutes from './UserDetailsRoutes';
 
 const createRoutes = (): RouteObject[] => {
   return [
@@ -47,6 +48,7 @@ const createRoutes = (): RouteObject[] => {
         ...OpenPlayCreationRoutes,
         ...WaitlistRoutes,
         ...OpenPlayListRoutes,
+        ...UserDetailsRoutes,
         {
           path: '/approve-members',
           element: <MemberApproval />,

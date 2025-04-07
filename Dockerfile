@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Handle the secrets file
-ARG SECRETS_FILE=secrets.env
+ARG SECRETS_FILE=.env.dev
 COPY ${SECRETS_FILE} /tmp/secrets.env
 
 # Fallback logic to ensure /tmp/secrets.env exists and is not empty

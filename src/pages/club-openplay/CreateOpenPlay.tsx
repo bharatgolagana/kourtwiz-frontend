@@ -67,29 +67,43 @@ function CreateOpenPlay() {
     };
   
     mutation.mutate(payload, {
-      onSuccess: () => alert("Session created successfully!"),
+      onSuccess: () => {
+        alert("Session created successfully!");
+        setFormData({
+          clubId: clubId,
+          courtName: "",
+          courtId: "",
+          startTime: "",
+          durationMinutes: "",
+          skillLevel: "",
+          maxPlayers: "",
+          registeredPlayers: "",
+        });
+      },
       onError: (error) => alert(error.message),
     });
   };
+  
   
 
   return (
     <form onSubmit={handleSubmit} className="openplay-form">
       <label className="form-label">
         Court Name:
-        <input
-          type="text"
+        <select
           name="courtName"
           value={formData.courtName}
           onChange={handleChange}
           className="form-input"
-          list="court-options"
-        />
-        <datalist id="court-options">
+          required
+        >
+          <option value="">Select a court</option>
           {courtsData?.map((court) => (
-            <option key={court.id} value={court.name} />
+            <option key={court.id} value={court.name}>
+              {court.name}
+            </option>
           ))}
-        </datalist>
+  </select>
       </label>
       <label className="form-label">
         Start Time:
@@ -115,14 +129,18 @@ function CreateOpenPlay() {
       </label>
       <label className="form-label">
         Skill Level:
-        <input
-          type="text"
+        <select
           name="skillLevel"
           value={formData.skillLevel}
           onChange={handleChange}
           className="form-input"
           required
-        />
+        >
+          <option value="">Select skill level</option>
+          <option value="Beginner">Beginner</option>
+          <option value="Intermediate">Intermediate</option>
+          <option value="Advanced">Advanced</option>
+     </select>
       </label>
       <label className="form-label">
         Max Players:

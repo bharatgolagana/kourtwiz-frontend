@@ -57,6 +57,7 @@ const CreateClubMembershipModal = ({ open, onClose }) => {
     onSuccessCallback: () => {
       toast.success('Membership created successfully!');
       onClose();
+      reset();
     },
     onErrorCallback: (err) => {
       console.error('Membership creation error:', err);

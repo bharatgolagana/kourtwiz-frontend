@@ -69,9 +69,8 @@
 }
 .user-profile__email {
   font-weight: 400;
-  padding-bottom: 0.5rem;
 }
-.user-profile__name [data-testid="EditIcon"] {
+.user-profile__name [data-testid='EditIcon'] {
   position: absolute;
   right: 0;
   cursor: pointer;
@@ -161,6 +160,9 @@
   padding: 0.5rem;
 }
 
+.user__profile__details__container {
+  padding: 0.5rem;
+}
 @media screen and (max-width: 768px) {
   .user-profile-details {
     right: -2.5rem;

@@ -42,6 +42,14 @@ export function useBookCourt(handleCloseModal: () => void) {
         // window.location.reload();
       }
     },
+    onError: async (error: any) => {
+      if (error instanceof Response) {
+        const errorMessage = await error.text();
+        alert(`Booking failed: ${errorMessage}`);
+      } else {
+        alert(`Booking failed: ${error.message || 'An unknown error occurred'}`);
+      }
+    },
   });
 
   return { bookCourt: mutate, bookingLoading: isPending };

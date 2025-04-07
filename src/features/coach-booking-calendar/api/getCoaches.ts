@@ -11,5 +11,5 @@ export const fetchCoaches = async (clubId: string) => {
     },
   });
 
-  return response.data.map((court: any) => ({ id: court.id, title: court.name }));
+  return response.data;
 };

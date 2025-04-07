@@ -140,8 +140,6 @@ const sidebarItems = [
     isExpandable: false,
   },
 
- 
-  
   {
     label: 'Open Play',
     path: '/open-play',
@@ -161,6 +159,9 @@ const sidebarItems = [
   {
     label: 'Join Open Play',
     path: '/openplay',
+    isExpandable: false,
+  },
+  {
     label: 'Themes',
     path: '/settings-themes',
     isExpandable: false,
@@ -510,17 +511,16 @@ const Sidebar: React.FC = () => {
                   )
                 ) {
                   if (
-                    item.label !== 'Approve Members' &&
                     item.label !== 'Assets' &&
                     item.label !== 'Settings' &&
                     item.label !== 'Members' &&
                     item.label !== 'Courts' &&
                     item.label !== 'Membership Plans' &&
                     item.label !== 'Club Bookings' &&
-                    item.label !== 'Open Play'&&
+                    item.label !== 'Open Play' &&
                     item.label !== 'Coach' &&
                     item.label !== 'Themes' &&
-                    item.label!=='Profile'
+                    item.label !== 'Profile'
                   ) {
                     return;
                   }
@@ -532,8 +532,7 @@ const Sidebar: React.FC = () => {
                     item.label !== 'Waitlist' &&
                     item.label !== 'Join Open Play' &&
                     item.label !== 'Coach Bookings' &&
-                    item.label!=='Profile'
- &&
+                    item.label !== 'Profile' &&
                     item.label !== 'Themes'
                   ) {
                     return;

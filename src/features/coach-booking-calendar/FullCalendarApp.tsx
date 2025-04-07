@@ -219,7 +219,10 @@ function FullCalendarApp(): JSX.Element {
         const loadCoaches = async () => {
           try {
             setCoachesLoading(true);
-            const coaches = await fetchCoaches(clubId!);
+            const coaches = (await fetchCoaches(clubId!)).map((coach: any) => ({
+              id: coach.id,
+              title: coach.name
+            }));           
             setCoachesResponse(coaches);
           } catch (error) {
             setCoachesError(error.message);

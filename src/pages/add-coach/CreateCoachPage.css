@@ -32,4 +32,34 @@
     background-color: gray;
     cursor: not-allowed;
   }
+
+  .create-coach-page {
+    padding: 20px;
+  }
+  
+  .coach-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .coach-table th, .coach-table td {
+    border: 1px solid #ccc;
+    padding: 10px;
+  }
+  
+  .add-button,
+  .submit-button,
+  .cancel-button {
+    margin: 10px 5px;
+    padding: 8px 12px;
+    cursor: pointer;
+  }
+  
+  .button-row {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  
   

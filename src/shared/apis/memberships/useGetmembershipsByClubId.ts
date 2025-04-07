@@ -7,7 +7,6 @@ const fetchClubMemberships = async (clubId: string) => {
     {
       headers: {
         Accept: '*/*',
-        Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
       },
     }
   );

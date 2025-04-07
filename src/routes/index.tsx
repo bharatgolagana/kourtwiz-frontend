@@ -15,7 +15,6 @@ import RequestsRoutes from './RequestsRoutes';
 import TBDRoutes from './TBDRoutes';
 import SignUpRoutes from './SignUpRoutes';
 import MemberApproval from '../pages/member-approval/MemberApproval';
-import BookingsPage from '../pages/bookings/BookingsPage';
 import ClubBookingsRoutes from './ClubBookingsRoutes';
 import { ManageUsers } from './ManageUser';
 import OpenPlayCreationRoutes from './OpenPlayCreationROutes';
@@ -25,6 +24,7 @@ import OpenPlayListRoutes from './OpenPlayListRoutes';
 import UserDetailsRoutes from './UserDetailsRoutes';
 import AddCoachesRoutes from './AddCoachRoutes';
 import CoachBookingCalendar from '../pages/coach-bookings-calendar/CoachBookingCalendar';
+import PreviousCoachBookingsRoutes from './PreviousCoachBookingsRoutes';
 import ThemeRoutes from './Themes';
 
 const createRoutes = (): RouteObject[] => {
@@ -54,6 +54,7 @@ const createRoutes = (): RouteObject[] => {
         ...UserDetailsRoutes,
         ...AddCoachesRoutes,
         ...ThemeRoutes,
+        ...PreviousCoachBookingsRoutes,
         {
           path: '/approve-members',
           element: <MemberApproval />,

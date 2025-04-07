@@ -10,7 +10,7 @@ export const fetchCoachBookings = async (clubId: string) => {
       Authorization: `Bearer ${token}`,
     },
   });
-  const  courtBooking  = response.data;
+  const  coachBooking  = response.data;
 
 
   const formatDateTime = (dateArray: number[], timeArray?: number[]) => {
@@ -20,32 +20,13 @@ export const fetchCoachBookings = async (clubId: string) => {
   };
 
 
-  const courtEvents = courtBooking.map((booking: any) => ({
+  const courtEvents = coachBooking.map((booking: any) => ({
     id: booking.id,
     title: 'Reserved',
     start: formatDateTime(booking.date, booking.startTime),
     end: formatDateTime(booking.date, booking.endTime),
     resourceId: booking.coachId,
   }));
-
-  // const openPlayEvents = openPlaySession.map((session: any) => {
-  //   const start = formatDateTime(session.startTime.slice(0, 3), session.startTime.slice(3)); 
-  //   const end = new Date(start);
-  //   end.setMinutes(end.getMinutes() + session.durationMinutes);
-  //   return {
-  //       id: session.id,
-  //       title: "Open Play",
-  //       start,
-  //       end,
-  //       resourceId: session.courtId,
-  //       extendedProps: {
-  //           skillLevel: session.skillLevel,
-  //           slotsRemaining: session.maxPlayers - (session.registeredPlayers ? session.registeredPlayers.length : 0),
-  //           totalSlots: session.maxPlayers,  
-  //           openSessionFull: session.openSessionFull, 
-  //       } 
-  //   };
-  // });
 
   return [...courtEvents];
 };

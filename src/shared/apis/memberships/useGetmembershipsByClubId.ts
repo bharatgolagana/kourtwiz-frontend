@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const fetchClubMemberships = async (clubId: string) => {
   const { data } = await axios.get(
-    `http://44.216.113.234:8080/api/membership-types/club-memberships/${clubId}`,
+    `http://44.216.113.234:8080/api/membership-plans/${clubId}`,
     {
       headers: {
         Accept: '*/*',

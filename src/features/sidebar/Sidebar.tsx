@@ -140,6 +140,11 @@ const sidebarItems = [
     isExpandable: false,
   },
   {
+    label: 'Coach',
+    path: '/add-coach',
+    isExpandable: false,
+  },
+  {
     label: 'Waitlist',
     path: '/waitlist',
     icon: <img src='src\assets\pickleballclub.svg' />,
@@ -501,7 +506,8 @@ const Sidebar: React.FC = () => {
                     item.label !== 'Courts' &&
                     item.label !== 'Membership Plans' &&
                     item.label !==  'Club Bookings' &&
-                    item.label !== 'Open Play'
+                    item.label !== 'Open Play'&&
+                    item.label !== 'Coach'
                   ) {
                     return;
                   }

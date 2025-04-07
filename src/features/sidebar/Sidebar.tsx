@@ -153,6 +153,8 @@ const sidebarItems = [
   {
     label: 'Join Open Play',
     path: '/openplay',
+    label: 'Themes',
+    path: '/settings-themes',
     isExpandable: false,
   },
 ];
@@ -489,7 +491,8 @@ const Sidebar: React.FC = () => {
                     item.label !== 'Assets' &&
                     item.label !== 'Courts' &&
                     item.label !== 'Settings' &&
-                    item.label !== 'Schedules'
+                    item.label !== 'Schedules' &&
+                    item.label !== 'Themes'
                   ) {
                     return;
                   }
@@ -505,29 +508,26 @@ const Sidebar: React.FC = () => {
                     item.label !== 'Members' &&
                     item.label !== 'Courts' &&
                     item.label !== 'Membership Plans' &&
-                    item.label !==  'Club Bookings' &&
+                    item.label !== 'Club Bookings' &&
                     item.label !== 'Open Play'&&
-                    item.label !== 'Coach'
+                    item.label !== 'Coach' &&
+                    item.label !== 'Themes'
                   ) {
                     return;
                   }
-                  
-                }
-                else if (
-                  user?.userClubRole?.some(
-                    (role) => role.roleName === 'Member'
-                  )
+                } else if (
+                  user?.userClubRole?.some((role) => role.roleName === 'Member')
                 ) {
                   if (
-                    item.label !== 'Bookings'&&
-                    item.label !== 'Waitlist'&&
+                    item.label !== 'Bookings' &&
+                    item.label !== 'Waitlist' &&
                     item.label !== 'Join Open Play' &&
                     item.label !== 'Coach Bookings'
-
+ &&
+                    item.label !== 'Themes'
                   ) {
                     return;
                   }
-                  
                 }
                 return (
                   <Tooltip

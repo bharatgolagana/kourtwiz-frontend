@@ -1,5 +1,4 @@
 import React, { useContext, useRef, useState, useEffect } from 'react';
-import { UserInfoContext } from '../../context/UserInfoContext';
 import './UserProfile.css';
 import {
   Avatar,
@@ -8,16 +7,20 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Divider,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Slide } from '@mui/material';
 // import { useKeycloak } from "@react-keycloak/web";
-import Logout from '../../assets/Vector.svg';
+import Logout from '../../../../assets/Vector.svg';
 import CloseIcon from '@mui/icons-material/Close';
 import { useNavigate } from 'react-router-dom';
+import AuthContext from '../../../../context/AuthContext';
+import SwitchClub from '../switch-club/SwitchClub';
 
 const UserProfile: React.FC = () => {
-  const { userInfo } = useContext(UserInfoContext) || {};
+  const { user } = useContext(AuthContext)!;
+  console.log('userinfo : ', user);
   const [userDisplay, setUserDisplay] = useState(false);
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
@@ -25,11 +28,6 @@ const UserProfile: React.FC = () => {
   const navigate = useNavigate();
   const userDetails = () => {
     setUserDisplay((prev) => !prev);
-  };
-
-  const handleLogin = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    // keycloak.login();
   };
 
   const handleLogout = () => {
@@ -67,13 +65,8 @@ const UserProfile: React.FC = () => {
   return (
     <div className='user-profile-main-container'>
       <div ref={ref} className='user-profile-container' onClick={userDetails}>
-        <Avatar
-          className='user-profile__avatar'
-          src={userInfo?.profile?.profileImages?.[0] || undefined}
-        >
-          {!userInfo?.profile?.profileImages?.[0] &&
-            userInfo?.userName?.charAt(0).toUpperCase()}
-          {'A '}
+        <Avatar className='user-profile__avatar'>
+          {user?.username?.charAt(0).toUpperCase()}
         </Avatar>
         <ExpandMoreIcon
           className={`expand-icon ${userDisplay ? 'rotate' : ''}`}
@@ -82,12 +75,15 @@ const UserProfile: React.FC = () => {
 
       <Slide direction='left' in={userDisplay} mountOnEnter unmountOnExit>
         <div ref={ref} className='user-profile-details'>
-          <div className='user-profile__name'>
-            {userInfo?.firstName} {userInfo?.lastName}
+          <div className='user__profile__details__container'>
+            <div className='user-profile__name'>{user?.username}</div>
+            <div className='user-profile__email'>{user?.email}</div>
+            <hr className='user-profile__hr'></hr>
+            <hr className='user-profile__hr'></hr>
           </div>
-          <div className='user-profile__email'>{userInfo?.email}</div>
-          <hr className='user-profile__hr'></hr>
-          <hr className='user-profile__hr'></hr>
+          <SwitchClub />
+          <Divider />
+
           <div className='user__profile__logout__container'>
             <Button onClick={openLogoutDialog} className='logout-btn'>
               Logout

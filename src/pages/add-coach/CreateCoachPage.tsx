@@ -1,8 +1,8 @@
-import { useContext } from 'react';
-import { useForm } from 'react-hook-form';
-import AuthContext from '../../context/AuthContext';
+import { useEffect, useState, useContext } from 'react';
 import './CreateCoachPage.css';
+import AuthContext from '../../context/AuthContext';
 import { useCreateCoach } from '../../features/Coach/api/useCreateCoach';
+import { fetchCoaches } from '../../features/coach-booking-calendar/api/getCoaches';
 
 type FormValues = {
   name: string;
@@ -15,74 +15,159 @@ function CreateCoachPage() {
   const { user } = useContext(AuthContext)!;
   const clubId = user?.currentActiveClubId;
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { isSubmitting },
-  } = useForm<FormValues>({
-    defaultValues: {
-      name: '',
-      email: '',
-      pricePerHour: '',
-      expertiseLevels: '',
-    },
+  const [coaches, setCoaches] = useState<any[]>([]);
+  const [showForm, setShowForm] = useState(false);
+
+  const [formData, setFormData] = useState<FormValues>({
+    name: '',
+    email: '',
+    pricePerHour: '',
+    expertiseLevels: '',
   });
 
   const { mutate, isPending } = useCreateCoach();
 
-  const onSubmit = (data: FormValues) => {
+  useEffect(() => {
+    if (clubId) {
+      fetchCoaches(clubId).then((data) => setCoaches(data));
+    }
+  }, [clubId]);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
     const payload = {
-      ...data,
+      ...formData,
       clubId,
-      expertiseLevels: [data.expertiseLevels],
+      expertiseLevels: [formData.expertiseLevels], 
     };
 
     mutate(payload, {
       onSuccess: () => {
         alert('Coach created successfully!');
-        reset();
+        setShowForm(false);
+        setFormData({
+          name: '',
+          email: '',
+          pricePerHour: '',
+          expertiseLevels: '',
+        });
+        if (clubId) {
+          fetchCoaches(clubId).then((data) => setCoaches(data));
+        }
       },
-      onError: (error: any) => alert(error?.message ?? 'Something went wrong.'),
+      onError: (error: any) =>
+        alert(error?.message ?? 'Something went wrong.'),
     });
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="coach-form">
-      <label className="form-label">
-        Name:
-        <input type="text" {...register('name', { required: true })} className="form-input" />
-      </label>
+    <div className="create-coach-page">
+      {!showForm ? (
+        <>
+          <h2>Coaches List</h2>
+          <button className="add-button" onClick={() => setShowForm(true)}>
+            Add Coach
+          </button>
+          <table className="coach-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Price Per Hour</th>
+                <th>Expertise Level</th>
+              </tr>
+            </thead>
+            <tbody>
+              {coaches.map((coach) => (
+                <tr key={coach.id}>
+                  <td>{coach.name}</td>
+                  <td>{coach.email}</td>
+                  <td>{coach.pricePerHour}</td>
+                  <td>{coach.expertiseLevels.join(', ')}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </>
+      ) : (
+        <form onSubmit={handleSubmit} className="coach-form">
+          <h2>Create New Coach</h2>
 
-      <label className="form-label">
-        Email:
-        <input type="email" {...register('email', { required: true })} className="form-input" />
-      </label>
+          <label className="form-label">
+            Name:
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              className="form-input"
+              required
+            />
+          </label>
 
-      <label className="form-label">
-        Price Per Hour:
-        <input
-          type="number"
-          step="0.01"
-          {...register('pricePerHour', { required: true })}
-          className="form-input"
-        />
-      </label>
+          <label className="form-label">
+            Email:
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              className="form-input"
+              required
+            />
+          </label>
 
-      <label className="form-label">
-        Expertise Level:
-        <select {...register('expertiseLevels', { required: true })} className="form-input">
-          <option value="">Select an expertise level</option>
-          <option value="Beginner">Beginner</option>
-          <option value="Intermediate">Intermediate</option>
-          <option value="Advanced">Advanced</option>
-        </select>
-      </label>
+          <label className="form-label">
+            Price Per Hour:
+            <input
+              type="number"
+              name="pricePerHour"
+              value={formData.pricePerHour}
+              onChange={handleChange}
+              className="form-input"
+              required
+            />
+          </label>
 
-      <button type="submit" className="submit-button" disabled={isPending || isSubmitting}>
-        {isPending || isSubmitting ? 'Submitting...' : 'Create Coach'}
-      </button>
-    </form>
+          <label className="form-label">
+            Expertise Level:
+            <select
+              name="expertiseLevels"
+              value={formData.expertiseLevels}
+              onChange={handleChange}
+              className="form-input"
+              required
+            >
+              <option value="">Select an expertise level</option>
+              <option value="Beginner">Beginner</option>
+              <option value="Intermediate">Intermediate</option>
+              <option value="Advanced">Advanced</option>
+            </select>
+          </label>
+
+          <div className="button-row">
+            <button
+              type="button"
+              className="cancel-button"
+              onClick={() => setShowForm(false)}
+            >
+              Cancel
+            </button>
+            <button type="submit" className="submit-button" disabled={isPending}>
+              {isPending ? 'Submitting...' : 'Create Coach'}
+            </button>
+          </div>
+        </form>
+      )}
+    </div>
   );
 }
 

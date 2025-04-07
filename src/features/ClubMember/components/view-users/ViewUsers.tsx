@@ -18,8 +18,11 @@ const Viewusers = ({
   handleOpenModal: () => void;
 }) => {
   if (!data) return <>Loading...</>;
+
   // Filter out users with the "Club Admin" role
-  const filteredUsers = data.filter((user) => user.role.name !== 'ClubAdmin');
+  const filteredUsers = data.filter(
+    (user: any) => user.role?.name !== 'ClubAdmin'
+  );
 
   return (
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
@@ -35,9 +38,9 @@ const Viewusers = ({
           variant='h4'
           gutterBottom
           align='center'
-          style={{ fontWeight: 'bold', color: '#333' }}
+          sx={{ fontWeight: 'bold', color: '#333', color: 'primary.main' }}
         >
-          View User's List
+          View Users List
         </Typography>
         <Button
           variant='contained'
@@ -48,13 +51,14 @@ const Viewusers = ({
           Add User
         </Button>
       </div>
+
       <TableContainer
         component={Paper}
         elevation={3}
         style={{ borderRadius: '10px', overflow: 'hidden' }}
       >
         <Table>
-          <TableHead style={{ backgroundColor: '#1976d2' }}>
+          <TableHead sx={{ bgcolor: 'primary.main' }}>
             <TableRow>
               <TableCell style={{ color: 'white', fontWeight: 'bold' }}>
                 Name
@@ -77,33 +81,22 @@ const Viewusers = ({
               <TableCell style={{ color: 'white', fontWeight: 'bold' }}>
                 City
               </TableCell>
-              <TableCell style={{ color: 'white', fontWeight: 'bold' }}>
-                State
-              </TableCell>
-              <TableCell style={{ color: 'white', fontWeight: 'bold' }}>
-                Country
-              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredUsers.map((userEntry, index) => (
-              <TableRow
-                key={userEntry.id}
-                style={{
-                  backgroundColor: index % 2 === 0 ? '#f5f5f5' : 'white',
-                }}
-              >
-                <TableCell>{userEntry.user.name}</TableCell>
-                <TableCell>{userEntry.user.email}</TableCell>
+            {filteredUsers.map((userEntry: any, index: number) => (
+              <TableRow key={index} sx={{ bgcolor: 'background.default' }}>
+                <TableCell>{userEntry.user.name || 'N/A'}</TableCell>
+                <TableCell>{userEntry.user.email || 'N/A'}</TableCell>
                 <TableCell>{userEntry.user.phoneNumber || 'N/A'}</TableCell>
-                <TableCell>{userEntry.role.name}</TableCell>
+                <TableCell>{userEntry.user.role?.name || 'N/A'}</TableCell>
                 <TableCell>
-                  {userEntry.role.tasks.map((task) => task.taskName).join(', ')}
+                  {userEntry.user.tasks?.length > 0
+                    ? userEntry.user.tasks.join(', ')
+                    : 'No tasks'}
                 </TableCell>
                 <TableCell>{userEntry.user.address || 'N/A'}</TableCell>
                 <TableCell>{userEntry.user.city || 'N/A'}</TableCell>
-                <TableCell>{userEntry.user.state || 'N/A'}</TableCell>
-                <TableCell>{userEntry.user.country || 'N/A'}</TableCell>
               </TableRow>
             ))}
           </TableBody>

@@ -8,6 +8,7 @@ import {
   DialogContent,
   DialogActions,
   Divider,
+  Box,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Slide } from '@mui/material';
@@ -64,7 +65,7 @@ const UserProfile: React.FC = () => {
   }, []);
 
   return (
-    <div className='user-profile-main-container'>
+    <Box className='user-profile-main-container'>
       <div ref={ref} className='user-profile-container' onClick={userDetails}>
         <Avatar className='user-profile__avatar'>
           {user?.username?.charAt(0).toUpperCase()}
@@ -75,7 +76,11 @@ const UserProfile: React.FC = () => {
       </div>
 
       <Slide direction='left' in={userDisplay} mountOnEnter unmountOnExit>
-        <div ref={ref} className='user-profile-details'>
+        <Box
+          ref={ref}
+          className='user-profile-details'
+          sx={{ bgcolor: 'background.default' }}
+        >
           <div className='user__profile__details__container'>
             <div className='user-profile__name'>{user?.username}</div>
             <div className='user-profile__email'>{user?.email}</div>
@@ -98,7 +103,7 @@ const UserProfile: React.FC = () => {
               <CloseIcon />
             </div>
           </div>
-        </div>
+        </Box>
       </Slide>
       <div className='profile-logout-dialog-container'>
         <Dialog
@@ -131,7 +136,7 @@ const UserProfile: React.FC = () => {
           </DialogActions>
         </Dialog>
       </div>
-    </div>
+    </Box>
   );
 };
 

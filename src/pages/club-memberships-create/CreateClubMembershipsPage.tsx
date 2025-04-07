@@ -1,5 +1,5 @@
 import { useGetmembershipsByClubId } from '../../shared/apis/memberships/useGetmembershipsByClubId';
-import { Card, CardContent, Typography } from '@mui/material';
+import { Box, Card, CardContent, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import './CreateClubMembershipsPage.css';
 import CreateClubmembershipModal from '../../features/club-memberships-create/components/create-club-membership-modal/createClubmembershipModal';
@@ -20,43 +20,51 @@ const CreateClubMembershipsPage = () => {
     guestPasses: 'Guest Passes',
     coachingSessions: 'Coaching Sessions',
   };
-  const [openCreateMembershipModal, setOpenCreateMembershipModal] = useState(false);
+  const [openCreateMembershipModal, setOpenCreateMembershipModal] =
+    useState(false);
   const onCloseModal = () => setOpenCreateMembershipModal(false);
 
   if (isLoading || !user) return <p>Loading...</p>;
 
   return (
     <div>
-      <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>
+      <Typography variant='h4' sx={{ color: 'primary.main' }}>
+        {' '}
         Your Club Memberships
-      </h2>
+      </Typography>
 
       <div className='club-memberships-container'>
         {clubMembershipdata?.map((membership: any) => (
-          <Card key={membership.id} className='membership-card'>
+          <Card
+            key={membership.id}
+            className='membership-card'
+            sx={{ bgcolor: 'background.paper' }}
+          >
             <CardContent>
-              <Typography variant='h5'>{membership.name}</Typography>
-              <Typography variant='body1'>Price: ${membership.price}</Typography>
+              <Typography variant='h5' color='primary.main'>
+                {membership.name}
+              </Typography>
+              <Typography>Price: ${membership.price}</Typography>
               <Typography variant='body2'>
                 Duration: {membership.duration} Months
               </Typography>
-              {membership.perks && Object.values(membership.perks).some((v) => v !== 0) && (
-                <>
-                  <Typography variant='subtitle2' sx={{ mt: 1 }}>
-                    Perks:
-                  </Typography>
-                  <ul style={{ paddingLeft: 5 }}>
-                    {Object.entries(membership.perks)
-                      .filter(([, value]) => value !== 0)
-                      .map(([key, value]) => (
-                        <li key={key}>
-                          {perkLabels[key] ?? key}: {value}
-                        </li>
-                      ))}
-                  </ul>
-                </>
-              )}
-
+              {membership.perks &&
+                Object.values(membership.perks).some((v) => v !== 0) && (
+                  <Box sx={{ color: 'text.secondary' }}>
+                    <Typography variant='subtitle2' sx={{ mt: 1 }}>
+                      Perks:
+                    </Typography>
+                    <ul style={{ paddingLeft: 5 }}>
+                      {Object.entries(membership.perks)
+                        .filter(([, value]) => value !== 0)
+                        .map(([key, value]) => (
+                          <li key={key}>
+                            {perkLabels[key] ?? key}: {value}
+                          </li>
+                        ))}
+                    </ul>
+                  </Box>
+                )}
 
               {membership.customPerks?.length > 0 && (
                 <>

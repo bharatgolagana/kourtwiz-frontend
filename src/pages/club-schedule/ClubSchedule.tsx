@@ -1,71 +1,83 @@
-import { useContext, useState } from "react";
-import AuthContext from "../../context/AuthContext";
-import "./ClubSchedule.css"
-import { useGetClubBookings } from "../../features/ClubBookings/api/useGetClubBookings";
-import { useGetCourts } from "../../features/bookings/api/useGetCourts";
-
+import React, { useContext } from 'react';
+import {
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  CircularProgress,
+  Alert,
+} from '@mui/material';
+import AuthContext from '../../context/AuthContext';
+import { useGetClubBookings } from '../../features/ClubBookings/api/useGetClubBookings';
+import { useGetCourts } from '../../features/bookings/api/useGetCourts';
 
 const ClubSchedulePage = () => {
-    const { user } = useContext(AuthContext)!;
+  const { user } = useContext(AuthContext)!;
 
-    if (!user) {
-        return <p>Loading...</p>;
-    }
+  if (!user) return <Typography>Loading user...</Typography>;
 
-    const clubId = user?.userClubRole?.[0]?.clubId ?? "";
+  const clubId = user?.userClubRole?.[0]?.clubId ?? '';
 
+  const {
+    data: clubBookingData,
+    isLoading,
+    error,
+  } = useGetClubBookings(clubId);
+  const { data: courtsData } = useGetCourts(clubId);
 
-    const { data: clubBookingData, isLoading: isLoading, error: isError } = useGetClubBookings(clubId);
-    const { data: courtsData } = useGetCourts(clubId);
+  return (
+    <div style={{ padding: '24px' }}>
+      <Typography variant='h4' color='primary.main' gutterBottom>
+        Club Bookings
+      </Typography>
 
+      {isLoading ? (
+        <CircularProgress />
+      ) : error ? (
+        <Alert severity='error'>Error loading bookings: {error.message}</Alert>
+      ) : (
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead sx={{ bgcolor: 'primary.main' }}>
+              <TableRow>
+                <TableCell sx={{ color: 'white' }}>Court</TableCell>
+                <TableCell sx={{ color: 'white' }}>Date</TableCell>
+                <TableCell sx={{ color: 'white' }}>Start Time</TableCell>
+                <TableCell sx={{ color: 'white' }}>End Time</TableCell>
+                <TableCell sx={{ color: 'white' }}>Participants</TableCell>
+                <TableCell sx={{ color: 'white' }}>Status</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {clubBookingData?.map((booking: any) => {
+                const courtName = courtsData?.find(
+                  (court: any) => court.id === booking.courtId
+                )?.name;
 
-    return (
-        <div className="ClubSchedulePage">
-            <h2>Club Bookings</h2>
-            <div className="table-container">
-                {isLoading ? (
-                    <p>Loading bookings...</p>
-                ) : isError ? (
-                    <p>Error loading bookings: {error.message}</p>
-                ) : (
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Court</th>
-                                <th>Date</th>
-                                <th>Start Time</th>
-                                <th>End Time</th>
-                                <th>Participants</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {clubBookingData?.length > 0 ? (
-                                clubBookingData.map((booking) => {
-                                    const courtName = courtsData?.find((court) => court.id === booking.courtId)?.name || "Unknown Court";
-                                    console.log(booking.startTime)
-                                    return (
-                                        <tr key={booking.id}>
-                                            <td>{courtName}</td>
-                                            <td>{`${booking.date[1]}-${booking.date[2]}-${booking.date[0]}`}</td>
-                                            <td>{`${booking.startTime[0]}:${String(booking.startTime[1]).padStart(2, "0")}`}</td>
-                                            <td>{`${booking.endTime[0]}:${String(booking.endTime[1]).padStart(2, "0")}`}</td>
-                                            <td>{booking.participants.join(", ")}</td>
-                                            <td>{booking.status}</td>
-                                        </tr>
-                                    );
-                                })
-                            ) : (
-                                <tr>
-                                    <td colSpan="6">No previous bookings found.</td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                )}
-            </div>
-        </div>
-    );
+                return (
+                  <TableRow
+                    key={booking.id}
+                    sx={{ bgcolor: 'background.default' }}
+                  >
+                    <TableCell>{courtName ?? 'N/A'}</TableCell>
+                    <TableCell>{booking.date}</TableCell>
+                    <TableCell>{booking.startTime}</TableCell>
+                    <TableCell>{booking.endTime}</TableCell>
+                    <TableCell>{booking.participants.length}</TableCell>
+                    <TableCell>{booking.status}</TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
+    </div>
+  );
 };
 
 export default ClubSchedulePage;

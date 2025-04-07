@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import AuthContext from '../../../../context/AuthContext';
 import './SwitchClub.css';
 import {
+  Box,
   Chip,
   Divider,
   List,
@@ -38,7 +39,7 @@ const SwitchClub = () => {
   };
   if (status === 'pending') return <>Changing club...</>;
   return (
-    <div>
+    <Box>
       <Divider textAlign='left'>
         <Chip label='Switch Club' color='primary' size='small' />
       </Divider>
@@ -68,7 +69,7 @@ const SwitchClub = () => {
           );
         })}
       </List>
-    </div>
+    </Box>
   );
 };
 

@@ -41,7 +41,10 @@ const Toolbar: React.FC<Props> = ({
   return (
     <div className='toolbar-header'>
       <AppBar className='toolbar'>
-        <MuiToolbar className='toolbar__content'>
+        <MuiToolbar
+          className='toolbar__content'
+          sx={{ bgcolor: 'background.paper' }}
+        >
           <Typography variant='h4' color='primary'>
             Welcome to {selectedClubname}
           </Typography>

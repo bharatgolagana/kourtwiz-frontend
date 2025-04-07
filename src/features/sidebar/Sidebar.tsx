@@ -268,6 +268,7 @@ const Sidebar: React.FC = () => {
             width: isExpanded ? '260px' : '96px',
             transition: 'width 0.3s cubic-bezier(.05,.72,.6,.97)',
           },
+          bgcolor: 'background.paper',
         }}
       >
         <div
@@ -277,7 +278,7 @@ const Sidebar: React.FC = () => {
         >
           <Logo isExpanded={isExpanded} />
           <div className='sidebar-list-container'>
-            <List className='list-items'>
+            <List className='list-items' sx={{ color: 'primary.main' }}>
               {sidebarItems.map((item) => {
                 // if (!hasPermission(item.permission)) return null;
 

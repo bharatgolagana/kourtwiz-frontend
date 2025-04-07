@@ -135,6 +135,14 @@ const sidebarItems = [
     isExpandable: false,
   },
   {
+    label: 'Profile',
+    path: '/user-managment-get-put',
+    isExpandable: false,
+  },
+
+ 
+  
+  {
     label: 'Open Play',
     path: '/open-play',
     isExpandable: false,
@@ -511,7 +519,8 @@ const Sidebar: React.FC = () => {
                     item.label !== 'Club Bookings' &&
                     item.label !== 'Open Play'&&
                     item.label !== 'Coach' &&
-                    item.label !== 'Themes'
+                    item.label !== 'Themes' &&
+                    item.label!=='Profile'
                   ) {
                     return;
                   }
@@ -522,7 +531,8 @@ const Sidebar: React.FC = () => {
                     item.label !== 'Bookings' &&
                     item.label !== 'Waitlist' &&
                     item.label !== 'Join Open Play' &&
-                    item.label !== 'Coach Bookings'
+                    item.label !== 'Coach Bookings' &&
+                    item.label!=='Profile'
  &&
                     item.label !== 'Themes'
                   ) {

@@ -22,6 +22,7 @@ import OpenPlayCreationRoutes from './OpenPlayCreationROutes';
 import BookingCalendarPage from '../pages/bookings-calendar/BookingCalendarPage';
 import WaitlistRoutes from './WaitlistRoutes';
 import OpenPlayListRoutes from './OpenPlayListRoutes';
+import UserDetailsRoutes from './UserDetailsRoutes';
 import AddCoachesRoutes from './AddCoachRoutes';
 import CoachBookingCalendar from '../pages/coach-bookings-calendar/CoachBookingCalendar';
 import ThemeRoutes from './Themes';
@@ -50,6 +51,7 @@ const createRoutes = (): RouteObject[] => {
         ...OpenPlayCreationRoutes,
         ...WaitlistRoutes,
         ...OpenPlayListRoutes,
+        ...UserDetailsRoutes,
         ...AddCoachesRoutes,
         ...ThemeRoutes,
         {

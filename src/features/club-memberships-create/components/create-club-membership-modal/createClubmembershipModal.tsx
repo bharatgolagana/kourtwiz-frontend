@@ -113,7 +113,7 @@ const CreateClubMembershipModal = ({ open, onClose }) => {
             {...register('price')}
           />
           <TextField
-            label="Duration (Days)"
+            label="Duration (Months)"
             type="number"
             {...register('durationInDays')}
           />

@@ -1,15 +1,18 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useUserInfo } from '../../../context/UserInfoContext';
 import { useGetClubCourt } from '../../../shared/apis/courts/useGetClubCourts';
 import { useMutateAddCourt } from '../../../shared/apis/courts/useMutateAddCourt';
 import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import AuthContext from '../../../context/AuthContext';
 
 const CourtsList = () => {
   const { userInfo } = useUserInfo();
-  const { data: clubList, isLoading, error } = useGetClubCourt('67e66d174ac81260061a2a8c');
+  
   const [showModal, setShowModal] = useState(false);
-
+  const { user } = useContext(AuthContext)!;
+  const clubId = user?.currentActiveClubId;
+  const { data: clubList, isLoading, error } = useGetClubCourt(clubId);
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
   const { mutate } = useMutateAddCourt({
     onSuccessCallback: () => {
@@ -27,18 +30,13 @@ const CourtsList = () => {
     const courtData = {
       id: crypto.randomUUID(),
       name: data.name,
-      slug: data.slug,
       type: data.type,
       capacity: data.capacity,
       surface: data.surface,
       pricePerHour: parseFloat(data.pricePerHour),
-      reservationIntervalMinutes: 1073741824, // Fixed value
-      openingTime: data.openingTime + ' AM',
-      closingTime: data.closingTime + ' PM',
-      blockedDates: blockedDatesArray,
-      available: data.available === 'true',
+      reservationIntervalMinutes: data.interval,
     };
-    mutate({ clubId: '67e66d174ac81260061a2a8c', courtData });
+    mutate({ clubId, courtData });
   };
 
   if (isLoading) return <p>Loading...</p>;
@@ -59,7 +57,7 @@ const CourtsList = () => {
               <TableCell>Surface</TableCell>
               <TableCell>Capacity</TableCell>
               <TableCell>Price/Hour</TableCell>
-              <TableCell>Available</TableCell>
+
             </TableRow>
           </TableHead>
           <TableBody>
@@ -70,7 +68,7 @@ const CourtsList = () => {
                 <TableCell>{court.surface}</TableCell>
                 <TableCell>{court.capacity}</TableCell>
                 <TableCell>${court.pricePerHour}</TableCell>
-                <TableCell>{court.available ? 'Yes' : 'No'}</TableCell>
+
               </TableRow>
             ))}
           </TableBody>
@@ -82,7 +80,6 @@ const CourtsList = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogContent>
             <TextField {...register('name', { required: true })} label="Name" fullWidth margin="dense" />
-            <TextField {...register('slug', { required: true })} label="Slug" fullWidth margin="dense" />
             <TextField {...register('type', { required: true })} select label="Type" fullWidth margin="dense">
               <MenuItem value="Singles">Singles</MenuItem>
               <MenuItem value="Doubles">Doubles</MenuItem>
@@ -91,10 +88,11 @@ const CourtsList = () => {
             <TextField {...register('capacity', { required: true })} label="Capacity" type="number" fullWidth margin="dense" inputProps={{ min: 0 }} />
             <TextField {...register('surface', { required: true })} label="Surface" fullWidth margin="dense" />
             <TextField {...register('pricePerHour', { required: true })} label="Price per Hour" type="number" fullWidth margin="dense" inputProps={{ min: 0 }}/>
-            <TextField {...register('available', { required: true })} select label="Available" fullWidth margin="dense">
-              <MenuItem value="true">Yes</MenuItem>
-              <MenuItem value="false">No</MenuItem>
+            <TextField {...register('interval', { required: true })} select label="interval" fullWidth margin="dense">
+              <MenuItem value="30">30 minutes</MenuItem>
+              <MenuItem value="60">60 minutes</MenuItem>
             </TextField>
+
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setShowModal(false)} color="secondary">Cancel</Button>

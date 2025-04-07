@@ -159,6 +159,9 @@ const sidebarItems = [
   {
     label: 'Join Open Play',
     path: '/openplay',
+    isExpandable: false,
+  },
+  {
     label: 'Themes',
     path: '/settings-themes',
     isExpandable: false,

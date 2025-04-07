@@ -172,6 +172,11 @@ const sidebarItems = [
     path: '/settings-themes',
     isExpandable: false,
   },
+  {
+    label: 'My Bookings',
+    path: '/my-bookings',
+    isExpandable: false,
+  }
 ];
 
 const Sidebar: React.FC = () => {
@@ -526,8 +531,8 @@ const Sidebar: React.FC = () => {
                     item.label !== 'Club Bookings' &&
                     item.label !== 'Open Play' &&
                     item.label !== 'Coach' &&
-                    item.label !== 'Themes' &&
-                    item.label !== 'Profile'
+                    item.label !== 'Profile'&&
+                    item.label !== 'Themes'
                   ) {
                     return;
                   }
@@ -540,7 +545,8 @@ const Sidebar: React.FC = () => {
                     item.label !== 'Join Open Play' &&
                     item.label !== 'Coach Bookings' &&
                     item.label !== 'Previous Coach Bookings' &&
-                    item.label !== 'Profile'
+                    item.label !== 'Profile' &&
+                    item.label !== 'My Bookings'
                   ) {
                     return;
                   }

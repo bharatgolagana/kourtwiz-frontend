@@ -179,11 +179,11 @@ function FullCalendarApp(): JSX.Element {
         }
         const isCourtBooking = event.title === 'Reserved'; 
         const isFull = event.extendedProps.slotsRemaining==0;
-        let backgroundColor = 'grey'; 
+        let backgroundColor = '#FDFD96'; 
         if (isCourtBooking) {
-            backgroundColor = 'red'; 
+            backgroundColor = '#575755'; 
         } else if (isFull) {
-            backgroundColor = 'blue'; 
+            backgroundColor = '#87CEEB'; 
         }
         return (
             <div

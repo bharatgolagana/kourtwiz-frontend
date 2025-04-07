@@ -532,8 +532,7 @@ const Sidebar: React.FC = () => {
                     item.label !== 'Waitlist' &&
                     item.label !== 'Join Open Play' &&
                     item.label !== 'Coach Bookings' &&
-                    item.label !== 'Profile' &&
-                    item.label !== 'Themes'
+                    item.label !== 'Profile'
                   ) {
                     return;
                   }

@@ -32,6 +32,7 @@ export const ThemeContextProvider = ({ children }) => {
   const { user } = useContext(AuthContext)!;
   const [mode, setMode] = useState('light');
   const [customThemes, setCustomThemes] = useState([]);
+  const token = localStorage.getItem('jwtToken');
   console.log('theme mode : ', mode);
   console.log('custom themes : ', customThemes);
 
@@ -46,11 +47,11 @@ export const ThemeContextProvider = ({ children }) => {
     const modesByUser = getStorageItem('themeModeByUser');
     const themesByUser = getStorageItem('customThemesByUser');
 
-    const userModes = modesByUser[userId] || {};
-    const userThemes = themesByUser[userId] || {};
+    // const userModes = modesByUser[userId] || {};
+    // const userThemes = themesByUser[userId] || {};
 
-    const themeMode = userModes[clubId] || 'light';
-    const clubThemes = userThemes[clubId] || [];
+    const themeMode = modesByUser[clubId] || 'light';
+    const clubThemes = themesByUser[clubId] || [];
 
     setMode(themeMode);
     setCustomThemes(clubThemes);
@@ -67,12 +68,12 @@ export const ThemeContextProvider = ({ children }) => {
     const modesByUser = getStorageItem('themeModeByUser');
     console.log('save start mode 2', modesByUser);
 
-    if (!modesByUser[userId]) {
-      modesByUser[userId] = {};
-    }
+    // if (!modesByUser[userId]) {
+    //   modesByUser[userId] = {};
+    // }
     console.log('save start mode 3', modesByUser);
 
-    modesByUser[userId][clubId] = mode;
+    modesByUser[clubId] = mode;
     console.log('save start mode 4');
 
     setStorageItem('themeModeByUser', modesByUser);
@@ -86,24 +87,24 @@ export const ThemeContextProvider = ({ children }) => {
     if (!userId || !clubId) return;
 
     const themesByUser = getStorageItem('customThemesByUser');
-    if (!themesByUser[userId]) {
-      themesByUser[userId] = {};
-    }
+    // if (!themesByUser[userId]) {
+    //   themesByUser[userId] = {};
+    // }
 
-    themesByUser[userId][clubId] = customThemes;
+    themesByUser[clubId] = customThemes;
     setStorageItem('customThemesByUser', themesByUser);
     console.log('save themes end');
   }, [customThemes, userId, clubId]);
 
   const currentTheme = useMemo(() => {
     console.log('creating themes');
-    if (!userId || !clubId) return createTheme(lightTheme);
+    if (!userId || !clubId || !token) return createTheme(lightTheme);
     if (mode === 'light') return createTheme(lightTheme);
     if (mode === 'dark') return createTheme(darkTheme);
 
     const custom = customThemes.find((t) => t.name === mode);
     return custom ? createTheme(custom.theme) : createTheme(lightTheme);
-  }, [mode, customThemes]);
+  }, [mode, customThemes, token]);
 
   const addCustomTheme = (name, theme) => {
     console.log('adding custom theme : ');

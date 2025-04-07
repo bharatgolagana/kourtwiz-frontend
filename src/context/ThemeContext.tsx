@@ -3,8 +3,8 @@ import React, {
   createContext,
   useContext,
   useState,
-  useMemo,
   useEffect,
+  useMemo,
 } from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -32,44 +32,72 @@ export const ThemeContextProvider = ({ children }) => {
   const { user } = useContext(AuthContext)!;
   const [mode, setMode] = useState('light');
   const [customThemes, setCustomThemes] = useState([]);
-  console.log('user : ', user);
-  // Load theme mode and custom themes for the current user
-  useEffect(() => {
-    console.log('before user id :', user?.userId);
+  console.log('theme mode : ', mode);
+  console.log('custom themes : ', customThemes);
 
-    if (!user?.userId || !user) return;
-    console.log('after user id :', user?.userId);
+  const userId = user?.userId;
+  const clubId = user?.currentActiveClubId;
+
+  // Load theme mode and custom themes
+  useEffect(() => {
+    console.log('load start');
+    if (!userId || !clubId) return;
+
     const modesByUser = getStorageItem('themeModeByUser');
     const themesByUser = getStorageItem('customThemesByUser');
-    console.log('during load: ');
-    console.log('mode by user : ', modesByUser);
-    console.log('theme by user : ', themesByUser);
-    setMode(modesByUser[user.userId] || 'light');
-    setCustomThemes(themesByUser[user.userId] || []);
-  }, [user?.userId]);
+
+    const userModes = modesByUser[userId] || {};
+    const userThemes = themesByUser[userId] || {};
+
+    const themeMode = userModes[clubId] || 'light';
+    const clubThemes = userThemes[clubId] || [];
+
+    setMode(themeMode);
+    setCustomThemes(clubThemes);
+    console.log('load end');
+  }, [userId, clubId]);
 
   // Save theme mode when it changes
   useEffect(() => {
-    if (!user?.userId) return;
-    console.log('saving theme : ');
+    console.log('save start mode');
+
+    if (!userId || !clubId) return;
+    console.log('save start mode 1');
+
     const modesByUser = getStorageItem('themeModeByUser');
-    modesByUser[user.userId] = mode;
-    console.log('mdoes by user : ', modesByUser);
+    console.log('save start mode 2', modesByUser);
+
+    if (!modesByUser[userId]) {
+      modesByUser[userId] = {};
+    }
+    console.log('save start mode 3', modesByUser);
+
+    modesByUser[userId][clubId] = mode;
+    console.log('save start mode 4');
+
     setStorageItem('themeModeByUser', modesByUser);
-  }, [mode, user?.userId]);
+    console.log('save end mode');
+  }, [mode, userId, clubId]);
 
   // Save custom themes when they change
   useEffect(() => {
-    console.log('saving custom theme!');
-    if (!user?.userId) return;
+    console.log('save themes start');
+
+    if (!userId || !clubId) return;
 
     const themesByUser = getStorageItem('customThemesByUser');
-    themesByUser[user.userId] = customThemes;
+    if (!themesByUser[userId]) {
+      themesByUser[userId] = {};
+    }
+
+    themesByUser[userId][clubId] = customThemes;
     setStorageItem('customThemesByUser', themesByUser);
-    console.log('on save : custom theme : ', themesByUser);
-  }, [customThemes, user?.userId]);
+    console.log('save themes end');
+  }, [customThemes, userId, clubId]);
 
   const currentTheme = useMemo(() => {
+    console.log('creating themes');
+    if (!userId || !clubId) return createTheme(lightTheme);
     if (mode === 'light') return createTheme(lightTheme);
     if (mode === 'dark') return createTheme(darkTheme);
 
@@ -78,7 +106,7 @@ export const ThemeContextProvider = ({ children }) => {
   }, [mode, customThemes]);
 
   const addCustomTheme = (name, theme) => {
-    console.log('addCustomTheme : ', name, theme);
+    console.log('adding custom theme : ');
     setCustomThemes((prev) => [...prev, { name, theme }]);
     setMode(name);
   };
@@ -94,7 +122,5 @@ export const ThemeContextProvider = ({ children }) => {
     </ThemeModeContext.Provider>
   );
 };
-
-export default ThemeModeContext;
 
 export const useThemeMode = () => useContext(ThemeModeContext);

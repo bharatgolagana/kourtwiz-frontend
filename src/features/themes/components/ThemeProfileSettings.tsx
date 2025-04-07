@@ -1,4 +1,3 @@
-// components/ThemeProfileSettings.tsx
 import {
   Box,
   Card,
@@ -8,7 +7,6 @@ import {
   Modal,
   TextField,
   Button,
-  IconButton,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { useState } from 'react';
@@ -28,6 +26,7 @@ const defaultNewTheme = {
 
 const ThemeProfileSettings = () => {
   const { setTheme, addCustomTheme, customThemes } = useThemeMode();
+  console.log('customThemes : ', customThemes);
   const [open, setOpen] = useState(false);
   const [newTheme, setNewTheme] = useState(defaultNewTheme);
   const [name, setName] = useState('');
@@ -57,17 +56,10 @@ const ThemeProfileSettings = () => {
 
   return (
     <Box p={4}>
-      <Typography variant='h4' gutterBottom align='center'>
-        Themes
-      </Typography>
-      <Typography variant='subtitle1' gutterBottom align='center'>
-        Theme Settings
-      </Typography>
-
       <Grid container spacing={2} justifyContent='center'>
         <Grid item>
           <Card
-            sx={{ width: 120, height: 120, cursor: 'pointer' }}
+            sx={{ width: 120, height: 120, cursor: 'pointer', bgcolor: '#fff' }}
             onClick={() => setTheme('light')}
           >
             <CardContent>
@@ -103,17 +95,31 @@ const ThemeProfileSettings = () => {
           </Card>
         </Grid>
 
-        {customThemes.map((theme) => (
+        {customThemes.map((theme: any) => (
           <Grid item key={theme.name}>
             <Card
-              sx={{ width: 120, height: 120, cursor: 'pointer' }}
+              sx={{
+                width: 120,
+                height: 120,
+                cursor: 'pointer',
+                bgcolor: theme.theme.palette.primary.main,
+              }}
               onClick={() => setTheme(theme.name)}
             >
               <CardContent>
-                <Typography variant='body1' align='center'>
+                <Typography
+                  variant='body1'
+                  align='center'
+                  sx={{ color: theme.theme.palette.text.primary }}
+                >
                   {theme.name}
                 </Typography>
-                <Typography variant='caption' align='center' display='block'>
+                <Typography
+                  variant='caption'
+                  align='center'
+                  display='block'
+                  sx={{ color: theme.theme.palette.text.secondary }}
+                >
                   Click to Apply
                 </Typography>
               </CardContent>
@@ -123,7 +129,12 @@ const ThemeProfileSettings = () => {
 
         <Grid item>
           <Card
-            sx={{ width: 120, height: 120, cursor: 'pointer' }}
+            sx={{
+              width: 120,
+              height: 120,
+              cursor: 'pointer',
+              bgcolor: '#808080',
+            }}
             onClick={() => setOpen(true)}
           >
             <CardContent>

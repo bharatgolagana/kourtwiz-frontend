@@ -15,15 +15,6 @@ import './createClubMembershipModal.css';
 import { useContext } from 'react';
 import AuthContext from '../../../../context/AuthContext';
 import { useMutateCreateClubMembership } from '../../../../shared/apis/memberships/useMutateCreateClubMembership';
-import { toast } from 'react-toastify';
-
-const PERKS_OPTIONS = [
-  'advanceBookingDays',
-  'openPlaySessionsAllowed',
-  'tournamentAccess',
-  'guestPasses',
-  'coachingSessions',
-];
 
 const CreateClubMembershipModal = ({ open, onClose }) => {
   const {
@@ -55,13 +46,10 @@ const CreateClubMembershipModal = ({ open, onClose }) => {
   const { mutate: createMembership, isLoading } = useMutateCreateClubMembership({
     clubId,
     onSuccessCallback: () => {
-      toast.success('Membership created successfully!');
       onClose();
       reset();
     },
     onErrorCallback: (err) => {
-      console.error('Membership creation error:', err);
-      toast.error('Failed to create membership.');
     },
   });
   const PERKS_LABELS: Record<string, string> = {

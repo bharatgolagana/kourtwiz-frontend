@@ -26,6 +26,7 @@ import AddCoachesRoutes from './AddCoachRoutes';
 import CoachBookingCalendar from '../pages/coach-bookings-calendar/CoachBookingCalendar';
 import PreviousCoachBookingsRoutes from './PreviousCoachBookingsRoutes';
 import ThemeRoutes from './Themes';
+import MyBookingsRoutes from './MyBookingsRoutes';
 
 const createRoutes = (): RouteObject[] => {
   return [
@@ -55,6 +56,7 @@ const createRoutes = (): RouteObject[] => {
         ...AddCoachesRoutes,
         ...ThemeRoutes,
         ...PreviousCoachBookingsRoutes,
+        ...MyBookingsRoutes,
         {
           path: '/approve-members',
           element: <MemberApproval />,

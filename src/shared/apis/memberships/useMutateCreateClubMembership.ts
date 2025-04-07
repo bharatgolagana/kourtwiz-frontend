@@ -63,7 +63,6 @@ export const useMutateCreateClubMembership = ({
     },
     onError: (error) => {
       console.error('Error creating membership:', error);
-      toast.error('Failed to create membership. Please try again.');
       onErrorCallback?.(error);
     },
   });

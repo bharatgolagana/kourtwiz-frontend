@@ -2,20 +2,27 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-const API_BASE_URL = 'http://44.216.113.234:8080/api/membership-types/create';
+const API_BASE_URL = 'http://44.216.113.234:8080/api/membership-plans/create';
+
+interface Perks {
+  advanceBookingDays: number;
+  openPlaySessionsAllowed: number;
+  tournamentAccess: number;
+  guestPasses: number;
+  coachingSessions: number;
+}
+
+interface CustomPerk {
+  name: string;
+  value: string;
+}
 
 interface MembershipData {
-  name: string;
-  description: string;
+  membershipName: string;
+  duration: string;
   price: number;
-  durationInDays: number;
-  benefits: string[];
-  isFamilyPlan: boolean;
-  maxFamilyMembers: number;
-  guestPasses: number;
-  discountPercentage: number;
-  autoRenewalAllowed: boolean;
-  upgradableTo: string[];
+  perks: Perks;
+  customPerks: CustomPerk[];
 }
 
 interface UseMutateCreateClubMembershipProps {
@@ -35,16 +42,18 @@ export const useMutateCreateClubMembership = ({
       if (!clubId) {
         throw new Error('Club ID is required to create a membership.');
       }
-      const response = await axios.post(
-        `${API_BASE_URL}/${clubId}`,
-        membershipData,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+      const payload = {
+        ...membershipData,
+        clubId,
+      };
+
+      const response = await axios.post(`${API_BASE_URL}`, payload, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
       return response.data;
     },
     onSuccess: (data) => {

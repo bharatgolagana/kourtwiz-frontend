@@ -6,24 +6,22 @@ import './Calendar.css';
 
 import 'react-calendar/dist/Calendar.css';
 import AuthContext from '../../context/AuthContext';
-import { fetchCourts } from './api/getCourts';
-import { fetchBookings } from './api/getbookings';
-import { toast } from 'react-toastify';
-import axios from 'axios';
-import { useBookCourt } from '../bookings/api/useBookCourt';
+import { fetchCoaches } from './api/getCoaches';
+import { fetchCoachBookings } from './api/getCoachBookings';
+import { useBookCoach } from './api/useBookCoach';
 
 function FullCalendarApp(): JSX.Element {
     const { user } = useContext(AuthContext)!;
     const clubId = user?.currentActiveClubId;
     const userId = user?.userId;
-    const [courtsResponse, setCourtsResponse] = useState<{ id: string; name: string }[]>([]);
-    const [courtsLoading, setCourtsLoading] = useState(true);
-    const [courtsError, setCourtsError] = useState('');
+    const [coachesResponse, setCoachesResponse] = useState<{ id: string; name: string }[]>([]);
+    const [coachesLoading, setCoachesLoading] = useState(true);
+    const [coachesError, setCoachesError] = useState('');
     const [error, setError] = useState('');
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [events, setEvents] = useState([]);
     const [eventsError, setEventsError] = useState('');
-    const [selectedCourt, setSelectedCourt] = useState<any>(null);
+    const [selectedCoach, setSelectedCoach] = useState<any>(null);
     const [selectedEvent, setSelectedEvent] = useState<any>(null);
     const [bookingDuration, setBookingDuration] = useState<number>(30);
 
@@ -37,28 +35,29 @@ function FullCalendarApp(): JSX.Element {
         const endTime = new Date(selectedDate);
         endTime.setHours(23, 0, 0, 0); 
     
-        courtsResponse.forEach((court) => {
+        coachesResponse.forEach((coach) => {
             let currentTime = new Date(startTime);
     
             while (currentTime < endTime) {
                 const nextTime = new Date(currentTime);
                 nextTime.setMinutes(nextTime.getMinutes() + 30); 
     
-                const isSlotOccupied = bookings.some(
-                    (event) =>
-                        event.resourceId === court.id &&
-                        new Date(event.start) < nextTime &&
-                        new Date(event.end) > currentTime
-                );
-    
+                const isSlotOccupied = bookings.some((event) => {
+        
+                    return (
+                      event.resourceId === coach.id &&
+                      new Date(event.start) < nextTime &&
+                      new Date(event.end) > currentTime
+                    );
+                  });
                 if (!isSlotOccupied) {
                     emptySlots.push({
-                        id: `empty-${court.id}-${currentTime.getTime()}`,
+                        id: `empty-${coach.id}-${currentTime.getTime()}`,
                         title: "Reserve",
                         start: new Date(currentTime),
                         end: new Date(nextTime),
-                        resourceId: court.id,
-                        extendedProps: { isTemporary: true,resourceId: court.id },
+                        resourceId: coach.id,
+                        extendedProps: { isTemporary: true,resourceId: coach.id },
                     });
                 }
     
@@ -72,17 +71,17 @@ function FullCalendarApp(): JSX.Element {
     
     const handleOpenModal = (event) => {
       setSelectedEvent(event);
-      const court = courtsResponse.find((c) => c.id === event.extendedProps.resourceId);
-      setSelectedCourt(court);
+      const coach = coachesResponse.find((c) => c.id === event.extendedProps.resourceId);
+      setSelectedCoach(coach);
       setIsModalOpen(true);
      };
   
     
         const handleCloseModal = () => {
             setIsModalOpen(false);
-            setSelectedCourt(null);
+            setSelectedCoach(null);
         };
-        const { bookCourt, bookingLoading } = useBookCourt(() => {
+        const { bookCoach, bookingLoading } = useBookCoach(() => {
             handleCloseModal();
             loadBookings();
         });
@@ -91,66 +90,35 @@ function FullCalendarApp(): JSX.Element {
           const startTimeEvent = new Date(selectedEvent.start);
           const endTimeEvent = new Date(startTimeEvent.getTime() + bookingDuration * 60 * 1000);
           const resourceId = selectedEvent.extendedProps?.resourceId;
-          const formatTime = (date: Date) =>
-            date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
-        
+          const formatTime = (date: Date) => {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+          
+            return `${year}-${month}-${day}T${hours}:${minutes}:00Z`;
+          };
+          console.log
           const formattedStartTime = formatTime(startTimeEvent);
           const formattedEndTime = formatTime(endTimeEvent);
+          // console.log(new Date(selectedEvent.start).toISOString().split("T")[0], "date")
+          // console.log(formattedStartTime)
+          // console.log(formattedEndTime)
+          
       
-          bookCourt({
+          bookCoach({
               userId,
-              clubId,
-              courtId: resourceId,
+              coachId: resourceId,
               date: new Date(selectedEvent.start).toISOString().split("T")[0],
               startTime: formattedStartTime,
               endTime: formattedEndTime,
-              participants: [userId]
      });
       };
-      
-        
-    const handleReserveOrWaitlist = async (sessionId: string, isFull: boolean) => {
-        const token=localStorage.getItem('jwtToken');
-        try {
-            const response = await axios.post(
-                `http://44.216.113.234:8080/api/openplay/bookings`,
-                null,
-                {
-                    headers: {
-
-                        Authorization: `Bearer ${token}`,
-
-                    },
-                    params: {
-                        sessionId,
-                        userId,
-                        isGuest: false,
-                    },
-                }
-            );
-
-            if (response.status === 200) {
-                toast.success(isFull ? 'You have been added to the waitlist!' : 'Court reserved successfully!');
-                loadBookings();
-            } else {
-                toast.error('Failed to process your request. Please try again.');
-            }
-        } catch (error) {
-            let errorMessage = "Failed to process your request. Please try again.";
-
-            if (error.response) {
-                if (error.response.data?.message) {
-                    errorMessage = error.response.data.message;  
-                } else if (error.response.data) {
-                    errorMessage = JSON.stringify(error.response.data); 
-                }
-            }
-            toast.error(errorMessage);
-        }
-    };
     
     const renderEventContent = (arg) => {
         const { event } = arg;
+        // console.log(event)
         if (event.extendedProps?.isTemporary) {
             return (
                 <button
@@ -177,13 +145,13 @@ function FullCalendarApp(): JSX.Element {
                 </button>
             );
         }
-        const isCourtBooking = event.title === 'Reserved'; 
+        const isCoachBooking = event.title === 'Reserved'; 
         const isFull = event.extendedProps.slotsRemaining==0;
-        let backgroundColor = '#FDFD96'; 
-        if (isCourtBooking) {
-            backgroundColor = '#575755'; 
+        let backgroundColor = 'grey'; 
+        if (isCoachBooking) {
+            backgroundColor = 'red'; 
         } else if (isFull) {
-            backgroundColor = '#87CEEB'; 
+            backgroundColor = 'blue'; 
         }
         return (
             <div
@@ -198,11 +166,11 @@ function FullCalendarApp(): JSX.Element {
                 alignItems: 'center',
                 textAlign: 'center',
                 backgroundColor, 
-                color: isCourtBooking ? 'white' : 'black', 
+                color: isCoachBooking ? 'white' : 'black', 
                 borderRadius: '4px',
                 }}
             >
-                {isCourtBooking ? (
+                {isCoachBooking ? (
                 <p style={{ fontWeight: 'bold', margin: 0 }}>Reserved</p>
                 ) : (
                 <>
@@ -237,7 +205,7 @@ function FullCalendarApp(): JSX.Element {
                         borderRadius: '4px',
                         cursor: 'pointer',
                     }}
-                    onClick={() => handleReserveOrWaitlist(event.id, isFull)}
+                    // onClick={() => handleReserveOrWaitlist(event.id, isFull)}
                     >
                     {isFull ? 'Join Waitlist' : 'Join OPEN Play'}
                     </button>
@@ -248,25 +216,29 @@ function FullCalendarApp(): JSX.Element {
     };
   
     useEffect(() => {
-        const loadCourts = async () => {
+        const loadCoaches = async () => {
           try {
-            setCourtsLoading(true);
-            const courts = await fetchCourts(clubId!);
-            setCourtsResponse(courts);
+            setCoachesLoading(true);
+            const coaches = await fetchCoaches(clubId!);
+            setCoachesResponse(coaches);
           } catch (error) {
-            setCourtsError(error.message);
+            setCoachesError(error.message);
           } finally {
-            setCourtsLoading(false);
+            setCoachesLoading(false);
           }
         };
     
-        if (clubId) loadCourts();
+        if (clubId) loadCoaches();
       }, [clubId]);
 
       const loadBookings = async () => {
         try {
-            const bookings = await fetchBookings(clubId!);
+            const bookings = await fetchCoachBookings(clubId!);
+
             const emptySlots = generateEmptySlots(bookings);
+            // console.log(bookings, "bookings")
+
+            // console.log(emptySlots, "empty")
             setEvents([...bookings, ...emptySlots]); 
         } catch (error) {
             setEventsError(error.message);
@@ -274,13 +246,14 @@ function FullCalendarApp(): JSX.Element {
     };
 
     useEffect(() => {
-        if (clubId) loadBookings();
+        if (clubId){ 
+            loadBookings()
+        };
     }, [clubId,selectedDate]);
 
     const handleDateChange = (info) => {
         setSelectedDate(new Date(info.start)); 
     };
-
 
   return (
     <div className="App">
@@ -295,9 +268,9 @@ function FullCalendarApp(): JSX.Element {
           slotMinTime="09:00:00"
             slotMaxTime="23:00:00"
             
-        resources={courtsResponse}
+        resources={coachesResponse}
           events={events}
-          resourceAreaHeaderContent="Courts"
+          resourceAreaHeaderContent="Coaches"
           eventBackgroundColor="#b3cde0"
           eventTextColor="#0f2657"
           nowIndicator
@@ -314,7 +287,7 @@ function FullCalendarApp(): JSX.Element {
       </div> */}
      {isModalOpen && selectedEvent && (
         <Modal onClose={handleCloseModal}>
-          <h3>Book {selectedCourt?.name}</h3>
+          <h3>Book {selectedCoach?.name}</h3>
           <p>
             Date: <strong>{new Date(selectedEvent.start).toDateString()}</strong><br />
             Start Time: <strong>{new Date(selectedEvent.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</strong>

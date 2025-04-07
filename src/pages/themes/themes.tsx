@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   Box,
   Typography,
@@ -10,8 +10,13 @@ import {
 } from '@mui/material';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import ThemeProfileSettings from '../../features/themes/components/ThemeProfileSettings';
+import AuthContext from '../../context/AuthContext';
 
 const ThemesSettings = () => {
+  const { user } = useContext(AuthContext)!;
+  const selectedClubname = user?.userClubRole?.find(
+    (club) => club.clubId === user?.currentActiveClubId
+  ).clubName;
   return (
     <Box sx={{ p: 4 }}>
       {/* Page Title */}
@@ -27,7 +32,6 @@ const ThemesSettings = () => {
             <CardContent>
               <Typography variant='subtitle1' fontWeight='bold' gutterBottom>
                 <img src='/src/assets/adminLogo.jpg' height='400' alt='Logo' />{' '}
-                Club Logo
               </Typography>
               <Typography variant='body2' mb={2}>
                 Upload your club logo. Recommended size: 512×512px, PNG or JPG
@@ -50,7 +54,6 @@ const ThemesSettings = () => {
                   height='400'
                   alt='Logo'
                 />{' '}
-                Club Banner
               </Typography>
               <Typography variant='body2' mb={2}>
                 Upload a banner image for your club page. Recommended size:
@@ -74,7 +77,7 @@ const ThemesSettings = () => {
           fullWidth
           label='Club Name'
           variant='outlined'
-          defaultValue='Riverside Pickleball Club'
+          defaultValue={selectedClubname}
         />
       </Box>
 

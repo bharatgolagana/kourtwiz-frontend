@@ -90,15 +90,6 @@ const AddUserModal = ({
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
-                label='Password'
-                type='password'
-                {...register('password')}
-                fullWidth
-                required
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
                 label='Phone Number'
                 {...register('phoneNumber')}
                 fullWidth

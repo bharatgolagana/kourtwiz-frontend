@@ -39,6 +39,7 @@ const ManualLoginProvider = ({ children }: { children: React.ReactNode }) => {
       const userData = await response.json();
       setUser(userData);
       setIsAuthenticated(true);
+      return userData;
     } catch (err) {
       console.error(err.message);
       setIsAuthenticated(false);
@@ -65,8 +66,16 @@ const ManualLoginProvider = ({ children }: { children: React.ReactNode }) => {
 
       if (!data.isFirstTimeLogin) {
         localStorage.setItem('jwtToken', data.token);
-        await fetchUserData(data.token);
-        navigate('/settings-themes');
+        const userData = await fetchUserData(data.token);
+        const role = userData?.userClubRole?.find(
+          (club) => club?.clubId === userData?.currentActiveClubId
+        ).roleName;
+        console.log(role);
+        if (role === 'Member') {
+          navigate('/bookings');
+        } else {
+          navigate('/settings-themes');
+        }
       }
     } catch (err) {
       setError(err.message);

@@ -19,7 +19,7 @@ import AuthContext from '../../../../context/AuthContext';
 import SwitchClub from '../switch-club/SwitchClub';
 
 const UserProfile: React.FC = () => {
-  const { user } = useContext(AuthContext)!;
+  const { user, setUser } = useContext(AuthContext)!;
   console.log('userinfo : ', user);
   const [userDisplay, setUserDisplay] = useState(false);
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
@@ -38,6 +38,7 @@ const UserProfile: React.FC = () => {
     localStorage.removeItem('onboardingComplete');
     localStorage.removeItem('availability');
     setLogoutDialogOpen(false);
+    setUser(null);
     navigate('/');
   };
 

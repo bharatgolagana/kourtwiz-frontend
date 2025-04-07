@@ -109,7 +109,6 @@ const sidebarItems = [
     icon: <img src='src\assets\pickleballclub.svg' />,
     path: '/previous-coach-bookings',
     isExpandable: false,
-    
   },
   {
     label: 'Membership Plans',
@@ -540,8 +539,7 @@ const Sidebar: React.FC = () => {
                     item.label !== 'Join Open Play' &&
                     item.label !== 'Coach Bookings' &&
                     item.label !== 'Previous Coach Bookings' &&
-                    item.label !== 'Profile' &&
-                    item.label !== 'Themes'
+                    item.label !== 'Profile'
                   ) {
                     return;
                   }

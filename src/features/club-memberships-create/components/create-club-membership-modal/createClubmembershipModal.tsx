@@ -1,4 +1,4 @@
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, useFieldArray } from 'react-hook-form';
 import {
   Modal,
   Box,
@@ -8,83 +8,126 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Checkbox,
-  FormControlLabel,
   Button,
+  Grid,
 } from '@mui/material';
 import './createClubMembershipModal.css';
+import { useContext } from 'react';
+import AuthContext from '../../../../context/AuthContext';
+import { useMutateCreateClubMembership } from '../../../../shared/apis/memberships/useMutateCreateClubMembership';
+import { toast } from 'react-toastify';
 
-const MEMBERSHIP_BENEFITS = [
-  'PRIORITY_BOOKING',
-  'DISCOUNT',
-  'GUEST_ACCESS',
-  'FAMILY_ACCESS',
-  'TOURNAMENT_DISCOUNT',
+const PERKS_OPTIONS = [
+  'advanceBookingDays',
+  'openPlaySessionsAllowed',
+  'tournamentAccess',
+  'guestPasses',
+  'coachingSessions',
 ];
 
-const UPGRADE_OPTIONS = ['Silver', 'Gold'];
-
-const CreateClubMembershipModal = ({
-  open,
-  onClose,
-  onSubmit,
-}: {
-  open: boolean;
-  onClose: () => void;
-  onSubmit: (data: any) => void;
-}) => {
-  const { register, handleSubmit, control } = useForm({
+const CreateClubMembershipModal = ({ open, onClose }) => {
+  const {
+    register,
+    handleSubmit,
+    control,
+    watch,
+  } = useForm({
     defaultValues: {
       name: '',
       description: '',
       price: '',
       durationInDays: '',
-      benefits: [],
+      selectedPerks: [],
+      perks: {},
       isFamilyPlan: false,
       maxFamilyMembers: '',
       guestPasses: '',
       discountPercentage: '',
       autoRenewalAllowed: false,
       upgradableTo: [],
+      customPerks: [],
     },
   });
 
-  const handleFormSubmit = (data: any) => {
-    onSubmit(data);
+  const { user } = useContext(AuthContext)!;
+  const clubId = user?.currentActiveClubId;
+
+  const { mutate: createMembership, isLoading } = useMutateCreateClubMembership({
+    clubId,
+    onSuccessCallback: () => {
+      toast.success('Membership created successfully!');
+      onClose();
+    },
+    onErrorCallback: (err) => {
+      console.error('Membership creation error:', err);
+      toast.error('Failed to create membership.');
+    },
+  });
+  const PERKS_LABELS: Record<string, string> = {
+    advanceBookingDays: 'Advance Booking (Days)',
+    openPlaySessionsAllowed: 'Open Play Sessions Allowed',
+    tournamentAccess: 'Tournament Entries',
+    guestPasses: 'Guest Passes',
+    coachingSessions: 'Coaching Sessions',
+  };
+  const PERKS_OPTIONS = Object.keys(PERKS_LABELS);
+
+  const selectedPerks = watch('selectedPerks');
+  const { fields: customPerksFields, append, remove } = useFieldArray({
+    control,
+    name: 'customPerks',
+  });
+
+  const handleFormSubmit = (data) => {
+    const perksPayload = {};
+    PERKS_OPTIONS.forEach((perk) => {
+      const value = data.perks?.[perk];
+      perksPayload[perk] = value ? Number(value) : 0;
+    });
+
+    const formattedPayload = {
+      clubId,
+      membershipName: data.name,
+      duration: Number(data.durationInDays),
+      price: parseFloat(Number(data.price).toFixed(1)),
+      perks: perksPayload,
+      customPerks: data.customPerks.map((perk) => ({
+        name: perk.name,
+        value: Number(perk.value),
+      })),
+    };
+
+    createMembership(formattedPayload);
   };
 
   return (
     <Modal open={open} onClose={onClose}>
-      <Box className='modal-container'>
-        <Typography className='modal-title'>Create Membership</Typography>
-        <form onSubmit={handleSubmit(handleFormSubmit)} className='modal-form'>
+      <Box className="modal-container">
+        <Typography className="modal-title">Create Membership</Typography>
+        <form onSubmit={handleSubmit(handleFormSubmit)} className="modal-form">
+          <TextField label="Name" {...register('name')} className="full-width" />
           <TextField
-            label='Name'
-            {...register('name')}
-            className='full-width'
+            label="Price"
+            type="number"
+            inputProps={{ step: '0.01' }}
+            {...register('price')}
           />
           <TextField
-            label='Description'
-            {...register('description')}
-            className='full-width'
-          />
-          <TextField label='Price' type='number' {...register('price')} />
-          <TextField
-            label='Duration (Days)'
-            type='number'
+            label="Duration (Days)"
+            type="number"
             {...register('durationInDays')}
           />
 
-          <FormControl className='full-width'>
-            <InputLabel>Benefits</InputLabel>
+          <FormControl className="full-width">
+            <InputLabel>Perks</InputLabel>
             <Controller
-              name='benefits'
               control={control}
+              name="selectedPerks"
               render={({ field }) => (
                 <Select multiple {...field}>
-                  {MEMBERSHIP_BENEFITS.map((benefit) => (
-                    <MenuItem key={benefit} value={benefit}>
-                      {benefit}
+                  {PERKS_OPTIONS.map((perk) => (
+                    <MenuItem key={perk} value={perk}>
+                      {PERKS_LABELS[perk]}
                     </MenuItem>
                   ))}
                 </Select>
@@ -92,56 +135,56 @@ const CreateClubMembershipModal = ({
             />
           </FormControl>
 
-          <FormControlLabel
-            control={<Checkbox {...register('isFamilyPlan')} />}
-            label='Family Plan'
-            className='checkbox-group'
-          />
-          <TextField
-            label='Max Family Members'
-            type='number'
-            {...register('maxFamilyMembers')}
-          />
-          <TextField
-            label='Guest Passes'
-            type='number'
-            {...register('guestPasses')}
-          />
-          <TextField
-            label='Discount %'
-            type='number'
-            {...register('discountPercentage')}
-          />
+          {selectedPerks.map((perk) => (
+            <Box key={perk} mb={2} display="grid" gap={2}>
+              <Typography sx={{ width: '50%' }}>{perk}</Typography>
+              <TextField
+                label="Value"
+                type="number"
+                {...register(`perks.${perk}`)}
+                sx={{ width: '50%' }}
+              />
+            </Box>
+          ))}
 
-          <FormControlLabel
-            control={<Checkbox {...register('autoRenewalAllowed')} />}
-            label='Auto Renewal Allowed'
-            className='checkbox-group'
-          />
+          {customPerksFields.map((item, index) => (
+            <Grid container spacing={2} key={item.id} className="perk-row">
+              <Grid item xs={5}>
+                <TextField
+                  label="Name"
+                  {...register(`customPerks.${index}.name`)}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={5}>
+                <TextField
+                  label="Value"
+                  {...register(`customPerks.${index}.value`)}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={2}>
+                <Button color="error" className="remove-button" onClick={() => remove(index)}>
+                  Remove
+                </Button>
+              </Grid>
+            </Grid>
+          ))}
 
-          <FormControl className='full-width'>
-            <InputLabel>Upgradable To</InputLabel>
-            <Controller
-              name='upgradableTo'
-              control={control}
-              render={({ field }) => (
-                <Select multiple {...field}>
-                  {UPGRADE_OPTIONS.map((option) => (
-                    <MenuItem key={option} value={option}>
-                      {option}
-                    </MenuItem>
-                  ))}
-                </Select>
-              )}
-            />
-          </FormControl>
+          <Button
+            variant="outlined"
+            onClick={() => append({ name: '', value: '' })}
+            className="add-custom-perk-btn"
+          >
+            Add Custom Perk
+          </Button>
 
-          <div className='button-group-create-membership full-width'>
-            <Button onClick={() => onClose()} variant='outlined'>
+          <div className="button-group-create-membership full-width">
+            <Button onClick={onClose} variant="outlined">
               Cancel
             </Button>
-            <Button type='submit' variant='contained' color='primary'>
-              Submit
+            <Button type="submit" variant="contained" color="primary" disabled={isLoading}>
+              {isLoading ? 'Submitting...' : 'Submit'}
             </Button>
           </div>
         </form>

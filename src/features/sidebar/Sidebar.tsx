@@ -99,6 +99,12 @@ const sidebarItems = [
     isExpandable: false,
   },
   {
+    label: 'Coach Bookings',
+    icon: <img src='src\assets\pickleballclub.svg' />,
+    path: '/coach-bookings',
+    isExpandable: false,
+  },
+  {
     label: 'Membership Plans',
     path: '/club/memberships',
     isExpandable: false,
@@ -131,6 +137,11 @@ const sidebarItems = [
   {
     label: 'Open Play',
     path: '/open-play',
+    isExpandable: false,
+  },
+  {
+    label: 'Coach',
+    path: '/add-coach',
     isExpandable: false,
   },
   {
@@ -498,7 +509,8 @@ const Sidebar: React.FC = () => {
                     item.label !== 'Courts' &&
                     item.label !== 'Membership Plans' &&
                     item.label !== 'Club Bookings' &&
-                    item.label !== 'Open Play' &&
+                    item.label !== 'Open Play'&&
+                    item.label !== 'Coach' &&
                     item.label !== 'Themes'
                   ) {
                     return;
@@ -510,6 +522,8 @@ const Sidebar: React.FC = () => {
                     item.label !== 'Bookings' &&
                     item.label !== 'Waitlist' &&
                     item.label !== 'Join Open Play' &&
+                    item.label !== 'Coach Bookings'
+ &&
                     item.label !== 'Themes'
                   ) {
                     return;

@@ -26,7 +26,7 @@ function FullCalendarApp(): JSX.Element {
     const [selectedCourt, setSelectedCourt] = useState<any>(null);
     const [selectedEvent, setSelectedEvent] = useState<any>(null);
     const [bookingDuration, setBookingDuration] = useState<number>(30);
-
+    const [clickedEventIds, setClickedEventIds] = useState<string[]>([]);
     const generateEmptySlots = (bookings) => {
         const emptySlots = [];
     
@@ -109,17 +109,21 @@ function FullCalendarApp(): JSX.Element {
       };
       
         
-    const handleReserveOrWaitlist = async (sessionId: string, isFull: boolean) => {
+      const handleReserveOrWaitlist = async (sessionId: string, isFull: boolean) => {
         const token=localStorage.getItem('jwtToken');
+    
+        if (!clickedEventIds.includes(sessionId)) {
+          setClickedEventIds([...clickedEventIds, sessionId]);
+      }
+  
+    
         try {
             const response = await axios.post(
                 `http://44.216.113.234:8080/api/openplay/bookings`,
                 null,
                 {
                     headers: {
-
                         Authorization: `Bearer ${token}`,
-
                     },
                     params: {
                         sessionId,
@@ -148,6 +152,7 @@ function FullCalendarApp(): JSX.Element {
             toast.error(errorMessage);
         }
     };
+    
     
     const renderEventContent = (arg) => {
         const { event } = arg;
@@ -231,15 +236,21 @@ function FullCalendarApp(): JSX.Element {
                     style={{
                         marginTop: '5px',
                         padding: '5px 10px',
-                        backgroundColor: isFull ? 'gray' : 'green',
+                       backgroundColor: clickedEventIds.includes(event.id)
+                        ? '#999'
+                        : isFull
+                          ? 'gray'
+                          : 'green',
                         color: 'white',
                         border: 'none',
                         borderRadius: '4px',
-                        cursor: 'pointer',
-                    }}
-                    onClick={() => handleReserveOrWaitlist(event.id, isFull)}
+                        cursor: clickedEventIds.includes(event.id) ? 'not-allowed' : 'pointer',
+                        opacity: clickedEventIds.includes(event.id) ? 0.6 : 1,
+                      }}
+                      disabled={clickedEventIds.includes(event.id)}
+                      onClick={() => handleReserveOrWaitlist(event.id, isFull)}
                     >
-                    {isFull ? 'Join Waitlist' : 'Join OPEN Play'}
+                      {isFull ? 'Join Waitlist' : 'Join OPEN Play'}
                     </button>
                 </>
                 )}

@@ -4,7 +4,7 @@ import "./CreateOpenPlay.css";
 import { useGetCourts } from "../../features/bookings/api/useGetCourts";
 import AuthContext from "../../context/AuthContext";
 
-function CreateOpenPlay() {
+function CreateOpenPlay({ onSuccess, onClose }) {
   const { user } = useContext(AuthContext) || {};
   const clubId = user?.userClubRole?.[0]?.clubId ?? "";
 
@@ -34,7 +34,6 @@ function CreateOpenPlay() {
       }));
     }
   }, [formData.courtName, courtsData, clubId]);
-  
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -43,19 +42,20 @@ function CreateOpenPlay() {
       [name]: type === "checkbox" ? checked : value,
     }));
   };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-  
+
     if (!formData.courtId) {
       alert("Invalid court name. Please select a valid court.");
       return;
     }
-  
+
     if (!formData.startTime || !formData.durationMinutes || !formData.skillLevel || !formData.maxPlayers) {
       alert("Please fill in all required fields.");
       return;
     }
-  
+
     const payload = {
       clubId: formData.clubId,
       courtId: formData.courtId,
@@ -65,7 +65,7 @@ function CreateOpenPlay() {
       maxPlayers: Number(formData.maxPlayers),
       registeredPlayers: [],
     };
-  
+
     mutation.mutate(payload, {
       onSuccess: () => {
         alert("Session created successfully!");
@@ -79,12 +79,11 @@ function CreateOpenPlay() {
           maxPlayers: "",
           registeredPlayers: "",
         });
+        onSuccess?.();
       },
       onError: (error) => alert(error.message),
     });
   };
-  
-  
 
   return (
     <form onSubmit={handleSubmit} className="openplay-form">
@@ -103,8 +102,9 @@ function CreateOpenPlay() {
               {court.name}
             </option>
           ))}
-  </select>
+        </select>
       </label>
+
       <label className="form-label">
         Start Time:
         <input
@@ -116,6 +116,7 @@ function CreateOpenPlay() {
           required
         />
       </label>
+
       <label className="form-label">
         Duration (Minutes):
         <input
@@ -127,6 +128,7 @@ function CreateOpenPlay() {
           required
         />
       </label>
+
       <label className="form-label">
         Skill Level:
         <select
@@ -140,8 +142,9 @@ function CreateOpenPlay() {
           <option value="Beginner">Beginner</option>
           <option value="Intermediate">Intermediate</option>
           <option value="Advanced">Advanced</option>
-     </select>
+        </select>
       </label>
+
       <label className="form-label">
         Max Players:
         <input
@@ -153,9 +156,19 @@ function CreateOpenPlay() {
           required
         />
       </label>
-      <button type="submit" className="submit-button">
-        Create Session
-      </button>
+
+      <div className="form-actions">
+        <button type="submit" className="submit-button">
+          Create Session
+        </button>
+        <button
+          type="button"
+          className="cancel-button"
+          onClick={onClose}
+        >
+          Cancel
+        </button>
+      </div>
     </form>
   );
 }

@@ -12,7 +12,12 @@
     font-weight: bold;
     margin-bottom: 5px;
   }
-  
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
   .form-input {
     width: 100%;
     padding: 8px;
@@ -42,3 +47,28 @@
     background-color: #0056b3;
   }
   
+  .table-container{
+    background-color: rgb(255, 255, 255);
+    margin: 1rem;
+    box-shadow: 0 0px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 0.5rem;
+    width: 100%;
+
+    & table{
+        width: 100%;
+        table-layout: fixed; 
+        th, td {
+            padding: 12px;
+            text-align: left;
+            word-wrap: break-word;
+        }
+
+        tr{
+            background-color: rgb(194, 193, 199);
+        }
+        
+         th{
+            background-color: #578bf3;
+         }
+        }
+      }

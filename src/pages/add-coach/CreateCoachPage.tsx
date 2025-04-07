@@ -1,102 +1,77 @@
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
+import { useForm } from 'react-hook-form';
 import AuthContext from '../../context/AuthContext';
 import './CreateCoachPage.css';
 import { useCreateCoach } from '../../features/Coach/api/useCreateCoach';
+
+type FormValues = {
+  name: string;
+  email: string;
+  pricePerHour: string;
+  expertiseLevels: string;
+};
 
 function CreateCoachPage() {
   const { user } = useContext(AuthContext)!;
   const clubId = user?.currentActiveClubId;
 
-  const [formData, setFormData] = useState({
-    clubId: '',
-    name: '',
-    email: '',
-    pricePerHour: '',
-    expertiseLevels: [] as string[],
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { isSubmitting },
+  } = useForm<FormValues>({
+    defaultValues: {
+      name: '',
+      email: '',
+      pricePerHour: '',
+      expertiseLevels: '',
+    },
   });
 
   const { mutate, isPending } = useCreateCoach();
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-
-    if (name === 'expertiseLevels') {
-      setFormData((prev) => ({ ...prev, expertiseLevels: [value] }));
-    } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
-    }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const onSubmit = (data: FormValues) => {
     const payload = {
-      ...formData,
+      ...data,
       clubId,
+      expertiseLevels: [data.expertiseLevels],
     };
 
-    const { name, email, pricePerHour, expertiseLevels } = payload;
-
-    if (!name || !email || !pricePerHour || expertiseLevels.length === 0) {
-      alert('Please fill in all required fields.');
-      return;
-    }
-
     mutate(payload, {
-      onSuccess: () => alert('Coach created successfully!'),
+      onSuccess: () => {
+        alert('Coach created successfully!');
+        reset();
+      },
       onError: (error: any) => alert(error?.message ?? 'Something went wrong.'),
     });
   };
 
   return (
-    <form onSubmit={handleSubmit} className="coach-form">
+    <form onSubmit={handleSubmit(onSubmit)} className="coach-form">
       <label className="form-label">
         Name:
-        <input
-          type="text"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          className="form-input"
-          required
-        />
+        <input type="text" {...register('name', { required: true })} className="form-input" />
       </label>
 
       <label className="form-label">
         Email:
-        <input
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          className="form-input"
-          required
-        />
+        <input type="email" {...register('email', { required: true })} className="form-input" />
       </label>
 
       <label className="form-label">
         Price Per Hour:
         <input
           type="number"
-          name="pricePerHour"
-          value={formData.pricePerHour}
-          onChange={handleChange}
+          step="0.01"
+          {...register('pricePerHour', { required: true })}
           className="form-input"
-          required
         />
       </label>
 
       <label className="form-label">
         Expertise Level:
-        <select
-          name="expertiseLevels"
-          value={formData.expertiseLevels[0] || ''}
-          onChange={handleChange}
-          className="form-input"
-          required
-        >
+        <select {...register('expertiseLevels', { required: true })} className="form-input">
           <option value="">Select an expertise level</option>
           <option value="Beginner">Beginner</option>
           <option value="Intermediate">Intermediate</option>
@@ -104,8 +79,8 @@ function CreateCoachPage() {
         </select>
       </label>
 
-      <button type="submit" className="submit-button" disabled={isPending}>
-        {isPending ? 'Submitting...' : 'Create Coach'}
+      <button type="submit" className="submit-button" disabled={isPending || isSubmitting}>
+        {isPending || isSubmitting ? 'Submitting...' : 'Create Coach'}
       </button>
     </form>
   );

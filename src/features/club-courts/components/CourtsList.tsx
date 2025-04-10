@@ -1,6 +1,5 @@
 import { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useUserInfo } from '../../../context/UserInfoContext';
 import { useGetClubCourt } from '../../../shared/apis/courts/useGetClubCourts';
 import { useMutateAddCourt } from '../../../shared/apis/courts/useMutateAddCourt';
 import {
@@ -10,7 +9,6 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  MenuItem,
   Table,
   TableBody,
   TableCell,
@@ -18,43 +16,40 @@ import {
   TableHead,
   TableRow,
   Paper,
+  MenuItem,
 } from '@mui/material';
 import AuthContext from '../../../context/AuthContext';
+import { toast } from 'react-toastify';
 
 const CourtsList = () => {
-  const { userInfo } = useUserInfo();
-
   const [showModal, setShowModal] = useState(false);
   const { user } = useContext(AuthContext)!;
   const clubId = user?.currentActiveClubId;
   const { data: clubList, isLoading, error } = useGetClubCourt(clubId);
+
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
   } = useForm();
+
   const { mutate } = useMutateAddCourt({
     onSuccessCallback: () => {
-      alert('Court added successfully!');
+      toast.success('Court added successfully!');
       setShowModal(false);
       reset();
     },
     onErrorCallback: (error) => {
-      alert(`Error: ${error.message}`);
+      toast.error(`Error: ${error.message}`);
     },
   });
 
   const onSubmit = (data) => {
-    console.log('booking court : ', data);
     const courtData = {
-      id: crypto.randomUUID(),
       name: data.name,
-      type: data.type,
-      capacity: data.capacity,
       surface: data.surface,
-      pricePerHour: parseFloat(data.pricePerHour),
-      reservationIntervalMinutes: data.interval,
+      reservationIntervalMinutes: parseInt(data.interval, 10),
     };
     mutate({ clubId, courtData });
   };
@@ -77,20 +72,16 @@ const CourtsList = () => {
           <TableHead sx={{ bgcolor: 'primary.main' }}>
             <TableRow>
               <TableCell sx={{ color: 'white' }}>Name</TableCell>
-              <TableCell sx={{ color: 'white' }}>Type</TableCell>
               <TableCell sx={{ color: 'white' }}>Surface</TableCell>
-              <TableCell sx={{ color: 'white' }}>Capacity</TableCell>
-              <TableCell sx={{ color: 'white' }}>Price/Hour</TableCell>
+              <TableCell sx={{ color: 'white' }}>Interval</TableCell>
             </TableRow>
           </TableHead>
           <TableBody sx={{ bgcolor: 'background.default' }}>
             {clubList?.map((court) => (
               <TableRow key={court.id}>
                 <TableCell>{court.name}</TableCell>
-                <TableCell>{court.type}</TableCell>
                 <TableCell>{court.surface}</TableCell>
-                <TableCell>{court.capacity}</TableCell>
-                <TableCell>${court.pricePerHour}</TableCell>
+                <TableCell>{court.reservationIntervalMinutes} mins</TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -108,47 +99,21 @@ const CourtsList = () => {
               margin='dense'
             />
             <TextField
-              {...register('type', { required: true })}
-              select
-              label='Type'
-              fullWidth
-              margin='dense'
-            >
-              <MenuItem value='Singles'>Singles</MenuItem>
-              <MenuItem value='Doubles'>Doubles</MenuItem>
-              <MenuItem value='Singles & Doubles'>Singles & Doubles</MenuItem>
-            </TextField>
-            <TextField
-              {...register('capacity', { required: true })}
-              label='Capacity'
-              type='number'
-              fullWidth
-              margin='dense'
-              inputProps={{ min: 0 }}
-            />
-            <TextField
               {...register('surface', { required: true })}
               label='Surface'
               fullWidth
               margin='dense'
             />
             <TextField
-              {...register('pricePerHour', { required: true })}
-              label='Price per Hour'
-              type='number'
-              fullWidth
-              margin='dense'
-              inputProps={{ min: 0 }}
-            />
-            <TextField
               {...register('interval', { required: true })}
               select
-              label='interval'
+              label='Interval'
               fullWidth
               margin='dense'
             >
               <MenuItem value='30'>30 minutes</MenuItem>
               <MenuItem value='60'>60 minutes</MenuItem>
+              <MenuItem value='120'>120 minutes</MenuItem>
             </TextField>
           </DialogContent>
           <DialogActions>

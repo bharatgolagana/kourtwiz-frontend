@@ -116,6 +116,11 @@ const sidebarItems = [
     isExpandable: false,
   },
   {
+    label: 'Devices',
+    path: '/club/device',
+    isExpandable: false,
+  },
+  {
     label: 'Courts',
     path: 'club/court',
     isExpandable: false,
@@ -532,7 +537,8 @@ const Sidebar: React.FC = () => {
                     item.label !== 'Open Play' &&
                     item.label !== 'Coach' &&
                     item.label !== 'Profile'&&
-                    item.label !== 'Themes'
+                    item.label !== 'Themes' &&
+                    item.label !== 'Devices'
                   ) {
                     return;
                   }

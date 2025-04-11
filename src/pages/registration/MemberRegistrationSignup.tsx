@@ -164,24 +164,25 @@ const MemberRegistrationSignupPage = () => {
   
   const captureImage = () => {
     if (videoRef.current && stream) {
-      const canvas = document.createElement('canvas');
-      canvas.width = videoRef.current.videoWidth;
-      canvas.height = videoRef.current.videoHeight;
-      const ctx = canvas.getContext('2d');
-      
-      if (ctx) {
-        ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-        const base64String = canvas.toDataURL('image/png');
-        setImageBase64(base64String);
-        setValue("file", base64String);
-        
-        // Stop the stream
-        stream.getTracks().forEach(track => track.stop());
-        setStream(null);
-        setIsCameraOpen(false);
-      }
+    const canvas = document.createElement('canvas');
+    canvas.width = videoRef.current.videoWidth;
+    canvas.height = videoRef.current.videoHeight;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+    canvas.toBlob((blob) => {
+    if (blob) {
+    const file = new File([blob], 'captured-image.jpg', { type: 'image/jpeg' });
+    setValue("file", file);
+    const previewUrl = URL.createObjectURL(file);
+    setImageBase64(previewUrl); 
+    stream.getTracks().forEach(track => track.stop());
+    setStream(null);
+    setIsCameraOpen(false);
     }
-  };
+    }, 'image/jpeg', 0.95); 
+    }
+    };
   
   const closeCamera = () => {
     if (stream) {

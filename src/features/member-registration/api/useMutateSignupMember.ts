@@ -28,6 +28,7 @@ const signUp = async (payload: {
 const formData = new FormData();
   formData.append("UserJson",JSON.stringify(userJsonFields));
   if (file) {
+    console.log("file", file);
     formData.append("file" , file);
   }
   const response = await fetch(

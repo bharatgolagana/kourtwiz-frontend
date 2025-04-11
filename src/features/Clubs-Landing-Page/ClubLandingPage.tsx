@@ -78,7 +78,7 @@ const ClubLandingPage = () => {
             {clubMembershipdata.map((membership) => (
               <div key={membership.id} className="membership-card">
                 <h3>{membership.membershipName}</h3>
-                <p>Duration: {membership.duration} days</p>
+                <p>Duration: {membership.duration}</p>
                 <p>Price: ${membership.price}</p>
 
                 <h4>Perks:</h4>

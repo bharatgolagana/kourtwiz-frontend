@@ -46,7 +46,7 @@ const CreateClubMembershipsPage = () => {
               </Typography>
               <Typography>Price: ${membership.price}</Typography>
               <Typography variant='body2'>
-                Duration: {membership.duration} Months
+                Duration: {membership.duration}
               </Typography>
               {membership.perks &&
                 Object.values(membership.perks).some((v) => v !== 0) && (

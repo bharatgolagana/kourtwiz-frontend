@@ -27,7 +27,7 @@ const CreateClubMembershipModal = ({ open, onClose }) => {
       name: '',
       description: '',
       price: '',
-      durationInDays: '',
+      duration: '',
       selectedPerks: [],
       perks: {},
       isFamilyPlan: false,
@@ -77,7 +77,7 @@ const CreateClubMembershipModal = ({ open, onClose }) => {
     const formattedPayload = {
       clubId,
       membershipName: data.name,
-      duration: Number(data.durationInDays),
+      duration: data.duration,
       price: parseFloat(Number(data.price).toFixed(1)),
       perks: perksPayload,
       customPerks: data.customPerks.map((perk) => ({
@@ -101,11 +101,20 @@ const CreateClubMembershipModal = ({ open, onClose }) => {
             inputProps={{ step: '0.01' }}
             {...register('price')}
           />
-          <TextField
-            label="Duration (Months)"
-            type="number"
-            {...register('durationInDays')}
-          />
+          <FormControl className="full-width" margin="normal">
+            <InputLabel id="duration-label">Duration</InputLabel>
+            <Controller
+              control={control}
+              name="duration"
+              render={({ field }) => (
+                <Select labelId="duration-label" label="Duration" {...field}>
+                  <MenuItem value="MONTHLY">Monthly</MenuItem>
+                  <MenuItem value="ANNUAL">Annual</MenuItem>
+                </Select>
+              )}
+            />
+        </FormControl>
+
 
           <FormControl className="full-width">
             <InputLabel>Perks</InputLabel>

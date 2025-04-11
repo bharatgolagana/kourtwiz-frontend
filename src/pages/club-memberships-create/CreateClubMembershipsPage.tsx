@@ -42,7 +42,7 @@ const CreateClubMembershipsPage = () => {
           >
             <CardContent>
               <Typography variant='h5' color='primary.main'>
-                {membership.name}
+                {membership.membershipName}
               </Typography>
               <Typography>Price: ${membership.price}</Typography>
               <Typography variant='body2'>

@@ -23,6 +23,7 @@ const Viewusers = ({
   const filteredUsers = data.filter(
     (user: any) => user.role?.name !== 'ClubAdmin'
   );
+  console.log(filteredUsers, 'filteredUsers');
 
   return (
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
@@ -81,6 +82,9 @@ const Viewusers = ({
               <TableCell style={{ color: 'white', fontWeight: 'bold' }}>
                 City
               </TableCell>
+              <TableCell style={{ color: 'white', fontWeight: 'bold' }}>
+                Membership
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -89,7 +93,7 @@ const Viewusers = ({
                 <TableCell>{userEntry.user.name || 'N/A'}</TableCell>
                 <TableCell>{userEntry.user.email || 'N/A'}</TableCell>
                 <TableCell>{userEntry.user.phoneNumber || 'N/A'}</TableCell>
-                <TableCell>{userEntry.user.role?.name || 'N/A'}</TableCell>
+                <TableCell>{userEntry.role?.name || 'N/A'}</TableCell>
                 <TableCell>
                   {userEntry.user.tasks?.length > 0
                     ? userEntry.user.tasks.join(', ')
@@ -97,6 +101,7 @@ const Viewusers = ({
                 </TableCell>
                 <TableCell>{userEntry.user.address || 'N/A'}</TableCell>
                 <TableCell>{userEntry.user.city || 'N/A'}</TableCell>
+                <TableCell>{userEntry.membershipPlan?.membershipName || 'N/A'}</TableCell>
               </TableRow>
             ))}
           </TableBody>

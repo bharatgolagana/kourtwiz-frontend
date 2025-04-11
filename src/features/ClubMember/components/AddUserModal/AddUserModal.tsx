@@ -1,28 +1,30 @@
-import { useForm } from 'react-hook-form';
-import { Modal, Box, Typography, TextField, Button, Grid } from '@mui/material';
+import { Controller, useForm } from 'react-hook-form';
+import { Modal, Box, Typography, TextField, Button, Grid, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { useMutateAddUser } from '../../../../shared/apis/User/useMutateAddUser';
 import { toast } from 'react-toastify';
 import './AddUserModal.css';
-import { useMutateAssignRoleUser } from '../../../../shared/apis/User/useMutateAssignRole';
+import { useGetmembershipsByClubId } from '../../../../shared/apis/memberships/useGetmembershipsByClubId';
+import { ref } from 'process';
+import PhoneInput from "react-phone-number-input";
+import 'react-phone-number-input/style.css';
 
 const AddUserModal = ({
   open,
   onClose,
   currentClubId,
-  clubName,
+  onUserAdded,
 }: {
   open: boolean;
   onClose: () => void;
   currentClubId: string;
-  clubName: string;
+  onUserAdded: () => void;
 }) => {
-  const { register, handleSubmit } = useForm({
+  const { register, handleSubmit, control, formState: { errors }, } = useForm({
     defaultValues: {
       email: '',
       name: '',
       password: '',
       phoneNumber: '',
-      profilePictureUrl: '',
       dateOfBirth: '',
       currentActiveClubId: currentClubId,
       skillLevel: '',
@@ -33,38 +35,30 @@ const AddUserModal = ({
       state: '',
       country: '',
       zipCode: '',
+      membershipTypeId: '',
     },
   });
 
-  const handleAddMembership = (data: any) => {
-    assignMemberMutate({
-      userEmail: data.email,
-      clubName: clubName,
-      roleName: 'Member',
-    });
-  };
+  const { data: clubMembershipdata = [] } = useGetmembershipsByClubId(
+    currentClubId ?? ''
+    );
+
   const { mutate: addUserMutate } = useMutateAddUser({
-    onSuccessCallback: (data) => {
+    onSuccessCallback: () => {
       toast.success('User added successfully!');
-      handleAddMembership(data);
+      onClose();
+      onUserAdded(); 
     },
     onErrorCallback: () => {
       toast.error('Failed to add user!');
     },
   });
-  const { mutate: assignMemberMutate } = useMutateAssignRoleUser({
-    onSuccessCallback: () => {
-      toast.success('Member assigned!');
-      onClose();
-    },
-    onErrorCallback: () => {
-      toast.error('Failed to assign member');
-      onClose();
-    },
-  });
+
   const onSubmit = (data: any) => {
     addUserMutate(data);
+    console.log('data', data);
   };
+
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -73,34 +67,30 @@ const AddUserModal = ({
         <form onSubmit={handleSubmit(onSubmit)} className='add-user-modal-form'>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
-              <TextField
-                label='Email'
-                {...register('email')}
-                fullWidth
-                required
-              />
+              <TextField label='Email' {...register('email')} fullWidth required />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField
-                label='Name'
-                {...register('name')}
-                fullWidth
-                required
-              />
+              <TextField label='Name' {...register('name')} fullWidth required />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField
-                label='Phone Number'
-                {...register('phoneNumber')}
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                label='Profile Picture URL'
-                {...register('profilePictureUrl')}
-                fullWidth
-              />
+              <FormControl fullWidth>
+                <Controller
+                  name="phoneNumber"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <PhoneInput
+                      {...field}
+                      international
+                      defaultCountry="US"
+                      countryCallingCodeEditable={false}
+                      onChange={(value) => field.onChange(value)}
+                      maxLength={15}
+                      error={!!errors.phoneNumber}
+                    />
+                  )}
+                />
+              </FormControl>
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
@@ -111,23 +101,39 @@ const AddUserModal = ({
                 InputLabelProps={{ shrink: true }}
               />
             </Grid>
-
             <Grid item xs={12} sm={6}>
-              <TextField
-                label='Skill Level'
-                {...register('skillLevel')}
-                fullWidth
-              />
+              <FormControl fullWidth>
+                <InputLabel id='skill-level-select-label'>Skill Level</InputLabel>
+                <Select
+                  labelId='skill-level-select-label'
+                  defaultValue=""
+                  {...register('skillLevel')}
+                  label='Skill Level'
+                >
+                  {[1, 2, 3, 4, 5].map((level) => (
+                    <MenuItem key={level} value={level}>
+                      {level}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField
-                label='Preferred Time'
-                {...register('preferredTime')}
-                fullWidth
-              />
+              <TextField label='Preferred Time' {...register('preferredTime')} fullWidth />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField label='Gender' {...register('gender')} fullWidth />
+              <FormControl fullWidth>
+                <InputLabel id='gender-select-label'>Gender</InputLabel>
+                <Select
+                  labelId='gender-select-label'
+                  defaultValue=""
+                  {...register('gender', { required: true })}
+                  label='Gender'
+                >
+                  <MenuItem value='Male'>Male</MenuItem>
+                  <MenuItem value='Female'>Female</MenuItem>
+                </Select>
+              </FormControl>
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField label='Address' {...register('address')} fullWidth />
@@ -144,6 +150,23 @@ const AddUserModal = ({
             <Grid item xs={12} sm={6}>
               <TextField label='Zip Code' {...register('zipCode')} fullWidth />
             </Grid>
+            <Grid item xs={12} sm={6}>
+            <FormControl fullWidth>
+              <InputLabel id='membership-select-label'>Membership</InputLabel>
+              <Select
+                labelId='membership-select-label'
+                defaultValue=''
+                {...register('membershipTypeId', { required: true })}
+                label='Membership'
+              >
+                {clubMembershipdata.map((membership: any) => (
+                  <MenuItem key={membership.id} value={membership.id}>
+                    {membership.membershipName}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
           </Grid>
 
           <div className='add-user-button-group'>

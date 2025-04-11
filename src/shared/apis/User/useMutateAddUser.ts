@@ -1,51 +1,63 @@
-import { useMutation } from '@tanstack/react-query';
-import axios from 'axios';
+import { useMutation } from "@tanstack/react-query";
 
-const API_BASE_URL = 'http://44.216.113.234:8080/users';
-
-interface UserData {
-  email: string;
+const signUp = async (payload: {
   name: string;
-  password: string;
+  email: string;
   phoneNumber: string;
-  profilePictureUrl: string;
   dateOfBirth: string;
-  currentActiveClubId: string;
-  skillLevel: string;
-  preferredTime: string;
   gender: string;
   address: string;
   city: string;
   state: string;
   country: string;
   zipCode: string;
+  currentActiveClubId: string;
+  skillLevel: string;
+  preferredTime: string;
+  membershipTypeId: string;
+  file?: File;
+}
+) => {
+const { membershipTypeId, file, ...userJsonFields } = payload;
+
+const formData = new FormData();
+formData.append("UserJson", JSON.stringify(userJsonFields));
+
+if (file) {
+  formData.append("file", file);
 }
 
-interface useMutateAddUserProps {
-  onSuccessCallback?: (data: any) => void;
-  onErrorCallback?: (error: unknown) => void;
+const response = await fetch(
+  `http://44.216.113.234:8080/users/assign-club-membership/${payload.currentActiveClubId}?membershipTypeId=${membershipTypeId}`,
+  {
+    method: "POST",
+    body: formData,
+  }
+);
+
+if (!response.ok) {
+  const errorMessage = await response.text();
+  throw new Error(
+    `Error ${response.status}: ${response.statusText} - ${errorMessage}`
+  );
 }
+
+return await response.text(); // assuming plain string response
+};
 
 export const useMutateAddUser = ({
   onSuccessCallback,
   onErrorCallback,
-}: useMutateAddUserProps) => {
+}: {
+  onSuccessCallback: (data: any) => void;
+  onErrorCallback: (error: Error) => void;
+}) => {
   return useMutation({
-    mutationFn: async (userData: UserData) => {
-      const response = await axios.post(API_BASE_URL, userData, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
-          'Content-Type': 'application/json',
-        },
-      });
-      return response.data;
-    },
-    onSuccess: (data) => {
-      onSuccessCallback?.(data);
-    },
-    onError: (error) => {
-      console.error('Error creating user:', error);
-      onErrorCallback?.(error);
+    mutationFn: signUp,
+    onSuccess: onSuccessCallback,
+    onError: (error: unknown) => {
+      console.error("Signup error:", error);
+      onErrorCallback(error as Error);
     },
   });
 };

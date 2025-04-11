@@ -16,7 +16,7 @@ const UserManagement: React.FC = () => {
     console.log('opening the modal');
     setopenAddUserModal(true);
   };
-  const { data: users, isLoading } = useGetUsersByClubId(currentClubId);
+  const { data: users, isLoading, refetch } = useGetUsersByClubId(currentClubId);
   if (!user || isLoading) return <>Loading..</>;
   return (
     <div>
@@ -26,6 +26,10 @@ const UserManagement: React.FC = () => {
         onClose={handleCloseModal}
         currentClubId={currentClubId}
         clubName={currentOrgName}
+        onUserAdded={() => {
+          refetch();
+          handleCloseModal();
+        }}
       />
       <Viewusers data={users} handleOpenModal={handleOpenModal} />
     </div>

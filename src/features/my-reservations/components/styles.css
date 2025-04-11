@@ -1,0 +1,21 @@
+.paid-button {
+    padding: 6px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    margin: 2px;
+}
+ 
+.paid-button[disabled] {
+    background-color: #b0afaf;
+    color: #060505;
+    cursor: not-allowed;
+    border: 1px solid #9d9d9d;
+    margin: 2px;
+  }
+  
+
+.withdraw-button {
+    font-size: 12px;
+    color: rgb(255, 255, 255);
+    margin: 2px
+}

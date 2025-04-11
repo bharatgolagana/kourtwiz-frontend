@@ -58,7 +58,7 @@ const CreateClub = () => {
   return (
     <div className='create-club-container'>
       <Box className='create-club-content'>
-        <Typography variant='h5' gutterBottom color='white'>
+        <Typography variant='h5' gutterBottom color='#222'>
           Join our network of Pickleball Clubs
         </Typography>
         <Divider className='createclub-divider' />

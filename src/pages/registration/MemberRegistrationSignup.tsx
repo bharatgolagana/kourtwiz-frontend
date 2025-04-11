@@ -25,12 +25,18 @@ const schema = z
     phoneNumber: z.string().min(10, "Phone number is required"),
     file: z
     .any()
-    .refine((file) => file instanceof File || file === undefined, {
-      message: "File is required",
-    })
+    .refine(
+    (file) =>
+    file instanceof File ||
+    (typeof file === "string" && file.startsWith("data:image")) ||
+    file === undefined,
+    {
+    message: "File must be a valid image (File or base64)",
+    }
+    )
     .optional(),
     dateOfBirth: z.string().min(1, "Date of birth is required"),
-    gender: z.string().min(1, "Gender is required"),
+    gender: z.enum(["Male", "Female"]),
     address: z.string().min(1, "Address is required"),
     city: z.string().min(1, "City is required"),
     state: z.string().min(1, "State is required"),
@@ -38,7 +44,7 @@ const schema = z
     zipCode: z.string().min(1, "Zip code is required"),
     emailOTP: z.string().min(6, "Email OTP is required"),
     phoneOTP: z.string().optional(),
-    skillLevel: z.string().min(1, "Skill level is required"),
+    skillLevel: z.enum(["1", "2", "3", "4", "5"]),
     preferredTime: z.string().min(1, "Preferred time is required"),
     paymentDetails: z.object({
       cardNumber: z.string().min(16, "Card number must be 16 digits"),
@@ -292,6 +298,8 @@ const MemberRegistrationSignupPage = () => {
             <Grid item xs={12}>
               <Typography variant="h6">Personal Information</Typography>
               <Divider sx={{ mb: 2 }} />
+              <Typography variant="h6">Upload Profile Picture</Typography>
+
             </Grid>
 
             {/* Image Upload Section */}
@@ -309,7 +317,6 @@ const MemberRegistrationSignupPage = () => {
                       accept="image/*"
                       hidden
                       onChange={handleFileUpload}
-                      required
                     />
                   </Button>
                 </Grid>
@@ -413,13 +420,11 @@ const MemberRegistrationSignupPage = () => {
                 type: "date",
                 shrink: true,
               },
-              { label: "Gender", name: "gender" },
               { label: "Address", name: "address" },
               { label: "City", name: "city" },
               { label: "State", name: "state" },
               { label: "Country", name: "country" },
               { label: "Zip Code", name: "zipCode" },
-              { label: "Skill Level", name: "skillLevel" },
               { label: "Preferred Time", name: "preferredTime" },
             ].map(({ label, name, type }) => (
               <Grid item xs={12} sm={6} key={name}>
@@ -436,6 +441,42 @@ const MemberRegistrationSignupPage = () => {
                 />
               </Grid>
             ))}
+
+            {/* Gender Dropdown */}
+            <Grid item xs={12} sm={6}>
+              <TextField
+                select
+                label="Gender"
+                {...register("gender")}
+                error={!!errors.gender}
+                helperText={errors.gender?.message}
+                fullWidth
+              >
+                {["Male", "Female"].map((option) => (
+                  <MenuItem key={option} value={option}>
+                    {option}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+
+            {/* Skill Level Dropdown */}
+            <Grid item xs={12} sm={6}>
+              <TextField
+                select
+                label="Skill Level"
+                {...register("skillLevel")}
+                error={!!errors.skillLevel}
+                helperText={errors.skillLevel?.message}
+                fullWidth
+              >
+                {["1", "2", "3", "4", "5"].map((level) => (
+                  <MenuItem key={level} value={level}>
+                    {level}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
 
             {/* VERIFICATION SECTION */}
             <Grid item xs={12} sx={{ mt: 2 }}>

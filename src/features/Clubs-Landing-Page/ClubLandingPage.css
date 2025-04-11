@@ -6,12 +6,13 @@
 
   }
   .membership-types{
-    background-color: black;
+    background-image: url('/images/light-club.jpg');
+    color: #222;
     align-items: center;
   }
   .membership-types h2{
-    background-color: black;
-    color: white;
+    background-image: url('/images/light-club.jpg');
+    color: #222;
     margin-top: 0rem;
   }
   .membership-cards {
@@ -20,7 +21,8 @@
     flex-wrap: wrap;
     gap: 50px;
     padding: 20px;
-    background-color: black;
+    background-image: url('/images/light-club.jpg');
+    color: #222;
   }
   
   .membership-card {
@@ -37,7 +39,7 @@
   
   .club-container {
     width: 100%;
-    background-color: black;
+    background-image: url('/images/light-club.jpg');
     display: flex;
     flex-direction: column;
     align-items: center;

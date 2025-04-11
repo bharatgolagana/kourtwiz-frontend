@@ -31,7 +31,7 @@ const formData = new FormData();
     formData.append("file" , file);
   }
   const response = await fetch(
-    `http://44.216.113.234:8080/users/assign-club-membership/${currentActiveClubId}?membershipTypeId=${membershipTypeId}`,
+    `http://44.216.113.234:8080/users/assign-club-membership/${payload.currentActiveClubId}?membershipTypeId=${membershipTypeId}`,
     {
       method: "POST",
       body: formData,

@@ -63,8 +63,9 @@ const ClubLandingPage = () => {
           className="club-container"
           style={{ backgroundImage: clubImage ? `url(${clubImage})` : 'none' }}
         >
-          <h1>Welcome to {clubName}</h1>
-          <p>{description}</p>
+         <h1 style={{ color: '#222' }}>Welcome to {clubName}</h1>
+
+          <p style={{ color: '#222' }}>{description}</p>
         </div>
       </div>
 

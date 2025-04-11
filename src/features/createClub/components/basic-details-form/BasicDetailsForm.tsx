@@ -14,7 +14,7 @@ interface BasicDetailsFormProps {
 const BasicDetailsForm = ({ register, errors, watch, setValue }: BasicDetailsFormProps) => {
   return (
     <>
-      <Typography variant='h6' gutterBottom color='white'>
+      <Typography variant='h6' gutterBottom color='#222'>
         Basic Details
       </Typography>
       <Grid container spacing={2}>

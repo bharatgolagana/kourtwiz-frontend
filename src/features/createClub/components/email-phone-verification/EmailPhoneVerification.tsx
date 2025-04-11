@@ -131,7 +131,7 @@ const EmailPhoneVerification: React.FC<VerificationProps> = ({
   };
   return (
     <Box display='flex' flexDirection='column' gap={3} alignItems='center'>
-      <Typography variant='h6' gutterBottom color='white'>
+      <Typography variant='h6' gutterBottom color='#222'>
         Verify Email
       </Typography>
       <Grid2 container spacing={2} alignItems='center'>
@@ -195,7 +195,7 @@ const EmailPhoneVerification: React.FC<VerificationProps> = ({
           {isEmailVerified && <CheckCircleIcon color='success' />}
         </Grid2>
       </Grid2>
-      <Typography variant='h6' color='white' gutterBottom>
+      <Typography variant='h6' color='#222' gutterBottom>
         Verify Phone
       </Typography>
       {/* Phone Verification */}

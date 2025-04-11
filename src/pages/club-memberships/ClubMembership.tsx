@@ -9,14 +9,15 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useGetClubPlans } from '../../shared/apis/clubs/useGetClubPlans';
-import backgroundImage from '@/assets/pickleball2.jpg';
+// import backgroundImage from '@/assets/pickleball2.jpg';
 const styles = {
-  background: `url(${backgroundImage}) center/cover no-repeat fixed`,
+  background: 'linear-gradient(135deg, #f0f2f5 0%, #e6ecf0 100%)',
   minHeight: '100vh',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-};
+  padding: '3rem 1rem',
+  };
 const ClubMembershipPage = () => {
   const { data, isLoading } = useGetClubPlans();
   const navigate = useNavigate();
@@ -26,8 +27,8 @@ const ClubMembershipPage = () => {
   return (
     <Box style={styles}>
       <Container>
-        <Typography variant='h3' align='center' gutterBottom color='white'>
-          Choose memberShip Plan For Club
+        <Typography variant='h3' align='center' gutterBottom color='black'>
+          Choose Membership Plan For Club
         </Typography>
         <Box
           sx={{

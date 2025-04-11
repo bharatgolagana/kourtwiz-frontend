@@ -17,7 +17,7 @@
   position: relative;
   padding: 50px 0;
   padding-top: 6rem;
-  background-color: black;
+  background: linear-gradient(135deg, #ffffff, #f8fffa);
 }
 
 .about-content {
@@ -80,8 +80,8 @@
   padding-top: 3.5rem;
   justify-content: center;
   text-align: center;
-  color: white;
-  background-color: black;
+  color: black;
+  background: linear-gradient(135deg, #ffffff, #f8fffa);
 }
 
 .home-content {
@@ -90,21 +90,20 @@
   max-width: 50%;
   
 }
-
-.clubs-content h2{
-  background-color: black;
+.clubs-content h2 {
+  background: transparent;
   padding-top: 3rem;
-  color: white;
+  color: black;
 }
-.clubs-content p{
-  color: white;
+.clubs-content p {
+  color: black;
   padding-bottom: 2rem;
 }
 .clubs-content {
   position: relative;
   text-align: center;
   padding: 20px;
-  background-color: black;
+  background: linear-gradient(135deg, #ffffff, #f8fffa);
 }
 
 .search-bar {
@@ -123,7 +122,7 @@
   padding: 10px 0;
   white-space: nowrap;
   gap: 15px;
-  background-color: black;
+  background: linear-gradient(135deg, #f6faff, #fefefe);
 }
 
 .club-card {
@@ -189,33 +188,32 @@
 .club-card:hover {
   transform: scale(1.05);
 }
-
-
 .home-content h1 {
-  font-size:2rem;
+  font-size: 2rem;
   font-weight: bold;
   margin-bottom: 2rem;
 }
-
 .home-content p {
   font-size: 1.5rem;
   margin-bottom: 0rem;
 }
-
 .btn {
   padding: 10px;
   font-size: 1rem;
-  display:inline-block;
+  display: inline-block;
   justify-content: flex-end;
   border: none;
-  margin:0.5rem;
+  margin: 0.5rem;
   cursor: pointer;
   align-items: center;
   border-radius: 5px;
   transition: 0.3s;
+  background: #007bff;
+  color: white;
 }
-
-
+.btn:hover {
+  background: #0056b3;
+}
 @media screen and (max-width: 850px) {
   .home-content {
     max-width: 80%;
@@ -227,7 +225,6 @@
     font-size: 1.2rem;
   }
 }
-
 @media screen and (max-width: 600px) {
   .home-content h1 {
     font-size: 1.8rem;
@@ -236,14 +233,12 @@
     font-size: 1rem;
   }
 }
-
 .pricing-container {
   display: flex;
   justify-content: center;
   gap: 20px;
   flex-wrap: wrap;
 }
-
 .pricing-card {
   background: #fff;
   border-radius: 10px;
@@ -252,22 +247,18 @@
   width: 300px;
   text-align: center;
 }
-
 .pricing-card h3 {
   margin-bottom: 10px;
 }
-
 .price {
   font-size: 20px;
   font-weight: bold;
   color: #007bff;
 }
-
 .pricing-card ul {
   list-style: none;
   padding: 0;
 }
-
 .pricing-card li {
   margin: 5px 0;
 }
@@ -287,18 +278,19 @@
 #pricing {
   text-align: center;
   padding: 5rem 1.5rem;
-  background-color: black;
+  background: linear-gradient(135deg, #fffbe0, #eafbe7);
 }
 
 .pricing-content h2 {
   font-size: 2rem;
   margin-bottom: 1rem;
-  color: white;
+  color: black;
 }
 
 .pricing-content p {
   font-size: 1.25rem;
   margin-bottom: 2.5rem;
+  color: black;
 }
 
 .pricing-plans {
@@ -309,7 +301,7 @@
 }
 
 .plan {
-  background: azure;
+  background: linear-gradient(135deg, #ffffff, #f8fffa);
   padding: 1.5rem;
   border-radius: 0.5rem;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
@@ -353,19 +345,20 @@
 #services {
   text-align: center;
   padding: 50px 20px;
-  background-color: black;
-  color: white;
+  background: linear-gradient(135deg, #f3f9ff, #ffffff);
+  color: black;
 }
 
 .services-content h2 {
   font-size: 28px;
   margin-bottom: 1rem;
-  color: white;
+  color: black;
 }
 
 .services-content p {
   font-size: 18px;
   margin-bottom: 30px;
+  color: black;
 }
 
 .services-container {
@@ -374,39 +367,33 @@
   gap: 20px;
   flex-wrap: wrap;
 }
-
 .service-card {
-  background: #222;
+  background: linear-gradient(135deg, #ffffff, #f4fcff);
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.1);
   max-width: 300px;
   text-align: center;
 }
-
 .service-card h3 {
   font-size: 22px;
   margin-bottom: 10px;
 }
-
 .service-card p {
   font-size: 16px;
   margin-bottom: 10px;
 }
-
 .default-padding {
   padding: 3rem;
   max-width: 1600px;
   margin: 0 auto;
 }
-
 .default-grid-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 3rem;
   place-items: center;
 }
-
 .heading1 {
   font-size: clamp(1.8rem, 3vw, 2.5rem);
   font-weight: 700;
@@ -414,14 +401,12 @@
   margin-bottom: 1rem;
   margin: 0;
 }
-
 .heading2 {
   font-size: clamp(1.6rem, 3vw, 2.25rem);
   font-weight: 600;
   line-height: 3rem;
   margin-bottom: 1rem;
 }
-
 .heading3 {
   font-size: clamp(1.6rem, 3vw, 2.25rem);
   font-size: 40px;
@@ -430,7 +415,6 @@
   color: #2b2828;
   margin: 0;
 }
-
 .footer-heading {
   font-size: clamp(14px, 3vw, 20px);
   font-weight: 500;
@@ -439,7 +423,6 @@
   color: #dbdadf;
   margin-bottom: 0.5rem;
 }
-
 .para1 {
   color: #797979;
   font-size: clamp(1rem, 3vw, 1.2rem);
@@ -456,7 +439,6 @@
   font-family: nunito;
   margin: 0;
 }
-
 .para3 {
   font-size: clamp(10px, 2vw, 14px);
   font-weight: 400;
@@ -466,11 +448,9 @@
   cursor: pointer;
   margin: 0;
 }
-
 .para-span {
   color: var(--primary-color);
 }
-
 .kourtwiz-btn {
   background-color: var(--primary-color);
   text-align: center;
@@ -484,11 +464,9 @@
   font-weight: 500;
   letter-spacing: 0.03em;
 }
-
 .kourtwiz-btn:hover {
   background-color: var(--primary-color);
 }
-
 :link {
   text-decoration: none;
 }
@@ -499,7 +477,6 @@
     color: black;
   }
 }
-
 @media screen and (max-width: 850px) {
   .default-padding {
     padding: 1.5rem;
@@ -511,13 +488,12 @@
     line-height: 2.5rem;
   }
 }
-
 @media screen and (max-width: 600px) {
   .default-grid-container {
     grid-template-columns: 1fr;
   }
 }
-
+ 
 .buttons{
   & button{
     background-color: rgb(151, 137, 137);

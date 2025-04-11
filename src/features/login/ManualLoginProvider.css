@@ -1,6 +1,5 @@
 .login-container {
-  background: linear-gradient(hwb(0 100% 0% / 0.8), #000000cc),
-              url("https://images.pexels.com/photos/1103829/pexels-photo-1103829.jpeg") no-repeat center center/cover;
+  background-image: url('/images/light-club.jpg');
   display: flex;
   justify-content: center;
   align-items: center;

@@ -1,0 +1,9 @@
+.buttons{
+    display: flex;
+    justify-content: center;
+}
+
+.add-device{
+    margin-top: 2rem;
+    margin-right: 2rem;
+}

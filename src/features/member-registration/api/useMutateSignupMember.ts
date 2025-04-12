@@ -4,7 +4,7 @@ const signUp = async (payload: {
   name: string;
   email: string;
   phoneNumber: string;
-  profilePictureUrl?: string;
+  file?: File;
   dateOfBirth: string;
   gender: string;
   address: string;
@@ -24,17 +24,17 @@ const signUp = async (payload: {
     cardTypeEnum: string;
   };
 }) => {
-  const { currentActiveClubId, membershipTypeId } = payload;
-
+  const {membershipTypeId,file,...userJsonFields } = payload;
+const formData = new FormData();
+  formData.append("UserJson",JSON.stringify(userJsonFields));
+  if (file) {
+    formData.append("file" , file);
+  }
   const response = await fetch(
     `http://44.216.113.234:8080/users/assign-club-membership/${currentActiveClubId}?membershipTypeId=${membershipTypeId}`,
     {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "*/*",
-      },
-      body: JSON.stringify(payload),
+      body: formData,
     }
   );
 

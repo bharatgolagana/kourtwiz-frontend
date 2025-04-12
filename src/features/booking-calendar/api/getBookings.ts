@@ -1,5 +1,13 @@
 import axios from 'axios';
 
+const eventColorMap: Record<string, string> = {
+  'Open Play': '#7FFFD4',          // Aquamarine
+  'Private Lesson': '#FFB6C1',     // Light Pink
+  'Group Lesson': '#ADD8E6',       // Light Blue
+  'Clinic': '#FFD700',             // Gold
+  'Tournament': '#DDA0DD',         // Plum
+  'League': '#98FB98',             // Pale Green
+};
 export const fetchBookings = async (clubId: string) => {
   if (!clubId) throw new Error('Club ID is required');
 
@@ -24,19 +32,22 @@ export const fetchBookings = async (clubId: string) => {
     start: formatDateTime([...booking.date, ...booking.startTime]),
     end: formatDateTime([...booking.date, ...booking.endTime]),
     resourceId: booking.courtId,
+    backgroundColor:'#575755'
   }));
 
   const playTypeEvents = playTypeSession.map((session: any) => {
     const start = formatDateTime(session.startTime);
     const end = new Date(start);
     end.setMinutes(end.getMinutes() + session.durationMinutes);
+    const formattedTitle = session.playTypeName.replace('_', ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
 
     return {
       id: session.id,
-      title: session.playTypeName.replace('_', ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase()), 
+      title: formattedTitle, 
       start,
       end,
       resourceId: session.courtId,
+      backgroundColor: eventColorMap[formattedTitle] || '#ccc',
       extendedProps: {
         skillLevel: session.skillLevel,
         slotsRemaining: session.maxPlayers - (session.registeredPlayers?.length || 0),

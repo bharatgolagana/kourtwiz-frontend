@@ -12,6 +12,7 @@ import axios from 'axios';
 import { useBookCourt } from '../bookings/api/useBookCourt';
 import { fetchBookings } from './api/getBookings';
 
+
 function FullCalendarApp(): JSX.Element {
     const { user } = useContext(AuthContext)!;
     const clubId = user?.currentActiveClubId;
@@ -201,7 +202,6 @@ function FullCalendarApp(): JSX.Element {
                 justifyContent: 'center',
                 alignItems: 'center',
                 textAlign: 'center',
-                backgroundColor, 
                 color: isCourtBooking ? 'white' : 'black', 
                 borderRadius: '4px',
                 }}

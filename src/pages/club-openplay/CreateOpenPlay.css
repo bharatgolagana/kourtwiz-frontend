@@ -72,3 +72,10 @@
          }
         }
       }
+
+
+      .openplay-form-container {
+        max-height: 82vh; 
+        overflow-y: auto;
+      }
+      

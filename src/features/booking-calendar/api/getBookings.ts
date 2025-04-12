@@ -10,42 +10,44 @@ export const fetchBookings = async (clubId: string) => {
       Authorization: `Bearer ${token}`,
     },
   });
-  const { courtBooking, openPlaySession } = response.data;
 
+  const { courtBooking, playTypeSession } = response.data;
 
-  const formatDateTime = (dateArray: number[], timeArray?: number[]) => {
-    const [year, month, day] = dateArray; 
-    const [hour, minute] = timeArray ?? [0, 0]; 
+  const formatDateTime = (dateArray: number[]) => {
+    const [year, month, day, hour = 0, minute = 0] = dateArray;
     return new Date(year, month - 1, day, hour, minute);
   };
-
 
   const courtEvents = courtBooking.map((booking: any) => ({
     id: booking.id,
     title: 'Reserved',
-    start: formatDateTime(booking.date, booking.startTime),
-    end: formatDateTime(booking.date, booking.endTime),
+    start: formatDateTime([...booking.date, ...booking.startTime]),
+    end: formatDateTime([...booking.date, ...booking.endTime]),
     resourceId: booking.courtId,
   }));
 
-  const openPlayEvents = openPlaySession.map((session: any) => {
-    const start = formatDateTime(session.startTime.slice(0, 3), session.startTime.slice(3)); 
+  const playTypeEvents = playTypeSession.map((session: any) => {
+    const start = formatDateTime(session.startTime);
     const end = new Date(start);
     end.setMinutes(end.getMinutes() + session.durationMinutes);
+
     return {
-        id: session.id,
-        title: "Open Play",
-        start,
-        end,
-        resourceId: session.courtId,
-        extendedProps: {
-            skillLevel: session.skillLevel,
-            slotsRemaining: session.maxPlayers - (session.registeredPlayers ? session.registeredPlayers.length : 0),
-            totalSlots: session.maxPlayers,  
-            openSessionFull: session.openSessionFull, 
-        } 
+      id: session.id,
+      title: session.playTypeName.replace('_', ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase()), 
+      start,
+      end,
+      resourceId: session.courtId,
+      extendedProps: {
+        skillLevel: session.skillLevel,
+        slotsRemaining: session.maxPlayers - (session.registeredPlayers?.length || 0),
+        totalSlots: session.maxPlayers,
+        openSessionFull: session.openSessionFull,
+        eventRepeatType: session.eventRepeatType,
+        repeatEndDate: formatDateTime(session.repeatEndDate),
+        repeatInterval: session.repeatInterval,
+      },
     };
   });
 
-  return [...courtEvents, ...openPlayEvents];
+  return [...courtEvents, ...playTypeEvents];
 };

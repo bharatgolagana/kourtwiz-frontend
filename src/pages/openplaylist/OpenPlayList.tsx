@@ -26,7 +26,7 @@ const OpenPlayList = () => {
       if (!token) throw new Error("No token found");
 
       const response = await axios.get(
-        `http://44.216.113.234:8080/api/openplay/sessions/available?clubId=${clubId}`,
+        `http://44.216.113.234:8080/api/play-type/sessions/available?clubId=${clubId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -62,7 +62,7 @@ const OpenPlayList = () => {
 
     try {
       const response = await axios.post(
-        `http://44.216.113.234:8080/api/openplay/bookings`,
+        `http://44.216.113.234:8080/api/play-type/bookings`,
         null,
         {
           headers: {
@@ -104,7 +104,7 @@ const OpenPlayList = () => {
 
   return (
     <div className="openPlayListPage">
-      <h2>Open Play Sessions</h2>
+      <h2>Play Sessions</h2>
       <div className="table-container">
         <table>
           <thead>
@@ -117,14 +117,16 @@ const OpenPlayList = () => {
               <th>Max Slots</th>
               <th>Filled Slots</th>
               <th>Action</th>
+              <th>Play Type</th>
             </tr>
           </thead>
           <tbody>
             {sessions.map((session) => {
-              const { date, time } = formatDateTime(session.startTime);
-              const filledSlots = session.registeredPlayers.length;
-              const isFull = filledSlots >= session.maxPlayers;
-              const courtName = courts[session.courtId] || "Unknown Court";
+                const { date, time } = formatDateTime(session.startTime);
+                const filledSlots = session.registeredPlayers.length;
+                const isFull = filledSlots >= session.maxPlayers;
+                const courtName = courts[session.courtId] || "Unknown Court";
+                const playType=session.playTypeName;
 
               return (
                 <tr key={session.id}>
@@ -135,6 +137,7 @@ const OpenPlayList = () => {
                   <td>{courtName}</td>
                   <td>{session.maxPlayers}</td>
                   <td>{filledSlots}</td>
+                  <td>{playType}</td>
                   <td>
                     <button
                       className={isFull ? "waitlist-btn" : "join-btn"}

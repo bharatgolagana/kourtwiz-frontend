@@ -7,15 +7,18 @@ import './Calendar.css';
 import 'react-calendar/dist/Calendar.css';
 import AuthContext from '../../context/AuthContext';
 import { fetchCourts } from './api/getCourts';
-import { fetchBookings } from './api/getbookings';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { useBookCourt } from '../bookings/api/useBookCourt';
+import { fetchBookings } from './api/getBookings';
 
 function FullCalendarApp(): JSX.Element {
     const { user } = useContext(AuthContext)!;
     const clubId = user?.currentActiveClubId;
     const userId = user?.userId;
+    const isClubAdmin = user?.userClubRole?.some(
+        (role) => role.roleName === 'ClubAdmin'
+      );
     const [courtsResponse, setCourtsResponse] = useState<{ id: string; name: string }[]>([]);
     const [courtsLoading, setCourtsLoading] = useState(true);
     const [courtsError, setCourtsError] = useState('');
@@ -112,14 +115,9 @@ function FullCalendarApp(): JSX.Element {
       const handleReserveOrWaitlist = async (sessionId: string, isFull: boolean) => {
         const token=localStorage.getItem('jwtToken');
     
-        if (!clickedEventIds.includes(sessionId)) {
-          setClickedEventIds([...clickedEventIds, sessionId]);
-      }
-  
-    
         try {
             const response = await axios.post(
-                `http://44.216.113.234:8080/api/openplay/bookings`,
+                `http://44.216.113.234:8080/api/play-type/bookings`,
                 null,
                 {
                     headers: {
@@ -157,6 +155,7 @@ function FullCalendarApp(): JSX.Element {
     const renderEventContent = (arg) => {
         const { event } = arg;
         if (event.extendedProps?.isTemporary) {
+            if (isClubAdmin) return null;
             return (
                 <button
                     style={{
@@ -212,7 +211,7 @@ function FullCalendarApp(): JSX.Element {
                 ) : (
                 <>
                     
-                    <p style={{ fontWeight: 'bold', margin: 0 }}>{event.extendedProps.skillLevel} - OPEN PLAY</p>
+                    <p style={{ fontWeight: 'bold', margin: 0 }}>{event.extendedProps.skillLevel} - {event.title}</p>
         
     
                     <p style={{ margin: 0 }}>
@@ -232,7 +231,7 @@ function FullCalendarApp(): JSX.Element {
                     )}
         
                     
-                    <button
+                    {!isClubAdmin &&(<button
                     style={{
                         marginTop: '5px',
                         padding: '5px 10px',
@@ -251,7 +250,7 @@ function FullCalendarApp(): JSX.Element {
                       onClick={() => handleReserveOrWaitlist(event.id, isFull)}
                     >
                       {isFull ? 'Join Waitlist' : 'Join OPEN Play'}
-                    </button>
+                    </button>)}
                 </>
                 )}
             </div>

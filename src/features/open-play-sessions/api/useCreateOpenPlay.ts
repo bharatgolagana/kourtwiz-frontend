@@ -7,12 +7,17 @@ interface OpenPlaySessionData {
   durationMinutes: number;
   skillLevel: string;
   maxPlayers: number;
+  playTypeName: string;
+  priceForPlay: number;
+  eventRepeatType?: string;       
+  repeatInterval?: number;        
+  repeatEndDate?: string;         
 }
 
 const createOpenPlaySession = async (sessionData: OpenPlaySessionData): Promise<OpenPlaySessionData> => {
   const token = localStorage.getItem('jwtToken');
 
-  const response = await fetch('http://44.216.113.234:8080/api/openplay/sessions', {
+  const response = await fetch('http://44.216.113.234:8080/api/play-type/sessions', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -29,8 +34,6 @@ const createOpenPlaySession = async (sessionData: OpenPlaySessionData): Promise<
   return response.json();
 };
 
-
-
 export function useCreateOpenPlay() {
   const { mutate, isPending } = useMutation<OpenPlaySessionData, Error, OpenPlaySessionData>({
     mutationFn: createOpenPlaySession,
@@ -44,4 +47,3 @@ export function useCreateOpenPlay() {
 
   return { mutate, isPending };
 }
-

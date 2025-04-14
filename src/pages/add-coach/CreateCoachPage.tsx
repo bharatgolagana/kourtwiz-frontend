@@ -19,7 +19,6 @@ type FormValues = {
   name: string;
   email: string;
   pricePerHour: string;
-  expertiseLevels: string;
 };
 
 function CreateCoachPage() {
@@ -33,7 +32,6 @@ function CreateCoachPage() {
     name: '',
     email: '',
     pricePerHour: '',
-    expertiseLevels: '',
   });
 
   const { mutate, isPending } = useCreateCoach();
@@ -57,7 +55,6 @@ function CreateCoachPage() {
     const payload = {
       ...formData,
       clubId,
-      expertiseLevels: [formData.expertiseLevels],
     };
 
     mutate(payload, {
@@ -67,8 +64,7 @@ function CreateCoachPage() {
         setFormData({
           name: '',
           email: '',
-          pricePerHour: '',
-          expertiseLevels: '',
+          pricePerHour: ''
         });
         if (clubId) {
           fetchCoaches(clubId).then((data) => setCoaches(data));
@@ -108,7 +104,6 @@ function CreateCoachPage() {
                     <TableCell>{coach.name}</TableCell>
                     <TableCell>{coach.email}</TableCell>
                     <TableCell>{coach.pricePerHour}</TableCell>
-                    <TableCell>{coach.expertiseLevels.join(', ')}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -155,21 +150,6 @@ function CreateCoachPage() {
             />
           </label>
 
-          <label className='form-label'>
-            Expertise Level:
-            <select
-              name='expertiseLevels'
-              value={formData.expertiseLevels}
-              onChange={handleChange}
-              className='form-input'
-              required
-            >
-              <option value=''>Select an expertise level</option>
-              <option value='Beginner'>Beginner</option>
-              <option value='Intermediate'>Intermediate</option>
-              <option value='Advanced'>Advanced</option>
-            </select>
-          </label>
 
           <div className='button-row'>
             <button

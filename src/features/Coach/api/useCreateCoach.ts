@@ -4,8 +4,6 @@ interface CoachData {
   clubId: string;
   name: string;
   email: string;
-  pricePerHour: string;
-  expertiseLevels: string[];
 }
 
 const createCoach = async (coachData: CoachData): Promise<CoachData> => {

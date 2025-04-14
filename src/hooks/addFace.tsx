@@ -2,7 +2,7 @@ import { useMutation, UseMutationOptions } from "@tanstack/react-query";
 
 type AddFaceVariables = {
   name: string;
-  base64Image: string;
+  base64Image: string | null;
 };
 
 const addFace = async ({ name, base64Image }: AddFaceVariables): Promise<any> => {

@@ -95,7 +95,6 @@ function CreateCoachPage() {
                   <TableCell>Name</TableCell>
                   <TableCell>Email</TableCell>
                   <TableCell>Price Per Hour</TableCell>
-                  <TableCell>Expertise Level</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>

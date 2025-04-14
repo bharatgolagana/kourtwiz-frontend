@@ -115,6 +115,8 @@ const MemberRegistrationSignupPage = () => {
   const [phoneTimer, setPhoneTimer] = useState(120);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [imageBase64, setImageBase64] = useState<string | null>(null);
+  const [imageBase64AddFace, setImageBase64AddFace] = useState<string | null>(null);
+
   const videoRef = useRef<HTMLVideoElement>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
 
@@ -147,12 +149,16 @@ const MemberRegistrationSignupPage = () => {
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    console.log(file)
+
     if (file) {
-      setValue("file", file); // pass File object to the form
+      setValue("file", file); 
+      const previewUrl = URL.createObjectURL(file);
+      setImageBase64(previewUrl);
       const reader = new FileReader();
       reader.onloadend = () => {
         const base64String = reader.result as string;
-        setImageBase64(base64String); // optional: just for preview
+        setImageBase64AddFace(base64String);
       };
       reader.readAsDataURL(file);
     }
@@ -189,6 +195,14 @@ const MemberRegistrationSignupPage = () => {
           setValue("file", file);
           const previewUrl = URL.createObjectURL(file);
           setImageBase64(previewUrl);
+          const reader = new FileReader();
+
+          reader.onloadend = () => {
+            const base64String = reader.result as string;
+            setImageBase64AddFace(base64String); 
+          };
+
+          reader.readAsDataURL(file);
           stream.getTracks().forEach(track => track.stop());
           setStream(null);
           setIsCameraOpen(false);
@@ -273,7 +287,10 @@ const MemberRegistrationSignupPage = () => {
   }, [phoneOtpValue]);
 
   const onSubmit = async (data: FormValues) => {
-    console.log("hello")
+    if(isEmailOtpValid === false ){
+      toast.error("Invalid Email OTP");
+      return;
+    }
     const payload = {
       ...data,
       name: `${data.firstName} ${data.lastName}`,
@@ -282,10 +299,10 @@ const MemberRegistrationSignupPage = () => {
     };
 
     try {
-      if (imageBase64) {
-        await handleAddFace(payload.name, imageBase64); 
+      if (imageBase64AddFace) {
+        await handleAddFace(payload.name, imageBase64AddFace);
       }
-  
+
       mutate(payload);
     } catch (error) {
       toast.error("Failed to register face.");

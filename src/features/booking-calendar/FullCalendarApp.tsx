@@ -12,6 +12,7 @@ import axios from 'axios';
 import { useBookCourt } from '../bookings/api/useBookCourt';
 import { fetchBookings } from './api/getBookings';
 import { useNavigate } from 'react-router-dom';
+import { fetchCoaches } from '../coach-booking-calendar/api/getCoaches';
 
 
 function FullCalendarApp(): JSX.Element {
@@ -32,7 +33,21 @@ function FullCalendarApp(): JSX.Element {
     const [selectedCourt, setSelectedCourt] = useState<any>(null);
     const [selectedEvent, setSelectedEvent] = useState<any>(null);
     const [bookingDuration, setBookingDuration] = useState<number>(30);
+    const [coachesData, setCoachesData] = useState([]);
     const [clickedEventIds, setClickedEventIds] = useState<string[]>([]);
+    useEffect(() => {
+      const loadCoaches = async () => {
+          if (!clubId) return;
+          try {
+              const coaches = await fetchCoaches(clubId);
+              setCoachesData(coaches);
+          } catch (error) {
+              setError(error.message);
+          }
+      };
+
+      loadCoaches();
+  }, [clubId]);
     const generateEmptySlots = (bookings) => {
         const emptySlots = [];
     
@@ -157,6 +172,7 @@ function FullCalendarApp(): JSX.Element {
     
     const renderEventContent = (arg) => {
         const { event } = arg;
+
         if (event.extendedProps?.isTemporary) {
             if (isClubAdmin) return null;
             return (
@@ -192,6 +208,14 @@ function FullCalendarApp(): JSX.Element {
         } else if (isFull) {
             backgroundColor = '#87CEEB'; 
         }
+
+        let coachName = 'Unknown Coach';
+    if (event.extendedProps?.coachId) {
+        const coach = coachesData.find(coach => coach.id === event.extendedProps.coachId);
+        if (coach) {
+            coachName = coach.name;
+        }
+    }
         return (
             <div
                 style={{
@@ -214,7 +238,12 @@ function FullCalendarApp(): JSX.Element {
                 <>
                     
                     <p style={{ fontWeight: 'bold', margin: 0 }}>{event.extendedProps.skillLevel} - {event.title}</p>
-        
+                    
+                    {event.extendedProps.playTypeSession === 'COACH_SESSION' && (
+                        <p style={{ margin: 0, fontStyle: 'italic' }}>
+                            Coach: {coachName}
+                        </p>
+                    )}
     
                     <p style={{ margin: 0 }}>
                     {event.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - 
@@ -305,7 +334,7 @@ function FullCalendarApp(): JSX.Element {
           height="auto"
           initialDate={selectedDate}
           plugins= {[ resourceTimeGridPlugin ]}
-  initialView='resourceTimeGridDay'
+          initialView='resourceTimeGridDay'
           slotMinTime="09:00:00"
             slotMaxTime="23:00:00"
             

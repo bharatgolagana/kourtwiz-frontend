@@ -51,8 +51,10 @@
         backgroundColor: eventColorMap[formattedTitle] || '#ccc',
         extendedProps: {
           skillLevel: session.skillLevel,
+          playTypeSession:session.playTypeName,
           slotsRemaining: session.maxPlayers - (session.registeredPlayers?.length || 0),
           totalSlots: session.maxPlayers,
+          coachId:session.coachId,
           openSessionFull: session.sessionFull,
           eventRepeatType: session.eventRepeatType,
           repeatEndDate: formatDateTime(session.repeatEndDate),

@@ -99,12 +99,6 @@ const sidebarItems = [
     isExpandable: false,
   },
   {
-    label: 'Coach Bookings',
-    icon: <img src='src\assets\pickleballclub.svg' />,
-    path: '/coach-bookings',
-    isExpandable: false,
-  },
-  {
     label: 'Previous Coach Bookings',
     icon: <img src='src\assets\pickleballclub.svg' />,
     path: '/previous-coach-bookings',

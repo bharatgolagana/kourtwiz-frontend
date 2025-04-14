@@ -178,6 +178,11 @@ const sidebarItems = [
     isExpandable: false,
   },
   {
+    label: 'My Open Play',
+    path: '/open-play/bookings',
+    isExpandable: false,
+  },
+  {
     label: 'My Bookings',
     path: '/my-bookings',
     isExpandable: false,
@@ -553,6 +558,7 @@ const Sidebar: React.FC = () => {
                     item.label !== 'Coach Bookings' &&
                     item.label !== 'Previous Coach Bookings' &&
                     item.label !== 'Profile' &&
+                    item.label !== 'My Open Play' &&
                     item.label !== 'My Bookings'
                   ) {
                     return;

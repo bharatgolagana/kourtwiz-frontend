@@ -16,7 +16,8 @@ const PLAY_TYPES = [
 ];
 
 
-const EVENT_REPEAT_TYPES = ["NONE", "DAILY", "WEEKLY", "MONTHLY"];
+const EVENT_REPEAT_TYPES = ["DAILY", "WEEKLY", "MONTHLY"];
+
 
 function CreateOpenPlay({ onSuccess, onClose }) {
   const { user } = useContext(AuthContext) || {};
@@ -105,6 +106,7 @@ function CreateOpenPlay({ onSuccess, onClose }) {
       skillLevel: formData.skillLevel,
       maxPlayers: Number(formData.maxPlayers),
       eventRepeatType: formData.eventRepeatType,
+      registeredPlayers:[],
       repeatEndDate: formData.repeatEndDate ? `${formData.repeatEndDate}T00:00:00` : null,
       repeatInterval: formData.eventRepeatType !== "NONE" ? Number(formData.repeatInterval) : null,
       coachId: formData.playTypeName === "COACH_SESSION" ? coachId : null,

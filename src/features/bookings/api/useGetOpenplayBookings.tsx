@@ -4,7 +4,7 @@ export function useGetOpenplayBookings(userId: string): UseQueryResult<unknown, 
   const getOpenplayBookings = async () => {
     try {
       const token = localStorage.getItem('jwtToken');
-      const response = await fetch(`http://44.216.113.234:8080/api/openplay/bookings/${userId}`, {
+      const response = await fetch(`http://44.216.113.234:8080/api/play-type/bookings/${userId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

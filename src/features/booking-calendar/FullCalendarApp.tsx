@@ -2,7 +2,7 @@ import { useState, useEffect, JSX, useContext } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import resourceTimeGridPlugin from '@fullcalendar/resource-timegrid';
 import Modal from "../../features/bookings/components/Modal";
-import './Calendar.css';
+import './Calendar.css'
 
 import 'react-calendar/dist/Calendar.css';
 import AuthContext from '../../context/AuthContext';
@@ -11,9 +11,11 @@ import { toast } from 'react-toastify';
 import axios from 'axios';
 import { useBookCourt } from '../bookings/api/useBookCourt';
 import { fetchBookings } from './api/getBookings';
+import { useNavigate } from 'react-router-dom';
 
 
 function FullCalendarApp(): JSX.Element {
+    const navigate=useNavigate();
     const { user } = useContext(AuthContext)!;
     const clubId = user?.currentActiveClubId;
     const userId = user?.userId;
@@ -249,7 +251,7 @@ function FullCalendarApp(): JSX.Element {
                       disabled={clickedEventIds.includes(event.id)}
                       onClick={() => handleReserveOrWaitlist(event.id, isFull)}
                     >
-                      {isFull ? 'Join Waitlist' : 'Join OPEN Play'}
+                      {isFull ? 'Join Waitlist' : `Join ${event.title}`}
                     </button>)}
                 </>
                 )}
@@ -293,7 +295,9 @@ function FullCalendarApp(): JSX.Element {
 
 
   return (
-    <div className="App">
+    <>
+    <button className="toggle-button"onClick={()=>navigate('/openplay')}>List</button>
+    <div className="App">    
       <div className="full-calendar">
         {error && <div style={{ color: 'red' }}>{error}</div>}
         <FullCalendar
@@ -346,7 +350,7 @@ function FullCalendarApp(): JSX.Element {
         </Modal>
       )}
   </div>
-
+  </>
   );
 }
 

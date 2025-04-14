@@ -4,6 +4,7 @@ import { AuthContext } from "../../context/AuthContext";
 import { fetchCourts } from "../../features/booking-calendar/api/getCourts";
 import { toast } from "react-toastify";
 import "./OpenPlayList.css";
+import { useNavigate } from "react-router-dom";
 
 const OpenPlayList = () => {
   const { user } = useContext(AuthContext)!; 
@@ -92,6 +93,7 @@ const OpenPlayList = () => {
     }
   };
 
+  const navigate=useNavigate();
   const formatDateTime = (startTime: number[]) => {
     const [year, month, day, hour, minute] = startTime;
     const date = new Date(year, month - 1, day, hour, minute);
@@ -105,6 +107,7 @@ const OpenPlayList = () => {
   return (
     <div className="openPlayListPage">
       <h2>Play Sessions</h2>
+      <button onClick={()=>navigate('/bookings')}>Calendar</button>
       <div className="table-container">
         <table>
           <thead>

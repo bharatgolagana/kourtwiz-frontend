@@ -4,6 +4,11 @@
     align-items: flex-start;
     padding: 2rem;
 
+    & button{
+        margin-left: 1rem;
+        background-color: rgb(212, 144, 95);
+    }
+
     & h2{
         margin-bottom: 1rem;
         padding-left: 1rem;

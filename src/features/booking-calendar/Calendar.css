@@ -1,9 +1,12 @@
 .App{
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
 }
 
-
+.toggle-button{
+    margin: 1rem;
+    background-color: rgb(96, 144, 157);
+}
 .full-calendar, .full-calendar * {
   font-family:Arial, Helvetica, sans-serif;
 }

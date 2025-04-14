@@ -19,16 +19,21 @@ const ThemesSettings = () => {
   ).clubName;
   return (
     <Box sx={{ p: 4 }}>
-      {/* Page Title */}
       <Typography variant='h5' gutterBottom fontWeight='bold'>
         Club Branding & Customization
       </Typography>
 
-      {/* Upload Section */}
       <Grid container spacing={3} mb={4}>
         {/* Club Logo Upload */}
         <Grid item xs={12} md={6}>
-          <Card variant='outlined' sx={{ borderRadius: 2 }}>
+          <Card
+            variant='outlined'
+            sx={{
+              borderRadius: 2,
+              border: '1px solid',
+              borderColor: 'primary',
+            }}
+          >
             <CardContent>
               <Typography variant='subtitle1' fontWeight='bold' gutterBottom>
                 <img src='/src/assets/adminLogo.jpg' height='400' alt='Logo' />{' '}
@@ -46,7 +51,14 @@ const ThemesSettings = () => {
 
         {/* Club Banner Upload */}
         <Grid item xs={12} md={6}>
-          <Card variant='outlined' sx={{ borderRadius: 2 }}>
+          <Card
+            variant='outlined'
+            sx={{
+              borderRadius: 2,
+              border: '1px solid',
+              borderColor: 'primary',
+            }}
+          >
             <CardContent>
               <Typography variant='subtitle1' fontWeight='bold' gutterBottom>
                 <img
@@ -99,14 +111,6 @@ const ThemesSettings = () => {
       </Box>
     </Box>
   );
-  // return (
-  //   <>
-  //     <Typography variant='h3' color='text.secondary'>
-  //       Themes Settings
-  //     </Typography>
-  //     <ThemeProfileSettings />
-  //   </>
-  // );
 };
 
 export default ThemesSettings;

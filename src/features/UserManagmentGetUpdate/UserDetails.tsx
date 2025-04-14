@@ -130,7 +130,7 @@ const UserDetails: React.FC = () => {
       {/* Header */}
       <AppBar position='static'>
         <Toolbar sx={{ bgcolor: 'background.paper' }}>
-          <Typography variant='h4' sx={{ flexGrow: 1, color: 'primary.main' }}>
+          <Typography variant='h4' sx={{ flexGrow: 1, color: 'primary' }}>
             User Details
           </Typography>
           <Button variant='contained' color='primary' onClick={handleOpen}>

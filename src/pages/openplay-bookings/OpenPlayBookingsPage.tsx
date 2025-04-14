@@ -28,6 +28,7 @@ const OpenPlayBookingsPage = () => {
           <table>
             <thead>
               <tr>
+                <th>Play Type</th>
                 <th>Court</th>
                 <th>Duration</th>
                 <th>Skill Level</th>
@@ -40,6 +41,7 @@ const OpenPlayBookingsPage = () => {
                 clubBookingData.map((booking) => {
                   return (
                     <tr key={booking.id}>
+                      <td>{booking.playTypeName}</td>
                       <td>{booking.courtName}</td>
                     
                       <td>

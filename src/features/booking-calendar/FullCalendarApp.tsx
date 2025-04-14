@@ -325,7 +325,7 @@ function FullCalendarApp(): JSX.Element {
 
   return (
     <>
-    <button className="toggle-button"onClick={()=>navigate('/openplay')}>List</button>
+    <button className="toggle-button"onClick={() => navigate(isClubAdmin ? '/openplay' : '/open-play')}>List</button>
     <div className="App">    
       <div className="full-calendar">
         {error && <div style={{ color: 'red' }}>{error}</div>}

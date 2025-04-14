@@ -42,7 +42,11 @@ const ThemesSettings = () => {
                 Upload your club logo. Recommended size: 512×512px, PNG or JPG
                 format.
               </Typography>
-              <Button variant='contained' startIcon={<UploadFileIcon />}>
+              <Button
+                variant='contained'
+                color='primary'
+                startIcon={<UploadFileIcon />}
+              >
                 Upload Logo
               </Button>
             </CardContent>

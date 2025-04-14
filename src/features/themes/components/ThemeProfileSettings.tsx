@@ -171,7 +171,11 @@ const ThemeProfileSettings = () => {
           })}
 
           <Box mt={3} display='flex' justifyContent='space-between'>
-            <Button variant='outlined' onClick={() => setOpen(false)}>
+            <Button
+              variant='contained'
+              color='secondary'
+              onClick={() => setOpen(false)}
+            >
               Cancel
             </Button>
             <Button variant='contained' onClick={handleSave}>

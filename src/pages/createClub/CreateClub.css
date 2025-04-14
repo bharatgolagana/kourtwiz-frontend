@@ -45,7 +45,7 @@
 }
 
 .MuiButton-root {
-  background-color: #16a249 !important;
+  background-color: #16a249;
   color: white !important;
   border-radius: 2rem;
   margin-top: 1rem;
@@ -82,7 +82,7 @@
 
 .testimonials-container {
   background-image: url('/images/light-club.jpg'); /* Changed from black to white */
-  color: black;            /* Update text color for contrast */
+  color: black; /* Update text color for contrast */
   display: flex;
   flex-direction: column;
   justify-content: center;

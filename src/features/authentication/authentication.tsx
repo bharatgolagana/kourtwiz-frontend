@@ -2,27 +2,44 @@ import React, { useRef, useState, useEffect, useCallback } from 'react';
 import Webcam from 'react-webcam';
 import * as faceapi from 'face-api.js';
 import { useSendImage } from '../../hooks/useSendImage';
-import { useLocation } from "react-router-dom";
+import { useLocation } from 'react-router-dom';
 
 const WebcamCapture: React.FC = () => {
     const location = useLocation();
-    const clubName = location.state?.clubName || "Unknown Club";
+    const clubId = location.state?.clubId || 'Unknown Club ID';
+    const clubName = location.state?.clubName || 'Unknown Club';
     const webcamRef = useRef<Webcam>(null);
-    const canvasRef = useRef<HTMLCanvasElement>(null);
 
     const [modelsLoaded, setModelsLoaded] = useState(false);
     const [lowLightDetected, setLowLightDetected] = useState<boolean | null>(null);
     const [faceDetected, setFaceDetected] = useState(false);
-    const [lastCapturedImage, setLastCapturedImage] = useState<string | null>(null);
-    const [responseData, setResponseData] = useState<any>(null); 
-    const [pauseDetection, setPauseDetection] = useState(false);
+    const [responseData, setResponseData] = useState<any>(null);
     const [processing, setProcessing] = useState(false);
     const [showWebcam, setShowWebcam] = useState(true);
-    
+    const [logs, setLogs] = useState<string[]>([]);
+
     const { mutate: sendImage, isPending } = useSendImage({
         onCompleteCallback: (data) => {
             console.log('📩 Response received:', data);
             setResponseData(data);
+            setProcessing(false);
+            setShowWebcam(false);
+
+        },
+        onErrorCallback: (error) => {
+            console.error('🚨 Error occurred:', error.message);
+            setResponseData({
+                status: 'error',
+                message: error.message
+            });
+            setProcessing(false);
+            setShowWebcam(true);
+            setLogs([]);
+        },
+        onMessageCallback: (data) => {
+            if (typeof data.message === 'string') {
+                setLogs((prevLogs) => [...prevLogs, `📡 ${data.message}`]);
+            }
         },
     });
 
@@ -46,23 +63,25 @@ const WebcamCapture: React.FC = () => {
     }, []);
 
     const detectFaceAndLight = async () => {
-        if (!webcamRef.current || !canvasRef.current || isPendingRef.current || !modelsLoaded) return;
+        if (!webcamRef.current || isPendingRef.current || !modelsLoaded) return;
 
         const video = webcamRef.current.video;
-        const canvas = canvasRef.current;
-        const ctx = canvas.getContext('2d');
+        if (!video) return;
 
-        if (!video || !ctx) return;
-
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-        const detections = await faceapi.detectAllFaces(video, 
+        const detections = await faceapi.detectAllFaces(
+            video,
             new faceapi.TinyFaceDetectorOptions({ inputSize: 512, scoreThreshold: 0.5 })
         );
 
         setFaceDetected(detections.length > 0);
+
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         const pixels = imageData.data;
@@ -77,68 +96,77 @@ const WebcamCapture: React.FC = () => {
         setLowLightDetected(avgBrightness < 50);
 
         if (detections.length > 0 && avgBrightness >= 50 && !isPendingRef.current) {
-            captureAndSendFromCanvas();
+            captureAndSendFromVideo(detections, video);
         }
     };
 
     useEffect(() => {
-        if (!modelsLoaded || pauseDetection) return;
-    
+        if (!modelsLoaded || processing) return;
+
         const interval = setInterval(() => {
             detectFaceAndLight();
-        }, 750); 
-    
+        }, 750);
+
         return () => clearInterval(interval);
-    }, [modelsLoaded, pauseDetection]);
+    }, [modelsLoaded, processing]);
 
-    useEffect(() => {
-        if (responseData) {
-            setProcessing(false);
-            setShowWebcam(false);
+    const captureAndSendFromVideo = useCallback((detections: faceapi.FaceDetection[], video: HTMLVideoElement) => {
+        if (!video) return;
 
-            if (responseData?.message?.includes("Authenticated:")) {
-                setTimeout(() => {
-                    setResponseData(null);
-                    setShowWebcam(true);
-                }, 5000);
-            } else {
-                setTimeout(() => {
-                    setShowWebcam(true);
-                }, 5000);
-            }
-        }
-    }, [responseData]);
-    
-    const captureAndSendFromCanvas = useCallback(() => {
-        if (!canvasRef.current) return;
-    
         setProcessing(true);
         setShowWebcam(false);
-        
-        const canvas = canvasRef.current;
-        const imageDataUrl = canvas.toDataURL('image/jpeg');
-    
-        setLastCapturedImage(imageDataUrl);
-    
-        if (imageDataUrl && !isPendingRef.current) {
-            console.log('📤 Sending image to backend...');
-            sendImage({ image: imageDataUrl, clubName }); 
+        setLogs(['🔍 Face detected. Sending images...']);
+
+        const capturedImages: string[] = [];
+
+        detections.forEach((detection) => {
+            let { x, y, width, height } = detection.box;
+            const padding = 0.4;
+            const newX = Math.max(0, x - width * padding);
+            const newY = Math.max(0, y - height * padding);
+            const newWidth = Math.min(video.videoWidth - newX, width * (1 + 2 * padding));
+            const newHeight = Math.min(video.videoHeight - newY, height * (1 + 2 * padding));
+            const faceCanvas = document.createElement('canvas');
+            faceCanvas.width = newWidth;
+            faceCanvas.height = newHeight;
+            const faceCtx = faceCanvas.getContext('2d');
+            y = Math.max(0, y - height * 0.3);
+            if (faceCtx) {
+                faceCtx.drawImage(video, newX, newY, newWidth, newHeight, 0, 0, newWidth, newHeight);
+                const imageDataUrl = faceCanvas.toDataURL('image/jpeg');
+                capturedImages.push(imageDataUrl);
+            }
+        });
+
+        if (capturedImages.length > 0 && !isPendingRef.current) {
+            sendImage({ images: capturedImages, clubName, clubId });
         }
-    }, [sendImage, clubName]);
+    }, [sendImage, clubName, clubId]);
 
     return (
         <div style={{ textAlign: 'center' }}>
             {processing ? (
-                <h3>PROCESSING...</h3>
-            ) : responseData ? (
                 <div>
+                    <h3>PROCESSING...</h3>
+                    <div style={{ textAlign: 'left', margin: '20px auto', maxWidth: '400px' }}>
+                        <h4>📜 Logs:</h4>
+                        <ul style={{ listStyle: 'none', paddingLeft: 0 }}>
+                            {logs.map((log, index) => (
+                                <li key={index}>• {log}</li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            ) : responseData && responseData.status === 'error' ? (
+                <div style={{ border: '2px solid red', padding: '20px', borderRadius: '10px', display: 'inline-block' }}>
+                    <h4>❌ Error:</h4>
+                    <p style={{ color: 'red' }}>{responseData.message}</p>
+                </div>
+            ) : responseData ? (
+                <div style={{ border: '2px solid green', padding: '20px', borderRadius: '10px', display: 'inline-block' }}>
                     <h4>🔍 Detection Results:</h4>
                     <p>{responseData.message}</p>
-                    {responseData.message.includes("Authenticated:") && (
-                        <div style={{ marginTop: '20px', color: 'green', fontWeight: 'bold' }}>
-                            ✅ You can now walk into the gate!
-                        </div>
-                    )}
+
                 </div>
             ) : showWebcam ? (
                 <div>
@@ -151,10 +179,9 @@ const WebcamCapture: React.FC = () => {
                             style={{
                                 borderRadius: '10px',
                                 border: '2px solid gray',
-                                width: '400px',
+                                width: '400px'
                             }}
                         />
-                        <canvas ref={canvasRef} style={{ display: 'none' }} />
                     </div>
                     <p>{faceDetected ? '✅ Face Detected' : '❌ No Face Detected'}</p>
                     <p>{lowLightDetected ? '⚠️ Low Light Detected' : '✅ Good Lighting'}</p>

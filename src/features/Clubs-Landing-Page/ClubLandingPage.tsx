@@ -14,6 +14,7 @@ const PERKS_LABELS: Record<string, string> = {
 
 const ClubLandingPage = () => {
   const { id } = useParams();
+  console.log("Club ID:", id);
   const location = useLocation();
   const navigate = useNavigate();
   const clubName = location.state?.clubName || 'Unknown Club';
@@ -51,8 +52,8 @@ const ClubLandingPage = () => {
           Login
         </button>
         <button
-          className="btn"
-          onClick={() => navigate(`/clubs/${id}/authentication`, { state: { clubName } })}
+          className='btn'
+          onClick={() => navigate(`/clubs/${id}/authentication`, { state: {clubId: id, clubName } })}
         >
           Authenticate
         </button>
@@ -79,7 +80,7 @@ const ClubLandingPage = () => {
             {clubMembershipdata.map((membership) => (
               <div key={membership.id} className="membership-card">
                 <h3>{membership.membershipName}</h3>
-                <p>Duration: {membership.duration} days</p>
+                <p>Duration: {membership.duration}</p>
                 <p>Price: ${membership.price}</p>
 
                 <h4>Perks:</h4>

@@ -21,7 +21,6 @@ import SwitchClub from '../switch-club/SwitchClub';
 
 const UserProfile: React.FC = () => {
   const { user, setUser } = useContext(AuthContext)!;
-  console.log('userinfo : ', user);
   const [userDisplay, setUserDisplay] = useState(false);
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
@@ -79,7 +78,11 @@ const UserProfile: React.FC = () => {
         <Box
           ref={ref}
           className='user-profile-details'
-          sx={{ bgcolor: 'background.default' }}
+          sx={{
+            bgcolor: 'background.default',
+            border: '1px solid',
+            borderColor: 'primary',
+          }}
         >
           <div className='user__profile__details__container'>
             <div className='user-profile__name'>{user?.username}</div>

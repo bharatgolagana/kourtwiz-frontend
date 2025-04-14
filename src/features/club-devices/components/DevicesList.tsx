@@ -15,13 +15,17 @@ import {
   TableRow,
   Paper,
   MenuItem,
+  Chip,
+  Box,
 } from '@mui/material';
+import './DevicesList.css';
 
 import AuthContext from '../../../context/AuthContext';
 import { useMutateAddDevice } from '../api/useMutateAddDevice';
 import { useGetClubDevices } from '../api/useGetClubDevices';
 import { useGetClubCourt } from '../../../shared/apis/courts/useGetClubCourts';
 import { toast } from 'react-toastify';
+import { useMutateDeleteDevice } from '../api/useMutateDeleteDevice';
 
 const DEVICE_TYPES = ['CAMERA', 'SWITCH', 'LIGHT'];
 const DEVICE_STATUSES = ['Online', 'Offline', 'Error'];
@@ -30,7 +34,13 @@ const DevicesList = () => {
   const [showModal, setShowModal] = useState(false);
   const { user } = useContext(AuthContext)!;
   const clubId = user?.currentActiveClubId;
+  const [selectedCourt, setSelectedCourt] = useState<string[]>([]);
 
+  const { mutate: deleteDevice } = useMutateDeleteDevice({
+    onSuccessCallback: () => toast.success('Device deleted successfully!'),
+    onErrorCallback: (error) => toast.error(`Delete failed: ${error.message}`),
+  });
+  
   const { data: deviceList, isLoading, error } = useGetClubDevices(clubId);
   const { data: courtList = [] } = useGetClubCourt(clubId);
 
@@ -74,13 +84,51 @@ const DevicesList = () => {
   return (
     <div style={{ padding: '20px' }}>
       <h3>Devices List</h3>
+      <div className='Buttons'>
       <Button
         variant='contained'
         color='primary'
         onClick={() => setShowModal(true)}
+        className='add-device'
       >
         Add New Device
       </Button>
+      <TextField
+      select
+      label="Filter by Court"
+      value={selectedCourt}
+      onChange={(e) => {
+        const value = e.target.value;
+        setSelectedCourt(typeof value === 'string' ? value.split(',') : value);
+      }}
+      SelectProps={{
+        multiple: true,
+        renderValue: (selected) => (
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+            {selected.map((courtId) => {
+              const court = courtList.find((c) => c.id === courtId);
+              return (
+                <Chip
+                  key={courtId}
+                  label={court ? court.name : 'Unknown'}
+                  size="small"
+                  sx={{ backgroundColor: '#e0f7fa', color: '#006064' }}
+                />
+              );
+            })}
+          </Box>
+        ),
+      }}
+      style={{ marginTop: '20px', minWidth: '300px' }}
+    >
+      {courtList.map((court) => (
+        <MenuItem key={court.id} value={court.id}>
+          {court.name}
+        </MenuItem>
+      ))}
+    </TextField>
+    </div>
+
       <TableContainer component={Paper} style={{ marginTop: '20px' }}>
         <Table>
           <TableHead sx={{ bgcolor: 'primary.main' }}>
@@ -89,15 +137,35 @@ const DevicesList = () => {
               <TableCell sx={{ color: 'white' }}>Type</TableCell>
               <TableCell sx={{ color: 'white' }}>Status</TableCell>
               <TableCell sx={{ color: 'white' }}>Court</TableCell>
+              <TableCell sx={{ color: 'white' }}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {deviceList?.map((device) => (
+          {deviceList
+            ?.filter((device) =>
+              selectedCourt.length === 0 ? true : selectedCourt.includes(device.courtId)
+            )
+            .map((device) => (
+
               <TableRow key={device.id}>
                 <TableCell>{device.name}</TableCell>
                 <TableCell>{device.type}</TableCell>
                 <TableCell>{device.status}</TableCell>
                 <TableCell>{getCourtName(device.courtId)}</TableCell>
+                <TableCell>
+                <Button
+                  variant='outlined'
+                  color='error'
+                  size='small'
+                  onClick={() => {
+                    if (window.confirm('Are you sure you want to delete this device?')) {
+                      deleteDevice(device.id);
+                    }
+                  }}
+                >
+                  Delete
+                </Button>
+              </TableCell>
               </TableRow>
             ))}
           </TableBody>

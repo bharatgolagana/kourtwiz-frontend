@@ -6,7 +6,7 @@ export function useGetWaitlist(userId: string): UseQueryResult<unknown, Error> {
       const token = localStorage.getItem('jwtToken');
       if (!token) throw new Error('No token found');
 
-      const response = await fetch(`http://44.216.113.234:8080/api/openplay/waitlist?userId=${userId}`, {
+      const response = await fetch(`http://44.216.113.234:8080/api/play-type/waitlist?userId=${userId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

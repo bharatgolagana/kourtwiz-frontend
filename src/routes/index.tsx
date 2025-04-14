@@ -27,6 +27,7 @@ import CoachBookingCalendar from '../pages/coach-bookings-calendar/CoachBookingC
 import PreviousCoachBookingsRoutes from './PreviousCoachBookingsRoutes';
 import ThemeRoutes from './Themes';
 import MyBookingsRoutes from './MyBookingsRoutes';
+import OpenplayBookingRoutes from './OpenplayBookingRoutes';
 
 const createRoutes = (): RouteObject[] => {
   return [
@@ -57,6 +58,7 @@ const createRoutes = (): RouteObject[] => {
         ...ThemeRoutes,
         ...PreviousCoachBookingsRoutes,
         ...MyBookingsRoutes,
+        ...OpenplayBookingRoutes,
         {
           path: '/approve-members',
           element: <MemberApproval />,

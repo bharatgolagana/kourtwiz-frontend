@@ -70,11 +70,13 @@ const ManualLoginProvider = ({ children }: { children: React.ReactNode }) => {
         const role = userData?.userClubRole?.find(
           (club) => club?.clubId === userData?.currentActiveClubId
         ).roleName;
-        console.log(role);
+        console.log('role name : ', role);
         if (role === 'Member') {
           navigate('/bookings');
-        } else {
+        } else if (role === 'ClubAdmin') {
           navigate('/settings-themes');
+        } else {
+          navigate('/bookings');
         }
       }
     } catch (err) {
@@ -104,10 +106,22 @@ const ManualLoginProvider = ({ children }: { children: React.ReactNode }) => {
       );
 
       if (!response.ok) throw new Error('Failed to change password');
-      await fetchUserData(token);
+
+      const userData = await fetchUserData(token);
       localStorage.setItem('jwtToken', token);
       setIsFirstTimeLogin(false);
-      navigate('/settings-themes');
+
+      const role = userData?.userClubRole?.find(
+        (club) => club?.clubId === userData?.currentActiveClubId
+      ).roleName;
+      console.log('role name : ', role);
+      if (role === 'Member') {
+        navigate('/bookings');
+      } else if (role === 'ClubAdmin') {
+        navigate('/settings-themes');
+      } else {
+        navigate('/bookings');
+      }
     } catch (err) {
       setError(err.message);
     } finally {

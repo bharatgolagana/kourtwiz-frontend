@@ -28,7 +28,7 @@ const CreateClubMembershipsPage = () => {
 
   return (
     <div>
-      <Typography variant='h4' sx={{ color: 'primary.main' }}>
+      <Typography variant='h4' sx={{ color: 'text.primary' }}>
         {' '}
         Your Club Memberships
       </Typography>
@@ -38,20 +38,22 @@ const CreateClubMembershipsPage = () => {
           <Card
             key={membership.id}
             className='membership-card'
-            sx={{ bgcolor: 'background.paper' }}
+            sx={{
+              bgcolor: 'background.paper',
+              border: '1px solid',
+              borderColor: 'primary.main',
+            }}
           >
             <CardContent>
-              <Typography variant='h5' color='primary.main'>
-                {membership.name}
-              </Typography>
-              <Typography>Price: ${membership.price}</Typography>
-              <Typography variant='body2'>
-                Duration: {membership.duration} Months
+              <Typography variant='h5'>{membership.membershipName}</Typography>
+              <Typography variant='h6'>Price: ${membership.price}</Typography>
+              <Typography variant='h6'>
+                Duration: {membership.duration}
               </Typography>
               {membership.perks &&
                 Object.values(membership.perks).some((v) => v !== 0) && (
-                  <Box sx={{ color: 'text.secondary' }}>
-                    <Typography variant='subtitle2' sx={{ mt: 1 }}>
+                  <Box>
+                    <Typography variant='h6' sx={{ mt: 1 }}>
                       Perks:
                     </Typography>
                     <ul style={{ paddingLeft: 5 }}>

@@ -1,4 +1,3 @@
-// context/ThemeContext.tsx
 import React, {
   createContext,
   useContext,
@@ -34,7 +33,7 @@ export const ThemeContextProvider = ({ children }) => {
   const [customThemes, setCustomThemes] = useState([]);
   const token = localStorage.getItem('jwtToken');
   console.log('theme mode : ', mode);
-  console.log('custom themes : ', customThemes);
+  console.log('custom themes : ', JSON.stringify(customThemes));
 
   const userId = user?.userId;
   const clubId = user?.currentActiveClubId;
@@ -46,9 +45,6 @@ export const ThemeContextProvider = ({ children }) => {
 
     const modesByUser = getStorageItem('themeModeByUser');
     const themesByUser = getStorageItem('customThemesByUser');
-
-    // const userModes = modesByUser[userId] || {};
-    // const userThemes = themesByUser[userId] || {};
 
     const themeMode = modesByUser[clubId] || 'light';
     const clubThemes = themesByUser[clubId] || [];
@@ -68,9 +64,6 @@ export const ThemeContextProvider = ({ children }) => {
     const modesByUser = getStorageItem('themeModeByUser');
     console.log('save start mode 2', modesByUser);
 
-    // if (!modesByUser[userId]) {
-    //   modesByUser[userId] = {};
-    // }
     console.log('save start mode 3', modesByUser);
 
     modesByUser[clubId] = mode;
@@ -87,9 +80,6 @@ export const ThemeContextProvider = ({ children }) => {
     if (!userId || !clubId) return;
 
     const themesByUser = getStorageItem('customThemesByUser');
-    // if (!themesByUser[userId]) {
-    //   themesByUser[userId] = {};
-    // }
 
     themesByUser[clubId] = customThemes;
     setStorageItem('customThemesByUser', themesByUser);

@@ -24,6 +24,15 @@ const defaultNewTheme = {
   },
 };
 
+const cardStyles = {
+  width: 120,
+  height: 120,
+  cursor: 'pointer',
+  bgcolor: 'background.default',
+  border: '1px solid',
+  borderColor: 'primary',
+};
+
 const ThemeProfileSettings = () => {
   const { setTheme, addCustomTheme, customThemes } = useThemeMode();
   console.log('customThemes : ', customThemes);
@@ -58,10 +67,7 @@ const ThemeProfileSettings = () => {
     <Box p={4}>
       <Grid container spacing={2} justifyContent='center'>
         <Grid item>
-          <Card
-            sx={{ width: 120, height: 120, cursor: 'pointer', bgcolor: '#fff' }}
-            onClick={() => setTheme('light')}
-          >
+          <Card sx={cardStyles} onClick={() => setTheme('light')}>
             <CardContent>
               <Typography variant='body1' align='center'>
                 Light Theme
@@ -74,16 +80,7 @@ const ThemeProfileSettings = () => {
         </Grid>
 
         <Grid item>
-          <Card
-            sx={{
-              width: 120,
-              height: 120,
-              bgcolor: '#121212',
-              color: 'white',
-              cursor: 'pointer',
-            }}
-            onClick={() => setTheme('dark')}
-          >
+          <Card sx={cardStyles} onClick={() => setTheme('dark')}>
             <CardContent>
               <Typography variant='body1' align='center'>
                 Dark Theme
@@ -97,29 +94,12 @@ const ThemeProfileSettings = () => {
 
         {customThemes.map((theme: any) => (
           <Grid item key={theme.name}>
-            <Card
-              sx={{
-                width: 120,
-                height: 120,
-                cursor: 'pointer',
-                bgcolor: theme.theme.palette.primary.main,
-              }}
-              onClick={() => setTheme(theme.name)}
-            >
+            <Card sx={cardStyles} onClick={() => setTheme(theme.name)}>
               <CardContent>
-                <Typography
-                  variant='body1'
-                  align='center'
-                  sx={{ color: theme.theme.palette.text.primary }}
-                >
+                <Typography variant='body1' align='center'>
                   {theme.name}
                 </Typography>
-                <Typography
-                  variant='caption'
-                  align='center'
-                  display='block'
-                  sx={{ color: theme.theme.palette.text.secondary }}
-                >
+                <Typography variant='caption' align='center' display='block'>
                   Click to Apply
                 </Typography>
               </CardContent>
@@ -129,12 +109,7 @@ const ThemeProfileSettings = () => {
 
         <Grid item>
           <Card
-            sx={{
-              width: 120,
-              height: 120,
-              cursor: 'pointer',
-              bgcolor: '#808080',
-            }}
+            sx={{ ...cardStyles, bgcolor: '#808080' }}
             onClick={() => setOpen(true)}
           >
             <CardContent>
@@ -161,6 +136,8 @@ const ThemeProfileSettings = () => {
             p: 4,
             mx: 'auto',
             mt: '10%',
+            border: '1px solid',
+            borderColor: 'white',
           }}
         >
           <Typography variant='h6'>Create Custom Theme</Typography>

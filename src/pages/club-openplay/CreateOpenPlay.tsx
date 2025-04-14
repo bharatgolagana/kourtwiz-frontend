@@ -3,6 +3,7 @@ import { useCreateOpenPlay } from "../../features/open-play-sessions/api/useCrea
 import "./CreateOpenPlay.css";
 import { useGetCourts } from "../../features/bookings/api/useGetCourts";
 import AuthContext from "../../context/AuthContext";
+import { fetchCoaches } from "../../features/coach-booking-calendar/api/getCoaches";
 
 const PLAY_TYPES = [
   { label: "Open Play", value: "OPEN_PLAY" },
@@ -11,7 +12,9 @@ const PLAY_TYPES = [
   { label: "Clinic", value: "CLINIC" },
   { label: "Tournament", value: "TOURNAMENT" },
   { label: "League", value: "LEAGUE" },
+  { label: "Coach Session", value: "COACH_SESSION" },
 ];
+
 
 const EVENT_REPEAT_TYPES = ["NONE", "DAILY", "WEEKLY", "MONTHLY"];
 
@@ -36,6 +39,24 @@ function CreateOpenPlay({ onSuccess, onClose }) {
 
   const mutation = useCreateOpenPlay();
   const { data: courtsData = [] } = useGetCourts(clubId);
+  const [coachesData, setCoachesData] = useState([]);
+  const [coachId, setCoachId] = useState("");
+
+  useEffect(() => {
+    const loadCoaches = async () => {
+      if (!clubId) return;
+      try {
+        const data = await fetchCoaches(clubId);
+        setCoachesData(data || []);
+      } catch (err) {
+        console.error("Failed to load coaches:", err);
+      }
+    };
+
+    if (formData.playTypeName === "COACH_SESSION") {
+      loadCoaches();
+    }
+  }, [clubId, formData.playTypeName]);
 
   useEffect(() => {
     if (formData.courtName && courtsData?.length) {
@@ -61,11 +82,19 @@ function CreateOpenPlay({ onSuccess, onClose }) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!formData.courtId || !formData.startTime || !formData.durationMinutes || !formData.skillLevel || !formData.maxPlayers || !formData.priceForPlay) {
+    if (
+      !formData.courtId ||
+      !formData.startTime ||
+      !formData.durationMinutes ||
+      !formData.skillLevel ||
+      !formData.maxPlayers ||
+      !formData.priceForPlay ||
+      (formData.playTypeName === "COACH_SESSION" && !coachId)
+    ) {
       alert("Please fill in all required fields.");
       return;
     }
-
+    
     const payload = {
       playTypeName: formData.playTypeName,
       clubId: formData.clubId,
@@ -76,10 +105,11 @@ function CreateOpenPlay({ onSuccess, onClose }) {
       skillLevel: formData.skillLevel,
       maxPlayers: Number(formData.maxPlayers),
       eventRepeatType: formData.eventRepeatType,
-      repeatEndDate: formData.repeatEndDate? `${formData.repeatEndDate}T00:00:00`: null,
-      repeatInterval: formData.eventRepeatType !== "NONE" ? Number(formData.repeatInterval) : null
+      repeatEndDate: formData.repeatEndDate ? `${formData.repeatEndDate}T00:00:00` : null,
+      repeatInterval: formData.eventRepeatType !== "NONE" ? Number(formData.repeatInterval) : null,
+      coachId: formData.playTypeName === "COACH_SESSION" ? coachId : null,
     };
-
+    
     mutation.mutate(payload, {
       onSuccess: () => {
         alert("Session created successfully!");
@@ -96,6 +126,8 @@ function CreateOpenPlay({ onSuccess, onClose }) {
           eventRepeatType: "NONE",
           repeatEndDate: "",
           repeatInterval: "",
+          coachId:"",
+
         });
         onSuccess?.();
       },
@@ -192,6 +224,25 @@ function CreateOpenPlay({ onSuccess, onClose }) {
             <option value="Advanced">Advanced</option>
           </select>
         </label>
+        {formData.playTypeName === "COACH_SESSION" && (
+        <label className="form-label">
+          Coach:
+          <select
+            name="coachId"
+            value={coachId}
+            onChange={(e) => setCoachId(e.target.value)}
+            className="form-input"
+            required
+          >
+            <option value="">Select a coach</option>
+            {coachesData.map((coach) => (
+              <option key={coach.id} value={coach.id}>
+                {coach.name}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
 
         <label className="form-label">
           Max Players:

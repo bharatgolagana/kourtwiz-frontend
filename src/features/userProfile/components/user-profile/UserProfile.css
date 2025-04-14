@@ -109,9 +109,6 @@
 .logout-btn {
   display: flex;
 }
-.logout-btn:hover {
-  background: none;
-}
 
 .logout-dialog-paper {
   width: 28.125rem;

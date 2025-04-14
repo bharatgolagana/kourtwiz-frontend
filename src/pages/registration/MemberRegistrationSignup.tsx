@@ -13,6 +13,7 @@ import PhoneInput from "react-phone-number-input";
 import 'react-phone-number-input/style.css';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import CloseIcon from '@mui/icons-material/Close';
+import { useAddFaceMutation } from "../../hooks/addFace";
 
 const schema = z
   .object({
@@ -24,11 +25,17 @@ const schema = z
       .email("Invalid email address"),
     phoneNumber: z.string().min(10, "Phone number is required"),
     file: z
-    .any()
-    .refine((file) => file instanceof File || file === undefined, {
-      message: "File is required",
-    })
-    .optional(),
+      .any()
+      .refine(
+        (file) =>
+          file instanceof File ||
+          (typeof file === "string" && file.startsWith("data:image")) ||
+          file === undefined,
+        {
+          message: "File must be a valid image (File or base64)",
+        }
+      )
+      .optional(),
     dateOfBirth: z.string().min(1, "Date of birth is required"),
     gender: z.string().min(1, "Gender is required"),
     address: z.string().min(1, "Address is required"),
@@ -58,6 +65,18 @@ const MemberRegistrationSignupPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { clubId, clubName, membershipId } = location.state || {};
+  const { mutate: addFaceMutate } = useAddFaceMutation({
+    onSuccess: () => {
+      toast.success("Member face successfully saved");
+    },
+    onError: () => {
+      toast.error("Error while saving Face");
+    },
+  });
+
+  const handleAddFace = (name: string, base64Image: string) => {
+    addFaceMutate({ name, base64Image });
+  };
   const { mutate } = useMutateSignUpMember({
     onSuccessCallback: () => {
       toast.success("Member created! Check your email for login credentials.");
@@ -138,7 +157,7 @@ const MemberRegistrationSignupPage = () => {
       reader.readAsDataURL(file);
     }
   };
-  
+
   const handleOpenCamera = () => {
     setIsCameraOpen(true);
     navigator.mediaDevices.getUserMedia({ video: true })
@@ -155,28 +174,30 @@ const MemberRegistrationSignupPage = () => {
         setIsCameraOpen(false);
       });
   };
-  
+
   const captureImage = () => {
     if (videoRef.current && stream) {
       const canvas = document.createElement('canvas');
       canvas.width = videoRef.current.videoWidth;
       canvas.height = videoRef.current.videoHeight;
       const ctx = canvas.getContext('2d');
-      
-      if (ctx) {
-        ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-        const base64String = canvas.toDataURL('image/png');
-        setImageBase64(base64String);
-        setValue("file", base64String);
-        
-        // Stop the stream
-        stream.getTracks().forEach(track => track.stop());
-        setStream(null);
-        setIsCameraOpen(false);
-      }
+      if (!ctx) return;
+      ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob((blob) => {
+        if (blob) {
+          const file = new File([blob], 'captured-image.jpg', { type: 'image/jpeg' });
+          setValue("file", file);
+          const previewUrl = URL.createObjectURL(file);
+          setImageBase64(previewUrl);
+          stream.getTracks().forEach(track => track.stop());
+          setStream(null);
+          setIsCameraOpen(false);
+        }
+      }, 'image/jpeg', 0.95);
     }
   };
-  
+
+
   const closeCamera = () => {
     if (stream) {
       stream.getTracks().forEach(track => track.stop());
@@ -222,7 +243,7 @@ const MemberRegistrationSignupPage = () => {
         {
           onSuccess: (isValid) => {
             setIsEmailOtpValid(isValid);
-              toast.success("OTP verified");
+            toast.success("OTP verified");
           },
           onError: () => {
             setIsEmailOtpValid(false);
@@ -240,7 +261,7 @@ const MemberRegistrationSignupPage = () => {
         {
           onSuccess: (isValid) => {
             setIsPhoneOtpValid(isValid);
-              toast.success("OTP verified");
+            toast.success("OTP verified");
           },
           onError: () => {
             setIsPhoneOtpValid(false);
@@ -252,6 +273,7 @@ const MemberRegistrationSignupPage = () => {
   }, [phoneOtpValue]);
 
   const onSubmit = async (data: FormValues) => {
+    console.log("hello")
     const payload = {
       ...data,
       name: `${data.firstName} ${data.lastName}`,
@@ -259,7 +281,15 @@ const MemberRegistrationSignupPage = () => {
       membershipTypeId: membershipId,
     };
 
-    mutate(payload);
+    try {
+      if (imageBase64) {
+        await handleAddFace(payload.name, imageBase64); 
+      }
+  
+      mutate(payload);
+    } catch (error) {
+      toast.error("Failed to register face.");
+    }
   };
 
   return (
@@ -321,7 +351,7 @@ const MemberRegistrationSignupPage = () => {
                   <Button
                     variant="outlined"
                     fullWidth
-                    
+
                     onClick={handleOpenCamera}
                     startIcon={<CameraAltIcon />}
                   >
@@ -333,30 +363,30 @@ const MemberRegistrationSignupPage = () => {
                   <Typography variant="subtitle1" gutterBottom>
                     Camera Preview - Smile!
                   </Typography>
-                  <video 
-                    ref={videoRef} 
-                    autoPlay 
-                    playsInline 
+                  <video
+                    ref={videoRef}
+                    autoPlay
+                    playsInline
                     required
-                    style={{ 
-                      width: '100%', 
-                      maxWidth: '400px', 
+                    style={{
+                      width: '100%',
+                      maxWidth: '400px',
                       margin: '10px 0',
                       border: '2px solid #ddd',
                       borderRadius: '4px'
                     }}
                   />
                   <div style={{ display: 'flex', gap: '10px' }}>
-                    <Button 
-                      variant="contained" 
+                    <Button
+                      variant="contained"
                       color="primary"
                       onClick={captureImage}
                       startIcon={<CameraAltIcon />}
                     >
                       Capture Photo
                     </Button>
-                    <Button 
-                      variant="outlined" 
+                    <Button
+                      variant="outlined"
                       color="secondary"
                       onClick={closeCamera}
                     >
@@ -376,8 +406,8 @@ const MemberRegistrationSignupPage = () => {
                     <img
                       src={imageBase64}
                       alt="preview"
-                      style={{ 
-                        width: '200px', 
+                      style={{
+                        width: '200px',
                         height: '200px',
                         objectFit: 'cover',
                         borderRadius: '4px',
@@ -468,8 +498,8 @@ const MemberRegistrationSignupPage = () => {
               >
                 {emailSent
                   ? `Resend in ${Math.floor(emailTimer / 60)}:${String(
-                      emailTimer % 60
-                    ).padStart(2, "0")}`
+                    emailTimer % 60
+                  ).padStart(2, "0")}`
                   : "Send OTP"}
               </Button>
               <TextField
@@ -490,7 +520,7 @@ const MemberRegistrationSignupPage = () => {
                 error={!!errors.phoneNumber}
                 value={watch("phoneNumber")}
                 onChange={(value) =>
-                    setValue("phoneNumber", value)}
+                  setValue("phoneNumber", value)}
                 maxlength={15}
               />
             </Grid>
@@ -510,8 +540,8 @@ const MemberRegistrationSignupPage = () => {
               >
                 {phoneSent
                   ? `Resend in ${Math.floor(phoneTimer / 60)}:${String(
-                      phoneTimer % 60
-                    ).padStart(2, "0")}`
+                    phoneTimer % 60
+                  ).padStart(2, "0")}`
                   : "Send OTP"}
               </Button>
               <TextField

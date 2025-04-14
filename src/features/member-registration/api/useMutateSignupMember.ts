@@ -24,11 +24,11 @@ const signUp = async (payload: {
     cardTypeEnum: string;
   };
 }) => {
-  const {membershipTypeId,file,...userJsonFields } = payload;
-const formData = new FormData();
-  formData.append("UserJson",JSON.stringify(userJsonFields));
+  const { membershipTypeId, file,currentActiveClubId, ...userJsonFields } = payload;
+  const formData = new FormData();
+  formData.append("UserJson", JSON.stringify(userJsonFields));
   if (file) {
-    formData.append("file" , file);
+    formData.append("file", file);
   }
   const response = await fetch(
     `http://44.216.113.234:8080/users/assign-club-membership/${currentActiveClubId}?membershipTypeId=${membershipTypeId}`,

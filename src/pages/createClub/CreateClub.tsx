@@ -52,6 +52,10 @@ const CreateClub = () => {
   };
 
   const onSubmit = async (data: ClubSchema) => {
+    if(!verifyOtp.email) {
+      toast.error('Invalid email OTP');
+      return;
+    }
     mutateCreateClub({ clubData: data, planId: membershipId });
   };
 

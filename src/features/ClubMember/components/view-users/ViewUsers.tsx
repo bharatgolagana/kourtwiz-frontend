@@ -10,6 +10,10 @@ import {
   Button,
 } from '@mui/material';
 
+const tableCellStyle = {
+  color: 'primary',
+  fontWeight: 'bold',
+};
 const Viewusers = ({
   data,
   handleOpenModal,
@@ -39,13 +43,12 @@ const Viewusers = ({
           variant='h4'
           gutterBottom
           align='center'
-          sx={{ fontWeight: 'bold', color: '#333', color: 'primary.main' }}
+          sx={{ fontWeight: 'bold', color: 'primary' }}
         >
           View Users List
         </Typography>
         <Button
           variant='contained'
-          color='primary'
           style={{ fontWeight: 'bold' }}
           onClick={handleOpenModal}
         >
@@ -56,35 +59,24 @@ const Viewusers = ({
       <TableContainer
         component={Paper}
         elevation={3}
-        style={{ borderRadius: '10px', overflow: 'hidden' }}
+        style={{
+          borderRadius: '10px',
+          overflow: 'hidden',
+          border: '1px solid',
+          borderColor: 'primary',
+        }}
       >
         <Table>
           <TableHead sx={{ bgcolor: 'primary.main' }}>
             <TableRow>
-              <TableCell style={{ color: 'white', fontWeight: 'bold' }}>
-                Name
-              </TableCell>
-              <TableCell style={{ color: 'white', fontWeight: 'bold' }}>
-                Email
-              </TableCell>
-              <TableCell style={{ color: 'white', fontWeight: 'bold' }}>
-                Phone Number
-              </TableCell>
-              <TableCell style={{ color: 'white', fontWeight: 'bold' }}>
-                Role
-              </TableCell>
-              <TableCell style={{ color: 'white', fontWeight: 'bold' }}>
-                Tasks
-              </TableCell>
-              <TableCell style={{ color: 'white', fontWeight: 'bold' }}>
-                Address
-              </TableCell>
-              <TableCell style={{ color: 'white', fontWeight: 'bold' }}>
-                City
-              </TableCell>
-              <TableCell style={{ color: 'white', fontWeight: 'bold' }}>
-                Membership
-              </TableCell>
+              <TableCell style={tableCellStyle}>Name</TableCell>
+              <TableCell style={tableCellStyle}>Email</TableCell>
+              <TableCell style={tableCellStyle}>Phone Number</TableCell>
+              <TableCell style={tableCellStyle}>Role</TableCell>
+              <TableCell style={tableCellStyle}>Tasks</TableCell>
+              <TableCell style={tableCellStyle}>Address</TableCell>
+              <TableCell style={tableCellStyle}>City</TableCell>
+              <TableCell style={tableCellStyle}>Membership</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -101,7 +93,9 @@ const Viewusers = ({
                 </TableCell>
                 <TableCell>{userEntry.user.address || 'N/A'}</TableCell>
                 <TableCell>{userEntry.user.city || 'N/A'}</TableCell>
-                <TableCell>{userEntry.membershipPlan?.membershipName || 'N/A'}</TableCell>
+                <TableCell>
+                  {userEntry.membershipPlan?.membershipName || 'N/A'}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

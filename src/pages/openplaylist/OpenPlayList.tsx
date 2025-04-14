@@ -143,7 +143,7 @@ const OpenPlayList = () => {
                       className={isFull ? "waitlist-btn" : "join-btn"}
                       onClick={() => handleReserveOrWaitlist(session.id, isFull)}
                     >
-                      {isFull ? "Join Waitlist" : "Join Open Play"}
+                      {isFull ? "Join Waitlist" : "Join Play"}
                     </button>
                   </td>
                 </tr>

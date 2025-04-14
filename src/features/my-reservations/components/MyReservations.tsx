@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import './styles.css'
 
@@ -43,7 +43,6 @@ const MyReservations = () => {
   return (
     <div className="ClubSchedulePage">
       <h2>Your Club Bookings</h2>
-      <ToastContainer position="top-right" autoClose={3000} />
       <div className="table-container">
         {isLoading ? (
           <p>Loading bookings...</p>

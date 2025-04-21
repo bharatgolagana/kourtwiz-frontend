@@ -13,12 +13,8 @@ RUN npm install
 # Copy the rest of the application files
 COPY . .
 
-# Handle the secrets file
-ARG SECRETS_FILE=.env.dev
-# COPY ${SECRETS_FILE} /tmp/secrets.env
-
-# # Copy .env.dev directly
-# COPY srv/environments/.env.dev src/environments/.env.prod
+# Use .env.development file during build
+COPY src/environments/.env.development src/environments/.env.dev
 
 # Build the app
 RUN npm run build:dev

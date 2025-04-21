@@ -13,8 +13,8 @@ interface BookingData {
 
 const bookCourt = async (bookingData: BookingData): Promise<Response> => {
   const token = localStorage.getItem('jwtToken');
-
-  const response = await fetch('http://44.216.113.234:8080/api/bookings', {
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  const response = await fetch(`${BASE_URL}/api/bookings`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

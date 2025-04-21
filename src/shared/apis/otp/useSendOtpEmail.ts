@@ -6,9 +6,9 @@ const sendOtpEmail = async ({ email }) => {
   if (!email) {
     throw new Error('Email is required');
   }
-
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const response = await axios.post(
-    `http://44.216.113.234:8080/temp-otp/send-email?email=${encodeURIComponent(
+    `${BASE_URL}/temp-otp/send-email?email=${encodeURIComponent(
       email
     )}`,
     {},

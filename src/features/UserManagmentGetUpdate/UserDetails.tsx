@@ -13,8 +13,9 @@ import {
   TextField,
 } from '@mui/material';
 import { useGetUserById } from '../../shared/apis/User/UseGetUsersById';
-import { useUpdateUserById } from '../../shared/apis/User/useUpdateUserById';
+
 import AuthContext from '../../context/AuthContext';
+import { useUpdateUserById } from '../../shared/apis/User/useUpdateuserById';
 
 const UserDetails: React.FC = () => {
   const authContext = useContext(AuthContext);

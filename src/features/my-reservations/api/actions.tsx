@@ -1,7 +1,8 @@
 export async function payBooking(bookingId: string): Promise<unknown> {
   try {
     const token = localStorage.getItem('jwtToken');
-    const response = await fetch(`http://44.216.113.234:8080/api/bookings/booking/${bookingId}/pay`, {
+    const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+    const response = await fetch(`${BASE_URL}/api/bookings/booking/${bookingId}/pay`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -21,7 +22,8 @@ export async function payBooking(bookingId: string): Promise<unknown> {
 export async function cancelBooking(bookingId: string): Promise<unknown> {
   try {
     const token = localStorage.getItem('jwtToken');
-    const response = await fetch(`http://44.216.113.234:8080/api/bookings/${bookingId}`, {
+    const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+    const response = await fetch(`${BASE_URL}/api/bookings/${bookingId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',

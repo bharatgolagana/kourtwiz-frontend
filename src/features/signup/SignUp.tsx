@@ -54,7 +54,8 @@ const SignUp = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://44.216.113.234:8080/users', {
+      const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+      const response = await fetch(`${BASE_URL}/users`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(credentials),

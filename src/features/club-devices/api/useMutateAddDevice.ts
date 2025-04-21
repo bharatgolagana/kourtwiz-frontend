@@ -6,9 +6,9 @@ const addDevice = async (deviceData) => {
   if (!token) {
     throw new Error('No token found');
   }
-
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const response = await axios.post(
-    'http://44.216.113.234:8080/api/devices',
+    `${BASE_URL}/api/devices`,
     deviceData,
     {
       headers: {

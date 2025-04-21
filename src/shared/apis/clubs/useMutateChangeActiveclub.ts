@@ -6,8 +6,9 @@ const changeSelectedClub = async ({ clubId }: { clubId: string }) => {
   if (!clubId) {
     throw new Error('Club ID is required');
   }
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const response = await axios.put(
-    `http://44.216.113.234:8080/users/change-active-club/${clubId}`,
+    `${BASE_URL}/users/change-active-club/${clubId}`,
     {},
     {
       headers: {

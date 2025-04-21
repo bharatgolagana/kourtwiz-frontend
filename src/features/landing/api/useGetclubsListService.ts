@@ -1,7 +1,8 @@
-const BASE_URL = "http://44.216.113.234:8080";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export const fetchClubs = async () => {
   try {
+    console.log("BASE URL", BASE_URL)
     const response = await fetch(`${BASE_URL}/clubs`);
     if (!response.ok) {
       throw new Error("Failed to fetch club details");

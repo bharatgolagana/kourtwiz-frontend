@@ -8,9 +8,9 @@ interface CoachData {
 
 const createCoach = async (coachData: CoachData): Promise<CoachData> => {
   const token = localStorage.getItem('jwtToken');
-
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const response = await fetch(
-    `http://44.216.113.234:8080/api/clubs/${coachData.clubId}/coaches`,
+    `${BASE_URL}/api/clubs/${coachData.clubId}/coaches`,
     {
       method: 'POST',
       headers: {

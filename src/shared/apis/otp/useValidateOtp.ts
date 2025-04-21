@@ -13,9 +13,9 @@ const validateOtp = async ({
   if (!recipient || !otp) {
     throw new Error('Recipient and OTP are required');
   }
-
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const response = await axios.post(
-    `http://44.216.113.234:8080/temp-otp/validate?recipient=${encodeURIComponent(
+    `${BASE_URL}/temp-otp/validate?recipient=${encodeURIComponent(
       recipient
     )}&otp=${encodeURIComponent(otp)}`,
     {},

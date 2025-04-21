@@ -30,8 +30,9 @@ const signUp = async (payload: {
   if (file) {
     formData.append("file", file);
   }
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const response = await fetch(
-    `http://44.216.113.234:8080/users/assign-club-membership/${payload.currentActiveClubId}?membershipTypeId=${membershipTypeId}`,
+    `${BASE_URL}/users/assign-club-membership/${payload.currentActiveClubId}?membershipTypeId=${membershipTypeId}`,
     {
       method: "POST",
       body: formData,

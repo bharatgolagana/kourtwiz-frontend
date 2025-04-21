@@ -29,7 +29,8 @@ const ManualLoginProvider = ({ children }: { children: React.ReactNode }) => {
 
   const fetchUserData = async (token: string) => {
     try {
-      const response = await fetch('http://44.216.113.234:8080/users/me', {
+      const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+      const response = await fetch(`${BASE_URL}/users/me`, {
         method: 'GET',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -52,7 +53,8 @@ const ManualLoginProvider = ({ children }: { children: React.ReactNode }) => {
     setError(null);
 
     try {
-      const response = await fetch('http://44.216.113.234:8080/auth/login', {
+      const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+      const response = await fetch(`${BASE_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(credentials),
@@ -92,8 +94,9 @@ const ManualLoginProvider = ({ children }: { children: React.ReactNode }) => {
     setError(null);
 
     try {
+      const BASE_URL = import.meta.env.VITE_API_BASE_URL;
       const response = await fetch(
-        'http://44.216.113.234:8080/auth/change-password',
+        `${BASE_URL}/auth/change-password`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

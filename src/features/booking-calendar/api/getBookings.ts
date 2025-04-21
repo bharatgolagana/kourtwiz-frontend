@@ -12,8 +12,10 @@
   export const fetchBookings = async (clubId: string) => {
     if (!clubId) throw new Error('Club ID is required');
 
-    const token = localStorage.getItem('jwtToken');
-    const response = await axios.get(`http://44.216.113.234:8080/api/bookings/all-bookings/${clubId}`, {
+    const token = localStorage.getItem('jwtToken'); 
+    const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+    const response = await axios.post(
+        `http:${BASE_URL}/api/bookings/all-bookings/${clubId}`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,

@@ -1,7 +1,8 @@
 import { RouteObject } from 'react-router-dom';
-import SignUp from '../features/signup/signup';
+;
 import MemberRegistrationSignupPage from '../pages/registration/MemberRegistrationSignup';
 import MemberRegistrationClubPage from '../pages/registration/MemberRegistrationClub';
+import SignUp from '../features/signup/SignUp';
 
 const SignUpRoutes: RouteObject[] = [
   {

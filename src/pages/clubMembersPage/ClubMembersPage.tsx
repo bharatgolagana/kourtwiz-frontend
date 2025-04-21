@@ -15,7 +15,8 @@ const ClubMembersPage = () => {
   const fetchMembers = async () => {
     try {
       const token = localStorage.getItem("jwtToken");
-      const response = await axios.get(`http://44.216.113.234:8080/user-organization-roles/organization/${clubId}`, {
+      const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+      const response = await axios.get(`${BASE_URL}/user-organization-roles/organization/${clubId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

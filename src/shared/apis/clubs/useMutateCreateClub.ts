@@ -8,8 +8,9 @@ const createClub = async ({
   planId: string;
   clubData: any;
 }) => {
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const response = await axios.post(
-    `http://44.216.113.234:8080/clubs?planId=${planId}`,
+    `${BASE_URL}/clubs?planId=${planId}`,
     clubData,
     {
       headers: {

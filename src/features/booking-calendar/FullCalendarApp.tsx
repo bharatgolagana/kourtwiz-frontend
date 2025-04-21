@@ -134,8 +134,9 @@ function FullCalendarApp(): JSX.Element {
         const token=localStorage.getItem('jwtToken');
     
         try {
+            const BASE_URL = import.meta.env.VITE_API_BASE_URL;
             const response = await axios.post(
-                `http://44.216.113.234:8080/api/play-type/bookings`,
+                `http:${BASE_URL}/api/play-type/bookings`,
                 null,
                 {
                     headers: {

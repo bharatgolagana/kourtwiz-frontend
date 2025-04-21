@@ -15,13 +15,13 @@ COPY . .
 
 # Handle the secrets file
 ARG SECRETS_FILE=.env.dev
-COPY ${SECRETS_FILE} /tmp/secrets.env
+# COPY ${SECRETS_FILE} /tmp/secrets.env
 
-# Fallback logic to ensure /tmp/secrets.env exists and is not empty
-RUN [ -f /tmp/secrets.env ] || echo "" > /tmp/secrets.env
+# # Copy .env.dev directly
+# COPY srv/environments/.env.dev src/environments/.env.prod
 
-# Generate .env.prod and build the app
-RUN grep -v '^#' /tmp/secrets.env > src/environments/.env.prod && npm run build:prod
+# Build the app
+RUN npm run build:dev
 
 # Serve the build with an HTTP server
 FROM nginx:alpine

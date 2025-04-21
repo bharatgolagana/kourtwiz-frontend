@@ -3,6 +3,8 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import './RequestsPage.css';
 
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const RequestsPage = () => {
   const [clubs, setClubs] = useState([]);
 
@@ -12,7 +14,7 @@ const RequestsPage = () => {
 
   const fetchClubs = async () => {
     try {
-      const response = await axios.get("http://44.216.113.234:8080/temp-clubs");
+      const response = await axios.get(`${BASE_URL}/temp-clubs`);
       setClubs(response.data);
     } catch (error) {
       console.error("Error fetching clubs:", error);
@@ -23,7 +25,7 @@ const RequestsPage = () => {
     try {
         const token = localStorage.getItem("jwtToken");
         await axios.put(
-          `http://44.216.113.234:8080/organizations/${id}/approveOrganization`,
+          `${BASE_URL}/organizations/${id}/approveOrganization`,
           {},
           {
             headers: {

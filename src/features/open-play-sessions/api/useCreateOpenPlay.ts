@@ -16,8 +16,8 @@ interface OpenPlaySessionData {
 
 const createOpenPlaySession = async (sessionData: OpenPlaySessionData): Promise<OpenPlaySessionData> => {
   const token = localStorage.getItem('jwtToken');
-
-  const response = await fetch('http://44.216.113.234:8080/api/play-type/sessions', {
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  const response = await fetch(`${BASE_URL}/api/play-type/sessions`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

@@ -15,9 +15,9 @@ export const useMutateDeleteDevice = ({
     if (!token) {
       throw new Error('No token found');
     }
-
+    const BASE_URL = import.meta.env.VITE_API_BASE_URL;
     const response = await axios.delete(
-      `http://44.216.113.234:8080/api/devices/${deviceId}`,
+      `${BASE_URL}/api/devices/${deviceId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

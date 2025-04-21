@@ -2,8 +2,9 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
 const fetchClubMemberships = async (clubId: string) => {
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const { data } = await axios.get(
-    `http://44.216.113.234:8080/api/membership-plans/${clubId}`,
+    `${BASE_URL}/api/membership-plans/${clubId}`,
     {
       headers: {
         Accept: '*/*',

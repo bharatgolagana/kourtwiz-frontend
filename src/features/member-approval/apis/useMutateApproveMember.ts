@@ -7,9 +7,9 @@ const approveUser = async (userId: string) => {
   if (!token) {
     throw new Error('No token found');
   }
-
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const response = await axios.put(
-    `http://44.216.113.234:8080/temp-users/${userId}/approve`,
+    `${BASE_URL}/temp-users/${userId}/approve`,
     {},
     {
       headers: {

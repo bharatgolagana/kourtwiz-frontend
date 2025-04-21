@@ -9,9 +9,9 @@ const fetchClubCourt = async (clubId) => {
   if (!token) {
     throw new Error('No token found');
   }
-
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const response = await axios.get(
-    `http://44.216.113.234:8080/courts/club/${clubId}`,
+    `${BASE_URL}/courts/club/${clubId}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,

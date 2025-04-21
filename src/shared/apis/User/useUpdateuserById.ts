@@ -7,8 +7,9 @@ const updateUserById = async ({ userId, userData }) => {
   if (!userId) throw new Error('User ID is required');
   if (!token) throw new Error('No token found');
 
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const response = await axios.put(
-    `http://44.216.113.234:8080/users/${userId}`,
+    `${BASE_URL}/users/${userId}`,
     userData,
     {
       headers: {

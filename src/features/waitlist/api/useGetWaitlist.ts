@@ -5,8 +5,8 @@ export function useGetWaitlist(userId: string): UseQueryResult<unknown, Error> {
     try {
       const token = localStorage.getItem('jwtToken');
       if (!token) throw new Error('No token found');
-
-      const response = await fetch(`http://44.216.113.234:8080/api/play-type/waitlist?userId=${userId}`, {
+      const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+      const response = await fetch(`${BASE_URL}/api/play-type/waitlist?userId=${userId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
